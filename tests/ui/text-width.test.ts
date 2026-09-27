@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { padEndVisible, padStartVisible, visibleWidth } from '../../src/ui/text-width.js';
-import { ICON_END_MARGIN, rowIcons } from '../../src/ui/labels.js';
+import { padEndVisible, padStartVisible, visibleWidth } from '../../src/ui/text-width';
+import { ICON_END_MARGIN, rowIcons } from '../../src/ui/labels';
 
 describe('visible text width', () => {
   it('pads using terminal display width', () => {

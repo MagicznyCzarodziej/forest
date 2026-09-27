@@ -4,7 +4,7 @@ import {
   worktreeFolderName,
   bareRepoPath,
   defaultWorktreePath,
-} from '../../src/repos/repo-structure.js';
+} from '../../src/repos/repo-structure';
 
 describe('worktreeFolderName', () => {
   it('joins repo name and worktree slug with double underscore', () => {

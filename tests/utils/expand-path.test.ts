@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { expandPath } from '../../src/utils/expand-path.js';
+import { expandPath } from '../../src/utils/expand-path';
 
 describe('expandPath', () => {
   it('expands ~ and ~/paths', () => {

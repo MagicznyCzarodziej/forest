@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { canConfirmBranchSelection, sortBranches } from '../../src/branches/branch-picker.js';
+import { canConfirmBranchSelection, sortBranches } from '../../src/branches/branch-picker';
 
 describe('sortBranches', () => {
   it('places default branch first then alphabetical', () => {

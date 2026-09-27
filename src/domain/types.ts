@@ -1,4 +1,4 @@
-import type { GitHubOwner } from './github-owner.js';
+import type { GitHubOwner } from './github-owner';
 
 export type RepoStructure = 'standard' | 'legacy' | 'unknown' | 'none';
 

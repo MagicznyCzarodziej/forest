@@ -1,9 +1,9 @@
 import { stat } from 'node:fs/promises';
 import { join } from 'node:path';
-import { bareRepoPath, worktreeFolderName } from '../repos/repo-structure.js';
-import { branchToWorktreeSlug } from './branch-slug.js';
-import { repositoryHasCommits, type GitOutputHandler } from './default-branch.js';
-import { runGitStreaming } from './run-git.js';
+import { bareRepoPath, worktreeFolderName } from '../repos/repo-structure';
+import { branchToWorktreeSlug } from './branch-slug';
+import { repositoryHasCommits, type GitOutputHandler } from './default-branch';
+import { runGitStreaming } from './run-git';
 
 export interface CreateWorktreeResult {
   worktreePath: string;

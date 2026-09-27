@@ -1,5 +1,5 @@
 import { Box, Text } from 'ink';
-import { ui } from '../theme/ui-tokens.js';
+import { ui } from '../theme/ui-tokens';
 
 interface ProgressViewProps {
   title: string;

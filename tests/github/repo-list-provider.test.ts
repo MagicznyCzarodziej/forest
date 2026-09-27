@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { parseRepoNameLines, repoNamesGraphql } from '../../src/github/repo-list-provider.js';
+import { parseRepoNameLines, repoNamesGraphql } from '../../src/github/repo-list-provider';
 
 describe('repoNamesGraphql', () => {
   it('pages organization repository names', () => {

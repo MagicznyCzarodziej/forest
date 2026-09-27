@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { fuzzyFilter } from '../../src/search/fuzzy-filter.js';
+import { fuzzyFilter } from '../../src/search/fuzzy-filter';
 
 describe('fuzzyFilter', () => {
   const items = [

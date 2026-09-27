@@ -1,5 +1,5 @@
 import { execFile } from 'node:child_process';
-import { withGitHubCredentials } from '../github/clone-url.js';
+import { withGitHubCredentials } from '../github/clone-url';
 import { readFile } from 'node:fs/promises';
 import { isAbsolute, join } from 'node:path';
 import { promisify } from 'node:util';

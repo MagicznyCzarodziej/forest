@@ -4,7 +4,7 @@ import {
   MAX_PANEL_WIDTH,
   resolveInnerContentWidth,
   resolvePanelWidth,
-} from '../../src/ui/layout/content-width.js';
+} from '../../src/ui/layout/content-width';
 
 describe('content width layout', () => {
   it('caps panel width at max', () => {

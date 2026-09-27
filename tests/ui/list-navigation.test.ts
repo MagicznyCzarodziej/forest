@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { jumpListIndex, moveListIndex } from '../../src/ui/list-navigation.js';
+import { jumpListIndex, moveListIndex } from '../../src/ui/list-navigation';
 
 describe('moveListIndex', () => {
   const len = 5;

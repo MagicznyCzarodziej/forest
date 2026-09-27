@@ -1,5 +1,5 @@
 import { Text } from 'ink';
-import { ui } from '../theme/ui-tokens.js';
+import { ui } from '../theme/ui-tokens';
 
 export function SearchQuery({ query, hint = '' }: { query: string; hint?: string }) {
   const display = query.length > 0 ? query : ' ';

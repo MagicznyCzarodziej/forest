@@ -1,4 +1,4 @@
-import type { ScreenState } from '../../navigation/screen-stack.js';
+import type { ScreenState } from '../../navigation/screen-stack';
 
 export function reposSubtitle(githubList: 'ready' | 'loading' | 'error'): string {
   if (githubList === 'loading') {

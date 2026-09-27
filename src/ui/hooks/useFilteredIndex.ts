@@ -1,5 +1,5 @@
 import { useMemo, useState, type Dispatch, type SetStateAction } from 'react';
-import { fuzzyFilter } from '../../search/fuzzy-filter.js';
+import { fuzzyFilter } from '../../search/fuzzy-filter';
 
 export type FilteredIndexFilter<T> = (
   items: T[],

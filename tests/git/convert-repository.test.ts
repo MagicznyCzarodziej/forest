@@ -3,8 +3,8 @@ import { mkdir, mkdtemp, readFile, readdir, rename, rm, writeFile } from 'node:f
 import { join } from 'node:path';
 import { promisify } from 'node:util';
 import { afterEach, describe, expect, it } from 'vitest';
-import { convertLegacyRepository } from '../../src/git/convert-repository.js';
-import { detectDefaultBranchFromBare } from '../../src/git/default-branch.js';
+import { convertLegacyRepository } from '../../src/git/convert-repository';
+import { detectDefaultBranchFromBare } from '../../src/git/default-branch';
 
 const execFileAsync = promisify(execFile);
 const roots: string[] = [];

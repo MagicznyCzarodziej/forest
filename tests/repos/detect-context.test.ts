@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { detectStartContext } from '../../src/repos/detect-context.js';
+import { detectStartContext } from '../../src/repos/detect-context';
 
 describe('detectStartContext', () => {
   const root = '/Users/dev';

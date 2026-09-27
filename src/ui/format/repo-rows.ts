@@ -1,5 +1,5 @@
-import type { RepoCatalogEntry } from '../../domain/types.js';
-import type { ListRow } from '../components/SelectableList.js';
+import type { RepoCatalogEntry } from '../../domain/types';
+import type { ListRow } from '../components/SelectableList';
 
 export function repoToListRow(repo: RepoCatalogEntry): ListRow {
   return {

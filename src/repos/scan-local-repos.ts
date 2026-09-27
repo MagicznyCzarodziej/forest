@@ -1,9 +1,9 @@
 import { readdir, stat, readFile } from 'node:fs/promises';
 import { join } from 'node:path';
-import type { LocalRepoMeta } from '../domain/types.js';
-import { DEFAULT_BRANCH } from '../git/default-branch.js';
-import { DEFAULT_REPO_SLUG_SEPARATOR, detectRepoStructure } from './repo-structure.js';
-import type { RepoStateStore } from '../state/repo-state.js';
+import type { LocalRepoMeta } from '../domain/types';
+import { DEFAULT_BRANCH } from '../git/default-branch';
+import { DEFAULT_REPO_SLUG_SEPARATOR, detectRepoStructure } from './repo-structure';
+import type { RepoStateStore } from '../state/repo-state';
 
 async function pathExists(path: string): Promise<boolean> {
   try {

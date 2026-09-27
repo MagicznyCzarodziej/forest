@@ -1,9 +1,9 @@
 import { memo, useMemo } from 'react';
 import { Box, Text } from 'ink';
-import { computeListViewport } from '../list-viewport.js';
-import { useTerminalLayout } from '../hooks/useTerminalLayout.js';
-import { ListRowBar, type ListRowData } from './ListRowBar.js';
-import { ui } from '../theme/ui-tokens.js';
+import { computeListViewport } from '../list-viewport';
+import { useTerminalLayout } from '../hooks/useTerminalLayout';
+import { ListRowBar, type ListRowData } from './ListRowBar';
+import { ui } from '../theme/ui-tokens';
 
 export type ListRow = ListRowData;
 

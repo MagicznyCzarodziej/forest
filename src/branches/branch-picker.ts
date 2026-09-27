@@ -1,4 +1,4 @@
-import { fuzzyFilter } from '../search/fuzzy-filter.js';
+import { fuzzyFilter } from '../search/fuzzy-filter';
 
 export function sortBranches(branches: string[], defaultBranch: string): string[] {
   const unique = [...new Set(branches)];

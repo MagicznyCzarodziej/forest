@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { computeListViewport } from '../../src/ui/list-viewport.js';
-import { listDataRowSlots } from '../../src/ui/layout/terminal-chrome.js';
+import { computeListViewport } from '../../src/ui/list-viewport';
+import { listDataRowSlots } from '../../src/ui/layout/terminal-chrome';
 
 describe('computeListViewport', () => {
   const viewport = 10;

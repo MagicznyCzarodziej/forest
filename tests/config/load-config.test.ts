@@ -2,7 +2,7 @@ import { mkdtemp, mkdir, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { tmpdir } from 'node:os';
 import { afterEach, describe, expect, it } from 'vitest';
-import { loadConfig, ConfigError } from '../../src/config/load-config.js';
+import { loadConfig, ConfigError } from '../../src/config/load-config';
 
 const originalHome = process.env.HOME;
 

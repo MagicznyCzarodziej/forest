@@ -1,5 +1,5 @@
-import type { GitHubOwner, GitHubOwnerKind } from '../domain/github-owner.js';
-import { ConfigError } from './config-error.js';
+import type { GitHubOwner, GitHubOwnerKind } from '../domain/github-owner';
+import { ConfigError } from './config-error';
 
 function parseKind(value: unknown): GitHubOwnerKind {
   if (value === 'organization') {

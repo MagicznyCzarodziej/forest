@@ -35,7 +35,7 @@ npm link
 
 Then run `forest` from any directory. Quit with Ctrl+C.
 
-After pulling changes, run `npm run build` again. `npm link` does not need to be repeated.
+After pulling changes, run `npm run build` again (Vite bundles the CLI to `dist/index.js`). `npm link` does not need to be repeated.
 
 Remove the command with `npm unlink -g forest`.
 

@@ -1,21 +1,21 @@
 import { Box, Text } from 'ink';
 import { type ReactNode, useMemo } from 'react';
-import { useAlternateScrollMode } from '../hooks/useAlternateScrollMode.js';
-import { useTerminalDimensions } from '../hooks/useTerminalDimensions.js';
-import { TerminalLayoutContext } from './terminal-layout-context.js';
+import { useAlternateScrollMode } from '../hooks/useAlternateScrollMode';
+import { useTerminalDimensions } from '../hooks/useTerminalDimensions';
+import { TerminalLayoutContext } from './terminal-layout-context';
 import {
   listDataRowSlots,
   panelRenderHeight,
   shellBodyHeight,
   SUBTITLE_LINES,
-} from './terminal-chrome.js';
+} from './terminal-chrome';
 import {
   horizontalPadding,
   INNER_PADDING_X,
   resolveInnerContentWidth,
   resolvePanelWidth,
-} from './content-width.js';
-import { ui } from '../theme/ui-tokens.js';
+} from './content-width';
+import { ui } from '../theme/ui-tokens';
 
 const DEFAULT_FOOTER =
   '↑↓ Home End list · type to filter · Tab complete · Enter · Esc back · Ctrl+C quit';

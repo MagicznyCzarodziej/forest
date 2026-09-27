@@ -1,31 +1,26 @@
 import { useCallback, useEffect, useRef, useState, type ReactNode } from 'react';
 import { Text, useInput } from 'ink';
-import { FullscreenShell } from './layout/FullscreenShell.js';
-import { reposSubtitle, screenFooter, screenSubtitle } from './layout/screen-chrome.js';
-import type { BootstrapResult } from '../application/bootstrap.js';
-import type { RepoCatalogEntry, WorktreeEntry } from '../domain/types.js';
-import { buildCloneUrl, detectGitProtocol } from '../github/clone-url.js';
-import { cloneRepository } from '../git/clone-repository.js';
-import { convertLegacyRepository } from '../git/convert-repository.js';
-import { createWorktreeFromBare } from '../git/create-worktree.js';
-import { DEFAULT_BRANCH, detectDefaultBranchFromBare } from '../git/default-branch.js';
-import { bareRepoPath } from '../repos/repo-structure.js';
-import { openInIdea } from '../idea/open-in-idea.js';
-import {
-  popScreen,
-  pushScreen,
-  currentScreen,
-  type ScreenState,
-} from '../navigation/screen-stack.js';
-import { buildRepoCatalog } from '../repos/repo-catalog.js';
-import { buildWorktreeList } from '../worktrees/worktree-catalog.js';
-import { listRemoteBranches, scanWorktrees } from '../worktrees/scan-worktrees.js';
-import { sortBranches } from '../branches/branch-picker.js';
-import { RepoPickerScreen } from './screens/RepoPickerScreen.js';
-import { WorktreePickerScreen } from './screens/WorktreePickerScreen.js';
-import { BranchPickerScreen } from './screens/BranchPickerScreen.js';
-import { ConfirmPrompt } from './components/ConfirmPrompt.js';
-import { ProgressView } from './components/ProgressView.js';
+import { FullscreenShell } from './layout/FullscreenShell';
+import { reposSubtitle, screenFooter, screenSubtitle } from './layout/screen-chrome';
+import type { BootstrapResult } from '../application/bootstrap';
+import type { RepoCatalogEntry, WorktreeEntry } from '../domain/types';
+import { buildCloneUrl, detectGitProtocol } from '../github/clone-url';
+import { cloneRepository } from '../git/clone-repository';
+import { convertLegacyRepository } from '../git/convert-repository';
+import { createWorktreeFromBare } from '../git/create-worktree';
+import { DEFAULT_BRANCH, detectDefaultBranchFromBare } from '../git/default-branch';
+import { bareRepoPath } from '../repos/repo-structure';
+import { openInIdea } from '../idea/open-in-idea';
+import { popScreen, pushScreen, currentScreen, type ScreenState } from '../navigation/screen-stack';
+import { buildRepoCatalog } from '../repos/repo-catalog';
+import { buildWorktreeList } from '../worktrees/worktree-catalog';
+import { listRemoteBranches, scanWorktrees } from '../worktrees/scan-worktrees';
+import { sortBranches } from '../branches/branch-picker';
+import { RepoPickerScreen } from './screens/RepoPickerScreen';
+import { WorktreePickerScreen } from './screens/WorktreePickerScreen';
+import { BranchPickerScreen } from './screens/BranchPickerScreen';
+import { ConfirmPrompt } from './components/ConfirmPrompt';
+import { ProgressView } from './components/ProgressView';
 
 interface ForestAppProps {
   bootstrap: BootstrapResult;

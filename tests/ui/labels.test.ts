@@ -6,7 +6,7 @@ import {
   rowIcons,
   SUFFIX_COLUMN_WIDTH,
   suffixIcon,
-} from '../../src/ui/labels.js';
+} from '../../src/ui/labels';
 
 describe('row icons', () => {
   it('uses compact icon columns', () => {

@@ -2,15 +2,15 @@ import { execFile } from 'node:child_process';
 import { lstat, mkdir, readFile, readdir, realpath, rename, rm, stat } from 'node:fs/promises';
 import { dirname, isAbsolute, join, resolve } from 'node:path';
 import { promisify } from 'node:util';
-import { bareRepoPath, worktreeFolderName } from '../repos/repo-structure.js';
+import { bareRepoPath, worktreeFolderName } from '../repos/repo-structure';
 import {
   detectCurrentBranch,
   detectDefaultBranchFromCheckout,
   detectDefaultBranchFromRemote,
   repositoryHasCommits,
   type GitOutputHandler,
-} from './default-branch.js';
-import { runGitStreaming } from './run-git.js';
+} from './default-branch';
+import { runGitStreaming } from './run-git';
 
 const execFileAsync = promisify(execFile);
 

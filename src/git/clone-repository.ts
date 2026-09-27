@@ -1,13 +1,13 @@
 import { mkdir } from 'node:fs/promises';
 import { join } from 'node:path';
-import { withGitHubCredentials } from '../github/clone-url.js';
+import { withGitHubCredentials } from '../github/clone-url';
 import {
   bareRepoPath,
   defaultWorktreePath as worktreePathForBranch,
-} from '../repos/repo-structure.js';
-import { detectDefaultBranchFromRemote } from './default-branch.js';
-import type { GitOutputHandler } from './default-branch.js';
-import { runGitStreaming } from './run-git.js';
+} from '../repos/repo-structure';
+import { detectDefaultBranchFromRemote } from './default-branch';
+import type { GitOutputHandler } from './default-branch';
+import { runGitStreaming } from './run-git';
 
 export interface CloneRepositoryResult {
   repoDir: string;

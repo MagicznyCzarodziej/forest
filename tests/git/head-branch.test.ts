@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { branchFromHead } from '../../src/git/default-branch.js';
+import { branchFromHead } from '../../src/git/default-branch';
 
 describe('branchFromHead', () => {
   it('reads an unborn branch from HEAD', () => {

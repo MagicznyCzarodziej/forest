@@ -1,4 +1,4 @@
-import type { WorktreeEntry } from '../domain/types.js';
+import type { WorktreeEntry } from '../domain/types';
 
 export function sortWorktrees(worktrees: WorktreeEntry[]): WorktreeEntry[] {
   return [...worktrees].sort((a, b) => {

@@ -1,4 +1,4 @@
-import { isPathInside } from '../utils/paths.js';
+import { isPathInside } from '../utils/paths';
 
 export interface RepoContext {
   repoName: string;

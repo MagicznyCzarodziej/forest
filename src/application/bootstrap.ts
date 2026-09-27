@@ -1,13 +1,13 @@
-import { loadConfig, remoteRepoCachePath } from '../config/load-config.js';
-import { GhCliRepoListProvider } from '../github/repo-list-provider.js';
-import { cachedRemoteRepoNames, resolveRemoteRepoNames } from '../github/remote-repo-cache.js';
-import { buildRepoCatalog } from '../repos/repo-catalog.js';
-import { detectStartContext } from '../repos/detect-context.js';
-import { resolveRepoContextFromCwd } from '../repos/resolve-repo-context.js';
-import { scanLocalRepos } from '../repos/scan-local-repos.js';
-import { RepoStateStore } from '../state/repo-state.js';
-import type { LocalRepoMeta, RepoCatalogEntry } from '../domain/types.js';
-import type { StartContext } from '../repos/detect-context.js';
+import { loadConfig, remoteRepoCachePath } from '../config/load-config';
+import { GhCliRepoListProvider } from '../github/repo-list-provider';
+import { cachedRemoteRepoNames, resolveRemoteRepoNames } from '../github/remote-repo-cache';
+import { buildRepoCatalog } from '../repos/repo-catalog';
+import { detectStartContext } from '../repos/detect-context';
+import { resolveRepoContextFromCwd } from '../repos/resolve-repo-context';
+import { scanLocalRepos } from '../repos/scan-local-repos';
+import { RepoStateStore } from '../state/repo-state';
+import type { LocalRepoMeta, RepoCatalogEntry } from '../domain/types';
+import type { StartContext } from '../repos/detect-context';
 
 const defaultRepoListProvider = new GhCliRepoListProvider();
 

@@ -2,7 +2,7 @@ import { describe, expect, it, vi } from 'vitest';
 import {
   disableAlternateScrollMode,
   enableAlternateScrollMode,
-} from '../../src/terminal/alternate-scroll-mode.js';
+} from '../../src/terminal/alternate-scroll-mode';
 
 describe('alternate scroll mode', () => {
   it('writes DEC 1007 escapes on a TTY', () => {

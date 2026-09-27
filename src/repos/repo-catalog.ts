@@ -1,5 +1,5 @@
-import type { LocalRepoMeta, RepoCatalogEntry } from '../domain/types.js';
-import { fuzzyFilter } from '../search/fuzzy-filter.js';
+import type { LocalRepoMeta, RepoCatalogEntry } from '../domain/types';
+import { fuzzyFilter } from '../search/fuzzy-filter';
 
 export function sortReposByLastOpened(repos: RepoCatalogEntry[]): RepoCatalogEntry[] {
   return [...repos].sort((a, b) => {

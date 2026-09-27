@@ -1,6 +1,6 @@
 import { join } from 'node:path';
-import type { RepoStructure } from '../domain/types.js';
-import { branchToWorktreeSlug } from '../git/branch-slug.js';
+import type { RepoStructure } from '../domain/types';
+import { branchToWorktreeSlug } from '../git/branch-slug';
 
 export const DEFAULT_REPO_SLUG_SEPARATOR = '__';
 

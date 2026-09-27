@@ -6,10 +6,10 @@ import {
   hintIcon,
   SUFFIX_COLUMN_WIDTH,
   suffixIcon,
-} from '../labels.js';
-import type { HintRole, SuffixRole } from '../labels.js';
-import { hintColor, suffixColor, ui } from '../theme/ui-tokens.js';
-import { padEndVisible, padStartVisible } from '../text-width.js';
+} from '../labels';
+import type { HintRole, SuffixRole } from '../labels';
+import { hintColor, suffixColor, ui } from '../theme/ui-tokens';
+import { padEndVisible, padStartVisible } from '../text-width';
 
 export interface ListRowData {
   id: string;

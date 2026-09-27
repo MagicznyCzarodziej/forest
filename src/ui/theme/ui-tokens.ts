@@ -1,5 +1,5 @@
-import { oneDark } from './one-dark.js';
-import type { HintRole, SuffixRole } from '../labels.js';
+import { oneDark } from './one-dark';
+import type { HintRole, SuffixRole } from '../labels';
 
 export const ui = {
   /** Repo / branch names — highest contrast. */

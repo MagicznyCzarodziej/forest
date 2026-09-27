@@ -3,8 +3,8 @@ import {
   buildRepoCatalog,
   filterRepoCatalogBySearch,
   sortReposByLastOpened,
-} from '../../src/repos/repo-catalog.js';
-import type { LocalRepoMeta, RepoCatalogEntry } from '../../src/domain/types.js';
+} from '../../src/repos/repo-catalog';
+import type { LocalRepoMeta, RepoCatalogEntry } from '../../src/domain/types';
 
 describe('sortReposByLastOpened', () => {
   it('sorts descending by lastOpenedAt', () => {

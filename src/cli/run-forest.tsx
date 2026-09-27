@@ -1,7 +1,7 @@
 import { render } from 'ink';
-import { bootstrap } from '../application/bootstrap.js';
-import { ConfigError } from '../config/load-config.js';
-import { ForestApp } from '../ui/ForestApp.js';
+import { bootstrap } from '../application/bootstrap';
+import { ConfigError } from '../config/load-config';
+import { ForestApp } from '../ui/ForestApp';
 
 export async function runForest(cwd = process.cwd()): Promise<void> {
   try {

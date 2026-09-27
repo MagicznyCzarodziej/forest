@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { sortWorktrees, buildWorktreeList } from '../../src/worktrees/worktree-catalog.js';
+import { sortWorktrees, buildWorktreeList } from '../../src/worktrees/worktree-catalog';
 
 describe('sortWorktrees', () => {
   it('puts default branch worktree first', () => {

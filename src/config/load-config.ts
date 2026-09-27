@@ -1,12 +1,12 @@
 import { readFile } from 'node:fs/promises';
 import { join } from 'node:path';
-import type { ForestConfig } from '../domain/types.js';
-import { DEFAULT_REPO_SLUG_SEPARATOR } from '../repos/repo-structure.js';
-import { expandPath } from '../utils/expand-path.js';
-import { ConfigError } from './config-error.js';
-import { parseGitHubOwnerFromConfig } from './parse-github-owner.js';
+import type { ForestConfig } from '../domain/types';
+import { DEFAULT_REPO_SLUG_SEPARATOR } from '../repos/repo-structure';
+import { expandPath } from '../utils/expand-path';
+import { ConfigError } from './config-error';
+import { parseGitHubOwnerFromConfig } from './parse-github-owner';
 
-export { ConfigError } from './config-error.js';
+export { ConfigError } from './config-error';
 
 export function configPath(home = process.env.HOME): string {
   if (!home) {

@@ -1,8 +1,8 @@
 import { execFile } from 'node:child_process';
 import { promisify } from 'node:util';
 import { basename } from 'node:path';
-import type { RepoContext } from './detect-context.js';
-import { isPathInside } from '../utils/paths.js';
+import type { RepoContext } from './detect-context';
+import { isPathInside } from '../utils/paths';
 
 const execFileAsync = promisify(execFile);
 

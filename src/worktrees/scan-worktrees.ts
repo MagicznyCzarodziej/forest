@@ -2,10 +2,10 @@ import { readdir, readFile, stat } from 'node:fs/promises';
 import { join } from 'node:path';
 import { execFile } from 'node:child_process';
 import { promisify } from 'node:util';
-import { branchFromHead, detectCurrentBranch } from '../git/default-branch.js';
-import { DEFAULT_REPO_SLUG_SEPARATOR } from '../repos/repo-structure.js';
-import type { RawWorktree } from './worktree-catalog.js';
-import { type RepoStateStore } from '../state/repo-state.js';
+import { branchFromHead, detectCurrentBranch } from '../git/default-branch';
+import { DEFAULT_REPO_SLUG_SEPARATOR } from '../repos/repo-structure';
+import type { RawWorktree } from './worktree-catalog';
+import { type RepoStateStore } from '../state/repo-state';
 
 const execFileAsync = promisify(execFile);
 

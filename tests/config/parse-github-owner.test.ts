@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { parseGitHubOwnerFromConfig } from '../../src/config/parse-github-owner.js';
-import { ConfigError } from '../../src/config/config-error.js';
+import { parseGitHubOwnerFromConfig } from '../../src/config/parse-github-owner';
+import { ConfigError } from '../../src/config/config-error';
 
 describe('parseGitHubOwnerFromConfig', () => {
   it('parses a user owner', () => {

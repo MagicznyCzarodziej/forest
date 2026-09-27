@@ -1,14 +1,10 @@
 import { useEffect, useMemo, useRef, useState, type Dispatch, type SetStateAction } from 'react';
 import { useInput } from 'ink';
-import { queryEditAction, applyQueryEdit } from '../../search/query-editing.js';
-import { fuzzyFilter } from '../../search/fuzzy-filter.js';
-import {
-  tabCompleteAdvance,
-  tabCompleteHint,
-  type TabCycleState,
-} from '../../search/tab-complete.js';
-import { jumpListIndex, moveListIndex } from '../list-navigation.js';
-import type { FilteredIndexFilter } from './useFilteredIndex.js';
+import { queryEditAction, applyQueryEdit } from '../../search/query-editing';
+import { fuzzyFilter } from '../../search/fuzzy-filter';
+import { tabCompleteAdvance, tabCompleteHint, type TabCycleState } from '../../search/tab-complete';
+import { jumpListIndex, moveListIndex } from '../list-navigation';
+import type { FilteredIndexFilter } from './useFilteredIndex';
 
 interface UsePickerKeyboardOptions<T> {
   items: T[];

@@ -1,10 +1,10 @@
 import { useMemo, useState } from 'react';
-import { SearchQuery } from '../components/SearchQuery.js';
-import { SelectableList } from '../components/SelectableList.js';
-import { useFilteredIndex } from '../hooks/useFilteredIndex.js';
-import { usePickerKeyboard } from '../hooks/usePickerKeyboard.js';
-import { canConfirmBranchSelection } from '../../branches/branch-picker.js';
-import { PickerBody } from './PickerBody.js';
+import { SearchQuery } from '../components/SearchQuery';
+import { SelectableList } from '../components/SelectableList';
+import { useFilteredIndex } from '../hooks/useFilteredIndex';
+import { usePickerKeyboard } from '../hooks/usePickerKeyboard';
+import { canConfirmBranchSelection } from '../../branches/branch-picker';
+import { PickerBody } from './PickerBody';
 
 export interface BranchPickerScreenProps {
   branches: string[];
