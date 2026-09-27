@@ -1,6 +1,6 @@
 import type { ScreenState } from '../../navigation/navigation';
 import { useForestNavigation } from '../../context/ForestNavigationContext';
-import { useForestOperationsContext } from '../../context/ForestOperationsContext';
+import { useRepositoryOperationsContext } from '../../context/RepositoryOperationsContext';
 import { ConfirmationScreen } from '../ConfirmationScreen';
 
 interface ConfirmConvertRouteProps {
@@ -9,7 +9,7 @@ interface ConfirmConvertRouteProps {
 
 export function ConfirmConvertRoute({ screen }: ConfirmConvertRouteProps) {
   const { goBack } = useForestNavigation();
-  const { convert, openLegacyWithoutConvert } = useForestOperationsContext();
+  const { convert, openLegacyWithoutConvert } = useRepositoryOperationsContext();
 
   return (
     <ConfirmationScreen

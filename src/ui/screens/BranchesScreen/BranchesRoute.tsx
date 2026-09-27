@@ -1,6 +1,7 @@
 import type { ScreenState } from '../../navigation/navigation';
 import { useForestNavigation } from '../../context/ForestNavigationContext';
-import { useForestOperationsContext } from '../../context/ForestOperationsContext';
+import { useWorktreeCatalogContext } from '../../context/WorktreeCatalogContext';
+import { useWorktreeOperationsContext } from '../../context/WorktreeOperationsContext';
 import { BranchesScreen } from './BranchesScreen';
 
 // Separator that won't appear in file paths or branch names
@@ -12,7 +13,8 @@ interface BranchesRouteProps {
 
 export function BranchesRoute({ screen }: BranchesRouteProps) {
   const { goBack } = useForestNavigation();
-  const { branches, ready, createWorktree } = useForestOperationsContext();
+  const { branches, ready } = useWorktreeCatalogContext();
+  const { createWorktree } = useWorktreeOperationsContext();
 
   return (
     <BranchesScreen

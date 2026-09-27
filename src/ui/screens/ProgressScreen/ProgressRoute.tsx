@@ -1,5 +1,5 @@
 import type { ScreenState } from '../../navigation/navigation';
-import { useForestOperationsContext } from '../../context/ForestOperationsContext';
+import { useProgressContext } from '../../context/ProgressContext';
 import { ProgressView } from '../../components/ProgressView';
 
 interface ProgressRouteProps {
@@ -8,7 +8,7 @@ interface ProgressRouteProps {
 
 export function ProgressRoute({ screen }: ProgressRouteProps) {
   void screen;
-  const { progressLines } = useForestOperationsContext();
+  const { progressLines } = useProgressContext();
 
   return <ProgressView lines={progressLines} />;
 }

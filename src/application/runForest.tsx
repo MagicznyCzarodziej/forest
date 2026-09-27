@@ -2,7 +2,7 @@ import { render } from 'ink';
 import { AppContextProvider, createAppContext } from '../ui/context/AppContext';
 import { ConfigError } from '../config/load-config';
 import { ForestNavigationProvider } from '../ui/context/ForestNavigationContext';
-import { ForestOperationsProvider } from '../ui/context/ForestOperationsContext';
+import { ForestUiProviders } from '../ui/context/ForestUiProviders';
 import { ForestScreen } from '../ui/screens/ForestScreen';
 
 export async function runForest(): Promise<void> {
@@ -12,9 +12,9 @@ export async function runForest(): Promise<void> {
     const instance = render(
       <AppContextProvider context={context}>
         <ForestNavigationProvider>
-          <ForestOperationsProvider>
+          <ForestUiProviders>
             <ForestScreen />
-          </ForestOperationsProvider>
+          </ForestUiProviders>
         </ForestNavigationProvider>
       </AppContextProvider>,
       {

@@ -1,6 +1,6 @@
 import type { ScreenState } from '../../navigation/navigation';
 import { useForestNavigation } from '../../context/ForestNavigationContext';
-import { useForestOperationsContext } from '../../context/ForestOperationsContext';
+import { useRepositoryOperationsContext } from '../../context/RepositoryOperationsContext';
 import { ConfirmationScreen } from '../ConfirmationScreen';
 
 interface ConfirmCloneRouteProps {
@@ -9,7 +9,7 @@ interface ConfirmCloneRouteProps {
 
 export function ConfirmCloneRoute({ screen }: ConfirmCloneRouteProps) {
   const { goBack } = useForestNavigation();
-  const { clone } = useForestOperationsContext();
+  const { clone } = useRepositoryOperationsContext();
 
   return (
     <ConfirmationScreen

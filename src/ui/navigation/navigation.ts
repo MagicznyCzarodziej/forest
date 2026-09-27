@@ -20,3 +20,29 @@ export function popScreen(stack: ScreenState[], minimumLength = 1): ScreenState[
 export function currentScreen(stack: ScreenState[]): ScreenState {
   return stack[stack.length - 1] ?? { type: 'repositories' };
 }
+
+/** Pops confirm + progress overlays, keeping at least `minimumLength` screens. */
+export function popOverlayScreens(stack: ScreenState[], minimumLength = 1): ScreenState[] {
+  return popScreen(popScreen(stack, minimumLength), minimumLength);
+}
+
+export function pushWorktreesScreen(
+  stack: ScreenState[],
+  repositoryName: string,
+  repositoryPath: string,
+): ScreenState[] {
+  return pushScreen(stack, { type: 'worktrees', repositoryName, repositoryPath });
+}
+
+export function finishConfirmFlowToWorktrees(
+  stack: ScreenState[],
+  repositoryName: string,
+  repositoryPath: string,
+  minimumLength = 1,
+): ScreenState[] {
+  return pushWorktreesScreen(
+    popOverlayScreens(stack, minimumLength),
+    repositoryName,
+    repositoryPath,
+  );
+}

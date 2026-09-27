@@ -33,11 +33,12 @@ export function WorktreesScreen({
   const listRows = useMemo(
     () =>
       filtered.map((worktree) => {
-        const opening = worktree.path === openingWorktreePath;
+        const isOpening = worktree.path === openingWorktreePath;
+
         return {
           id: worktree.path,
           primary: worktree.branch,
-          statusText: opening ? 'Opening...' : undefined,
+          statusText: isOpening ? 'Opening...' : undefined,
           suffixRole: worktree.isDefaultBranch ? ('default' as const) : undefined,
         };
       }),

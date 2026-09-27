@@ -1,6 +1,7 @@
 import type { ScreenState } from '../../navigation/navigation';
 import { useForestNavigation } from '../../context/ForestNavigationContext';
-import { useForestOperationsContext } from '../../context/ForestOperationsContext';
+import { useWorktreeCatalogContext } from '../../context/WorktreeCatalogContext';
+import { useWorktreeOperationsContext } from '../../context/WorktreeOperationsContext';
 import { WorktreesScreen } from './WorktreesScreen';
 
 interface WorktreesRouteProps {
@@ -9,7 +10,8 @@ interface WorktreesRouteProps {
 
 export function WorktreesRoute({ screen }: WorktreesRouteProps) {
   const { goBack, goToBranches } = useForestNavigation();
-  const { worktrees, ready, openingWorktreePath, openWorktree } = useForestOperationsContext();
+  const { worktrees, ready } = useWorktreeCatalogContext();
+  const { openingWorktreePath, openWorktree } = useWorktreeOperationsContext();
 
   return (
     <WorktreesScreen

@@ -1,11 +1,11 @@
 import { useForestNavigation } from '../context/ForestNavigationContext';
-import { useForestOperationsContext } from '../context/ForestOperationsContext';
+import { useRepositoryListContext } from '../context/RepositoryListContext';
 import type { ScreenState } from '../navigation/navigation';
-import { GitHubListStatus } from './useRepositoryList';
+import type { GitHubListStatus } from './useRepositoryList';
 
 export function useScreenSubtitle(): string {
   const { screen } = useForestNavigation();
-  const { githubListStatus } = useForestOperationsContext();
+  const { githubListStatus } = useRepositoryListContext();
 
   if (screen.type === 'repositories') {
     return repositoriesSubtitle(githubListStatus);

@@ -1,10 +1,12 @@
 import { useForestNavigation } from '../../context/ForestNavigationContext';
-import { useForestOperationsContext } from '../../context/ForestOperationsContext';
+import { useRepositoryListContext } from '../../context/RepositoryListContext';
+import { useRepositoryOperationsContext } from '../../context/RepositoryOperationsContext';
 import { RepositoriesScreen } from './RepositoriesScreen';
 
 export function RepositoriesRoute() {
   const { goBack } = useForestNavigation();
-  const { repositories, githubListStatus, openRepository } = useForestOperationsContext();
+  const { repositories, githubListStatus } = useRepositoryListContext();
+  const { openRepository } = useRepositoryOperationsContext();
 
   return (
     <RepositoriesScreen
