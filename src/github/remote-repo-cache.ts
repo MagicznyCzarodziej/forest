@@ -51,6 +51,22 @@ export interface ResolveRemoteRepoNamesOptions {
   now?: number;
 }
 
+/** Names already on disk, including a stale list. `fresh` is false when GitHub should be fetched. */
+export async function cachedRemoteRepoNames(
+  cachePath: string,
+  owner: GitHubOwner,
+  now = Date.now(),
+): Promise<{ repoNames: string[]; fresh: boolean }> {
+  const existing = (await readRemoteRepoCache(cachePath))?.entries[githubOwnerCacheKey(owner)];
+  if (!existing) {
+    return { repoNames: [], fresh: false };
+  }
+  return {
+    repoNames: existing.repoNames,
+    fresh: !shouldRefreshCache(existing.fetchedAt, now),
+  };
+}
+
 export async function resolveRemoteRepoNames(
   options: ResolveRemoteRepoNamesOptions,
 ): Promise<string[]> {

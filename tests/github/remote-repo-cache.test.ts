@@ -6,6 +6,7 @@ import {
   readRemoteRepoCache,
   writeRemoteRepoCache,
   shouldRefreshCache,
+  cachedRemoteRepoNames,
   resolveRemoteRepoNames,
 } from "../../src/github/remote-repo-cache.js";
 import type { GitHubRepoListProvider } from "../../src/github/repo-list-provider.js";
@@ -40,6 +41,29 @@ describe("remote repo cache file", () => {
     });
     const data = await readRemoteRepoCache(path);
     expect(data?.entries["user:octocat"]?.repoNames).toEqual(["b"]);
+  });
+});
+
+describe("cachedRemoteRepoNames", () => {
+  let dir: string;
+
+  beforeEach(async () => {
+    dir = await mkdtemp(join(tmpdir(), "forest-cache-"));
+  });
+
+  it("returns a stale list without treating it as fresh", async () => {
+    const path = join(dir, "remote-repos-cache.json");
+    const stale = Date.now() - 3 * 24 * 60 * 60 * 1000;
+    await writeRemoteRepoCache(path, {
+      version: 1,
+      entries: {
+        "organization:acme": { repoNames: ["old"], fetchedAt: stale },
+      },
+    });
+
+    await expect(
+      cachedRemoteRepoNames(path, { kind: "organization", login: "acme" }),
+    ).resolves.toEqual({ repoNames: ["old"], fresh: false });
   });
 });
 

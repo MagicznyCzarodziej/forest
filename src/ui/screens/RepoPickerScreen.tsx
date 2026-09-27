@@ -11,9 +11,15 @@ export interface RepoPickerScreenProps {
   repos: RepoCatalogEntry[];
   onSelect: (repo: RepoCatalogEntry) => void;
   onEscape: () => void;
+  emptyMessage?: string;
 }
 
-export function RepoPickerScreen({ repos, onSelect, onEscape }: RepoPickerScreenProps) {
+export function RepoPickerScreen({
+  repos,
+  onSelect,
+  onEscape,
+  emptyMessage = "No matching repositories",
+}: RepoPickerScreenProps) {
   const [query, setQuery] = useState("");
   const { filtered, selectedIndex, setSelectedIndex } = useFilteredIndex(
     repos,
@@ -49,7 +55,7 @@ export function RepoPickerScreen({ repos, onSelect, onEscape }: RepoPickerScreen
         listActive
         showSuffixColumn
         showHintColumn
-        emptyMessage="No matching repositories"
+        emptyMessage={emptyMessage}
       />
     </PickerBody>
   );

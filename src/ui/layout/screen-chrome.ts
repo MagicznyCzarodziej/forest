@@ -1,9 +1,19 @@
 import type { ScreenState } from "../../navigation/screen-stack.js";
 
+export function reposSubtitle(githubList: "ready" | "loading" | "error"): string {
+  if (githubList === "loading") {
+    return "Repositories · Loading from GitHub…";
+  }
+  if (githubList === "error") {
+    return "Repositories · Could not load GitHub repositories";
+  }
+  return "Repositories";
+}
+
 export function screenSubtitle(screen: ScreenState): string {
   switch (screen.type) {
     case "repos":
-      return "Repositories";
+      return reposSubtitle("ready");
     case "worktrees":
       return `${screen.repoName} · Worktrees`;
     case "branches":

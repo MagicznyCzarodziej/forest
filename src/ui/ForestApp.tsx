@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState, type ReactNode } from "react";
 import { Text, useInput } from "ink";
 import { FullscreenShell } from "./layout/FullscreenShell.js";
-import { screenFooter, screenSubtitle } from "./layout/screen-chrome.js";
+import { reposSubtitle, screenFooter, screenSubtitle } from "./layout/screen-chrome.js";
 import type { BootstrapResult } from "../application/bootstrap.js";
 import type { RepoCatalogEntry, WorktreeEntry } from "../domain/types.js";
 import { buildCloneUrl } from "../github/clone-url.js";
@@ -12,6 +12,7 @@ import { DEFAULT_BRANCH, detectDefaultBranchFromBare } from "../git/default-bran
 import { bareRepoPath } from "../repos/repo-structure.js";
 import { openInIdea } from "../idea/open-in-idea.js";
 import { popScreen, pushScreen, currentScreen, type ScreenState } from "../navigation/screen-stack.js";
+import { buildRepoCatalog } from "../repos/repo-catalog.js";
 import { buildWorktreeList } from "../worktrees/worktree-catalog.js";
 import { listRemoteBranches, scanWorktrees } from "../worktrees/scan-worktrees.js";
 import { sortBranches } from "../branches/branch-picker.js";
@@ -42,6 +43,33 @@ export function ForestApp({ bootstrap }: ForestAppProps) {
   const [confirmChoice, setConfirmChoice] = useState<"yes" | "no">("yes");
   const [progressLines, setProgressLines] = useState<string[]>([]);
   const [openingWorktreePath, setOpeningWorktreePath] = useState<string | null>(null);
+  const [githubList, setGithubList] = useState<"ready" | "loading" | "error">(
+    bootstrap.remoteListFresh ? "ready" : "loading",
+  );
+
+  useEffect(() => {
+    if (bootstrap.remoteListFresh) {
+      return;
+    }
+    let cancelled = false;
+    void bootstrap
+      .refreshRemoteRepos()
+      .then((remoteRepoNames) => {
+        if (cancelled) {
+          return;
+        }
+        setRepos(buildRepoCatalog({ remoteRepoNames, localRepos: bootstrap.localRepos }));
+        setGithubList("ready");
+      })
+      .catch(() => {
+        if (!cancelled) {
+          setGithubList("error");
+        }
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [bootstrap]);
 
   const screen = currentScreen(stack);
   const stackFloor = 1;
@@ -269,6 +297,7 @@ export function ForestApp({ bootstrap }: ForestAppProps) {
         repos={repos}
         onSelect={(repo) => void openRepoFlow(repo)}
         onEscape={goBack}
+        emptyMessage={githubList === "loading" ? "Loading from GitHub…" : undefined}
       />
     );
   } else if (screen.type === "worktrees") {
@@ -338,7 +367,7 @@ export function ForestApp({ bootstrap }: ForestAppProps) {
 
   return (
     <FullscreenShell
-      subtitle={screenSubtitle(screen)}
+      subtitle={screen.type === "repos" ? reposSubtitle(githubList) : screenSubtitle(screen)}
       footer={footer ?? undefined}
     >
       {content}
