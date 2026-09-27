@@ -32,7 +32,7 @@ export function RepoPickerScreen({
   const repoNames = useMemo(() => repos.map((r) => r.name), [repos]);
   const listRows = useMemo(() => filtered.map(repoToListRow), [filtered]);
 
-  usePickerKeyboard({
+  const tabHint = usePickerKeyboard({
     candidates: repoNames,
     listLength: filtered.length,
     selectedIndex,
@@ -50,7 +50,7 @@ export function RepoPickerScreen({
 
   return (
     <PickerBody>
-      <SearchQuery query={query} />
+      <SearchQuery query={query} hint={tabHint} />
       <SelectableList
         rows={listRows}
         selectedIndex={selectedIndex}

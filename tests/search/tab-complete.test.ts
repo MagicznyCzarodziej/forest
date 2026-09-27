@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { tabCompleteAdvance } from "../../src/search/tab-complete.js";
+import { tabCompleteAdvance, tabCompleteHint } from "../../src/search/tab-complete.js";
 
 const repos = [
   "table-rotating-blah",
@@ -8,6 +8,33 @@ const repos = [
   "tableau-seven",
   "random-goat",
 ];
+
+describe("tabCompleteHint", () => {
+  it("returns the suffix Tab would add for a shared-prefix extension", () => {
+    expect(tabCompleteHint("ta", repos, null)).toBe("ble");
+    expect(tabCompleteHint("table-r", repos, null)).toBe("otating-");
+  });
+
+  it("returns the rest of a single matching name", () => {
+    expect(tabCompleteHint("ran", repos, null)).toBe("dom-goat");
+  });
+
+  it("returns empty when there is no completion", () => {
+    expect(tabCompleteHint("zzz", repos, null)).toBe("");
+    expect(tabCompleteHint("", repos, null)).toBe("");
+  });
+
+  it("is case-insensitive for the typed query", () => {
+    expect(tabCompleteHint("TA", repos, null)).toBe("ble");
+    expect(tabCompleteHint("TABLE-R", repos, null)).toBe("otating-");
+    expect(tabCompleteHint("Ran", repos, null)).toBe("dom-goat");
+  });
+
+  it("follows the active Tab cycle state", () => {
+    const first = tabCompleteAdvance("table-r", repos, null);
+    expect(tabCompleteHint(first.query, repos, first.state)).toBe("blah");
+  });
+});
 
 describe("tabCompleteAdvance", () => {
   it("extends to the longest prefix shared by every name that starts with the query", () => {

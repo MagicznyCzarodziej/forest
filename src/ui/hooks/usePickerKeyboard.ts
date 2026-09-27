@@ -1,7 +1,11 @@
 import { useRef, type Dispatch, type SetStateAction } from "react";
 import { useInput } from "ink";
 import { queryEditAction, applyQueryEdit } from "../../search/query-editing.js";
-import { tabCompleteAdvance, type TabCycleState } from "../../search/tab-complete.js";
+import {
+  tabCompleteAdvance,
+  tabCompleteHint,
+  type TabCycleState,
+} from "../../search/tab-complete.js";
 import { jumpListIndex, moveListIndex } from "../list-navigation.js";
 
 interface UsePickerKeyboardOptions {
@@ -15,7 +19,7 @@ interface UsePickerKeyboardOptions {
   onEnter: (query: string, filteredLength: number, selectedIndex: number) => void;
 }
 
-export function usePickerKeyboard(options: UsePickerKeyboardOptions): void {
+export function usePickerKeyboard(options: UsePickerKeyboardOptions): string {
   const tabCycleRef = useRef<TabCycleState | null>(null);
   const optionsRef = useRef(options);
   optionsRef.current = options;
@@ -90,4 +94,6 @@ export function usePickerKeyboard(options: UsePickerKeyboardOptions): void {
       opts.setQuery((q) => q + input);
     }
   });
+
+  return tabCompleteHint(options.query, options.candidates, tabCycleRef.current);
 }

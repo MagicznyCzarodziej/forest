@@ -34,7 +34,7 @@ export function BranchPickerScreen({
     [filtered],
   );
 
-  usePickerKeyboard({
+  const tabHint = usePickerKeyboard({
     candidates: branches,
     listLength: filtered.length,
     selectedIndex,
@@ -55,7 +55,7 @@ export function BranchPickerScreen({
 
   return (
     <PickerBody>
-      <SearchQuery query={query} />
+      <SearchQuery query={query} hint={tabHint} />
       <SelectableList
         rows={listRows}
         selectedIndex={selectedIndex}

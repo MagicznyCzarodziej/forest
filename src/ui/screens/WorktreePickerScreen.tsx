@@ -45,7 +45,7 @@ export function WorktreePickerScreen({
     [filtered, openingWorktreePath],
   );
 
-  usePickerKeyboard({
+  const tabHint = usePickerKeyboard({
     candidates: branchNames,
     listLength: filtered.length,
     selectedIndex,
@@ -69,7 +69,7 @@ export function WorktreePickerScreen({
 
   return (
     <PickerBody>
-      <SearchQuery query={query} />
+      <SearchQuery query={query} hint={tabHint} />
       <SelectableList
         rows={listRows}
         selectedIndex={selectedIndex}

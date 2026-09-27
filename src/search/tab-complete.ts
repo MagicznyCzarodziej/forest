@@ -36,6 +36,24 @@ export interface TabCompleteResult {
   state: TabCycleState | null;
 }
 
+/** Gray suffix shown after the query — what Tab would append or replace toward next. */
+export function tabCompleteHint(
+  query: string,
+  candidates: string[],
+  state: TabCycleState | null,
+): string {
+  if (query.trim().length === 0) {
+    return "";
+  }
+  const { query: completed } = tabCompleteAdvance(query, candidates, state);
+  const queryLower = query.toLowerCase();
+  const completedLower = completed.toLowerCase();
+  if (!completedLower.startsWith(queryLower) || completed.length <= query.length) {
+    return "";
+  }
+  return completed.slice(query.length);
+}
+
 export function tabCompleteAdvance(
   query: string,
   candidates: string[],
