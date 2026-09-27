@@ -1,4 +1,4 @@
-import type { LocalRepositoryMeta, RepositoryCatalogEntry } from '../domain/types';
+import type { LocalRepositoryMeta, RepositoryCatalogEntry } from '../types';
 import { fuzzyFilter } from '../search/fuzzy-filter';
 
 export function sortRepositoriesByLastOpened(

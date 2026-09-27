@@ -1,10 +1,11 @@
-import type { ScreenState } from '../../navigation/screen-stack';
+import type { ScreenState } from '../navigation/screen-stack';
+import { GitHubListStatus } from '../hooks/useRepositoryList';
 
-export function repositoriesSubtitle(githubList: 'ready' | 'loading' | 'error'): string {
-  if (githubList === 'loading') {
+export function repositoriesSubtitle(githubListStatus: GitHubListStatus): string {
+  if (githubListStatus === 'loading') {
     return 'Repositories · Loading from GitHub…';
   }
-  if (githubList === 'error') {
+  if (githubListStatus === 'error') {
     return 'Repositories · Could not load GitHub repositories';
   }
   return 'Repositories';
@@ -21,7 +22,7 @@ export function screenSubtitle(screen: ScreenState): string {
     case 'confirm-clone':
       return 'Clone repository';
     case 'confirm-convert':
-      return 'Convert layout';
+      return 'Convert folder to Forest structure';
     case 'progress':
       return screen.title;
     default:

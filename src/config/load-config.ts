@@ -1,8 +1,8 @@
 import { readFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import type { ForestConfig } from '../domain/types';
-import { DEFAULT_REPOSITORY_WORKTREE_SEPARATOR } from '../repositories/repository-structure';
-import { expandPath } from '../utils/expand-path';
+import { DEFAULT_REPOSITORY_WORKTREE_SEPARATOR } from '../domain/repositories/repository-structure';
+import { expandPath } from './expand-path';
 import { ConfigError } from './config-error';
 import { parseGitHubOwnerFromConfig } from './parse-github-owner';
 

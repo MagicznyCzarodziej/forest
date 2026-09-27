@@ -1,17 +1,23 @@
 import { render } from 'ink';
-import { bootstrap } from '../application/bootstrap';
+import { createAppContext } from '../ui/context/AppContext';
 import { ConfigError } from '../config/load-config';
 import { ForestApp } from '../ui/ForestApp';
+import { AppContextProvider } from '../ui/context/AppContext';
 
 export async function runForest(): Promise<void> {
   try {
-    const data = await bootstrap(process.cwd());
+    const context = await createAppContext(process.cwd());
 
-    const instance = render(<ForestApp bootstrap={data} />, {
-      patchConsole: false,
-      incrementalRendering: true,
-      alternateScreen: true,
-    });
+    const instance = render(
+      <AppContextProvider context={context}>
+        <ForestApp />
+      </AppContextProvider>,
+      {
+        patchConsole: false,
+        incrementalRendering: true,
+        alternateScreen: true,
+      },
+    );
 
     await instance.waitUntilExit();
   } catch (error) {

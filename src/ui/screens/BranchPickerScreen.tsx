@@ -3,7 +3,7 @@ import { SearchQuery } from '../components/SearchQuery';
 import { SelectableList } from '../components/SelectableList';
 import { useFilteredIndex } from '../hooks/useFilteredIndex';
 import { usePickerKeyboard } from '../hooks/usePickerKeyboard';
-import { canConfirmBranchSelection } from '../../branches/branch-picker';
+import { canConfirmBranchSelection } from '../branch-picker';
 import { PickerBody } from './PickerBody';
 
 export interface BranchPickerScreenProps {

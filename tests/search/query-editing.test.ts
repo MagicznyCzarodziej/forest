@@ -4,7 +4,7 @@ import {
   applyQueryKeyboardEdit,
   deleteWordBackward,
   queryEditAction,
-} from '../../src/search/query-editing';
+} from '../../src/domain/search/query-editing';
 
 const noMods = {
   ctrl: false,

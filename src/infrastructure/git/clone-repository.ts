@@ -4,7 +4,7 @@ import { withGitHubCredentials } from '../github/clone-url';
 import {
   bareRepositoryPath,
   defaultWorktreePath as worktreePathForBranch,
-} from '../repositories/repository-structure';
+} from '../../domain/repositories/repository-structure';
 import { detectDefaultBranchFromRemote } from './default-branch';
 import type { GitOutputHandler } from './default-branch';
 import { runGitStreaming } from './run-git';

@@ -1,7 +1,7 @@
 import { access } from 'node:fs/promises';
 import { basename, dirname, join, resolve, sep } from 'node:path';
 import type { RepositoryContext } from './detect-context';
-import { isPathInside } from '../utils/paths';
+import { isPathInside } from './paths';
 
 function normalizePath(path: string): string {
   const resolved = resolve(path);

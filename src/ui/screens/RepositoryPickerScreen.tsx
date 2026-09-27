@@ -3,7 +3,7 @@ import type { RepositoryCatalogEntry } from '../../domain/types';
 import { SearchQuery } from '../components/SearchQuery';
 import { SelectableList } from '../components/SelectableList';
 import { useFilteredIndex } from '../hooks/useFilteredIndex';
-import { filterRepositoryCatalogBySearch } from '../../repositories/repository-catalog';
+import { filterRepositoryCatalogBySearch } from '../../domain/repositories/repository-catalog';
 import { repositoryToListRow } from '../format/repository-rows';
 import { usePickerKeyboard } from '../hooks/usePickerKeyboard';
 import { PickerBody } from './PickerBody';

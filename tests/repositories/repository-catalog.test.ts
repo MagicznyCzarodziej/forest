@@ -3,7 +3,7 @@ import {
   buildRepositoryCatalog,
   filterRepositoryCatalogBySearch,
   sortRepositoriesByLastOpened,
-} from '../../src/repositories/repository-catalog';
+} from '../../src/domain/repositories/repository-catalog';
 import type { LocalRepositoryMeta, RepositoryCatalogEntry } from '../../src/domain/types';
 
 describe('sortRepositoriesByLastOpened', () => {

@@ -1,6 +1,6 @@
 import { join } from 'node:path';
-import type { RepositoryStructure } from '../domain/types';
-import { branchToWorktreeSlug } from '../git/branchToPath';
+import type { RepositoryStructure } from '../types';
+import { branchToWorktreeSlug } from '../../infrastructure/git/branchToPath';
 
 export const DEFAULT_REPOSITORY_WORKTREE_SEPARATOR = '__';
 

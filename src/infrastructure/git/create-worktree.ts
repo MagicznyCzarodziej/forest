@@ -1,6 +1,9 @@
 import { stat } from 'node:fs/promises';
 import { join } from 'node:path';
-import { bareRepositoryPath, worktreeFolderName } from '../repositories/repository-structure';
+import {
+  bareRepositoryPath,
+  worktreeFolderName,
+} from '../../domain/repositories/repository-structure';
 import { branchToWorktreeSlug } from './branchToPath';
 import { repositoryHasCommits, type GitOutputHandler } from './default-branch';
 import { runGitStreaming } from './run-git';

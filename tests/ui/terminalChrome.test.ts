@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { listDataRowSlots } from '../../src/ui/layout/terminal-chrome';
+import { listDataRowSlots } from '../../src/ui/layout/terminalChrome';
 
 describe('terminal chrome metrics', () => {
   it('allocates list rows from terminal height', () => {

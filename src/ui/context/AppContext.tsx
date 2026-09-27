@@ -1,20 +1,21 @@
-import { loadConfig, remoteRepositoryCachePath } from '../config/load-config';
-import { GitHubCliRepositoryListProvider } from '../github/repository-list-provider';
+import { loadConfig, remoteRepositoryCachePath } from '../../config/load-config';
+import { GitHubCliRepositoryListProvider } from '../../infrastructure/github/repository-list-provider';
 import {
   cachedRemoteRepositoryNames,
   resolveRemoteRepositoryNames,
-} from '../github/remote-repository-cache';
-import { buildRepositoryCatalog } from '../repositories/repository-catalog';
-import { resolveStartContext } from '../repositories/detect-context';
-import { resolveRepositoryContextFromCurrentPath } from '../repositories/resolve-repository-context';
-import { scanLocalRepositories } from '../repositories/scan-local-repositories';
-import { RepositoryStateStore } from '../state/repository-state';
-import type { ForestConfig, LocalRepositoryMeta, RepositoryCatalogEntry } from '../domain/types';
-import type { StartContext } from '../repositories/detect-context';
+} from '../../infrastructure/github/remote-repository-cache';
+import { buildRepositoryCatalog } from '../../domain/repositories/repository-catalog';
+import type { StartContext } from '../../domain/repositories/detect-context';
+import { resolveStartContext } from '../../domain/repositories/detect-context';
+import { resolveRepositoryContextFromCurrentPath } from '../../domain/repositories/resolve-repository-context';
+import { scanLocalRepositories } from '../../domain/repositories/scan-local-repositories';
+import { RepositoryStateStore } from '../../domain/state/repository-state';
+import type { ForestConfig, LocalRepositoryMeta, RepositoryCatalogEntry } from '../../domain/types';
+import { createContext, PropsWithChildren } from 'react';
 
 const defaultRepositoryListProvider = new GitHubCliRepositoryListProvider();
 
-export interface BootstrapResult {
+export interface AppContextValue {
   config: ForestConfig;
   repositories: RepositoryCatalogEntry[];
   localRepositories: LocalRepositoryMeta[];
@@ -25,7 +26,7 @@ export interface BootstrapResult {
   stateStore: RepositoryStateStore;
 }
 
-export async function bootstrap(startPath: string): Promise<BootstrapResult> {
+export async function createAppContext(startPath: string): Promise<AppContextValue> {
   const config = await loadConfig();
   const stateStore = new RepositoryStateStore(RepositoryStateStore.defaultPath());
   const localRepositories = await scanLocalRepositories(
@@ -53,4 +54,17 @@ export async function bootstrap(startPath: string): Promise<BootstrapResult> {
     startContext,
     stateStore,
   };
+}
+
+export const AppContext = createContext<AppContextValue | null>(null);
+
+interface AppContextProviderProps {
+  context: AppContextValue;
+}
+
+export function AppContextProvider({
+  context,
+  children,
+}: PropsWithChildren<AppContextProviderProps>) {
+  return <AppContext value={context}>{children}</AppContext>;
 }

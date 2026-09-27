@@ -8,8 +8,8 @@ import {
   shouldRefreshCache,
   cachedRemoteRepositoryNames,
   resolveRemoteRepositoryNames,
-} from '../../src/github/remote-repository-cache';
-import type { GitHubRepositoryListProvider } from '../../src/github/repository-list-provider';
+} from '../../src/infrastructure/github/remote-repository-cache';
+import type { GitHubRepositoryListProvider } from '../../src/infrastructure/github/repository-list-provider';
 
 describe('shouldRefreshCache', () => {
   it('returns true when cache is older than thirty days', () => {

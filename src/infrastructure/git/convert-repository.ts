@@ -2,7 +2,10 @@ import { execFile } from 'node:child_process';
 import { lstat, mkdir, readFile, readdir, realpath, rename, rm, stat } from 'node:fs/promises';
 import { dirname, isAbsolute, join, resolve } from 'node:path';
 import { promisify } from 'node:util';
-import { bareRepositoryPath, worktreeFolderName } from '../repositories/repository-structure';
+import {
+  bareRepositoryPath,
+  worktreeFolderName,
+} from '../../domain/repositories/repository-structure';
 import {
   detectCurrentBranch,
   detectDefaultBranchFromCheckout,

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { buildCloneUrl, withGitHubCredentials } from '../../src/github/clone-url';
+import { buildCloneUrl, withGitHubCredentials } from '../../src/infrastructure/github/clone-url';
 
 describe('buildCloneUrl', () => {
   it('uses https so gh can authenticate private repositories', () => {

@@ -2,7 +2,7 @@ import { mkdir, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { tmpdir } from 'node:os';
 import { describe, expect, it } from 'vitest';
-import { resolveRepositoryContextFromCurrentPath } from '../../src/repositories/resolve-repository-context';
+import { resolveRepositoryContextFromCurrentPath } from '../../src/domain/repositories/resolve-repository-context';
 
 describe('resolveRepositoryContextFromCurrentPath', () => {
   it('returns the repository container when cwd is the forest repository folder (not a worktree)', async () => {

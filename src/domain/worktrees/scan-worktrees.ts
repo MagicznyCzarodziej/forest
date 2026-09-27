@@ -2,7 +2,7 @@ import { readdir, readFile, stat } from 'node:fs/promises';
 import { join } from 'node:path';
 import { execFile } from 'node:child_process';
 import { promisify } from 'node:util';
-import { branchFromHead, detectCurrentBranch } from '../git/default-branch';
+import { branchFromHead, detectCurrentBranch } from '../../infrastructure/git/default-branch';
 import { DEFAULT_REPOSITORY_WORKTREE_SEPARATOR } from '../repositories/repository-structure';
 import type { RawWorktree } from './worktree-catalog';
 import { type RepositoryStateStore } from '../state/repository-state';

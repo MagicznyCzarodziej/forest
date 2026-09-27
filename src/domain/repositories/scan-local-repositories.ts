@@ -1,7 +1,7 @@
 import { readdir, stat, readFile } from 'node:fs/promises';
 import { join } from 'node:path';
-import type { LocalRepositoryMeta } from '../domain/types';
-import { DEFAULT_BRANCH } from '../git/default-branch';
+import type { LocalRepositoryMeta } from '../types';
+import { DEFAULT_BRANCH } from '../../infrastructure/git/default-branch';
 import {
   DEFAULT_REPOSITORY_WORKTREE_SEPARATOR,
   detectRepositoryStructure,

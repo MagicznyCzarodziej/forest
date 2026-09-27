@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { parseBranchNames, withUnbornHeadBranch } from '../../src/worktrees/scan-worktrees';
+import { parseBranchNames, withUnbornHeadBranch } from '../../src/domain/worktrees/scan-worktrees';
 
 describe('parseBranchNames', () => {
   it('reads local heads from a bare clone', () => {

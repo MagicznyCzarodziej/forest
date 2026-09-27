@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import {
   parseRepositoryNameLines,
   repositoryNamesGraphql,
-} from '../../src/github/repository-list-provider';
+} from '../../src/infrastructure/github/repository-list-provider';
 
 describe('repositoryNamesGraphql', () => {
   it('pages organization repository names', () => {

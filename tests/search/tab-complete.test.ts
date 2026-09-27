@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { tabCompleteAdvance, tabCompleteHint } from '../../src/search/tab-complete';
+import { tabCompleteAdvance, tabCompleteHint } from '../../src/domain/search/tab-complete';
 
 const repositories = [
   'table-rotating-blah',

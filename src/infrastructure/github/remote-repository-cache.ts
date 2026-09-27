@@ -1,7 +1,7 @@
 import { readFile, writeFile, mkdir } from 'node:fs/promises';
 import { dirname } from 'node:path';
-import type { GitHubOwner } from '../domain/github-owner';
-import { githubOwnerCacheKey } from '../domain/github-owner';
+import type { GitHubOwner } from '../../domain/github-owner';
+import { githubOwnerCacheKey } from '../../domain/github-owner';
 import type { GitHubRepositoryListProvider } from './repository-list-provider';
 
 const THIRTY_DAYS = 30 * 24 * 60 * 60 * 1000;
