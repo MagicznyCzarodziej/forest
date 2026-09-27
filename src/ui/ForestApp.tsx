@@ -208,6 +208,17 @@ export function ForestApp({ bootstrap }: ForestAppProps) {
     });
   };
 
+  const handleOpenLegacyWithoutConvert = async (repoName: string, repoPath: string) => {
+    setStack((s) => popScreen(s, stackFloor));
+    await bootstrap.stateStore.touchRepo(repoName);
+    setRepos((list) =>
+      list.map((r) =>
+        r.name === repoName ? { ...r, lastOpenedAt: Date.now() } : r,
+      ),
+    );
+    await openInIdea(repoPath);
+  };
+
   const handleConvert = async (repoName: string, repoPath: string) => {
     const originUrl = buildCloneUrl(
       bootstrap.config.githubOwner,
@@ -295,7 +306,11 @@ export function ForestApp({ bootstrap }: ForestAppProps) {
       }
       if (key.return) {
         if (confirmChoice === "no") {
-          setStack((s) => popScreen(s, stackFloor));
+          if (current.type === "confirm-convert") {
+            void handleOpenLegacyWithoutConvert(current.repoName, current.repoPath);
+          } else {
+            setStack((s) => popScreen(s, stackFloor));
+          }
           return;
         }
         if (current.type === "confirm-clone") {
