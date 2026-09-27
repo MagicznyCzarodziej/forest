@@ -292,6 +292,9 @@ export function ForestApp({ bootstrap }: ForestAppProps) {
     });
   };
 
+  const confirmInputActive =
+    screen.type === "confirm-clone" || screen.type === "confirm-convert";
+
   useInput((input, key) => {
     const current = currentScreen(stack);
     if (current.type === "confirm-clone" || current.type === "confirm-convert") {
@@ -320,7 +323,7 @@ export function ForestApp({ bootstrap }: ForestAppProps) {
         }
       }
     }
-  });
+  }, { isActive: confirmInputActive });
 
   let content: ReactNode;
 

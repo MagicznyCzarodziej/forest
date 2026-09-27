@@ -1,5 +1,6 @@
 import { useRef, type Dispatch, type SetStateAction } from "react";
 import { useInput } from "ink";
+import { queryEditAction, applyQueryEdit } from "../../search/query-editing.js";
 import { tabCompleteAdvance, type TabCycleState } from "../../search/tab-complete.js";
 import { jumpListIndex, moveListIndex } from "../list-navigation.js";
 
@@ -27,8 +28,17 @@ export function usePickerKeyboard(options: UsePickerKeyboardOptions): void {
     const opts = optionsRef.current;
 
     // Confirm prompts own Left/Right for choosing Yes/No; pickers use Left as back.
-    if (key.escape || key.leftArrow) {
+    if (key.leftArrow) {
       resetTabCycle();
+      opts.onEscape();
+      return;
+    }
+    if (key.escape) {
+      resetTabCycle();
+      if (opts.query.length > 0) {
+        opts.setQuery("");
+        return;
+      }
       opts.onEscape();
       return;
     }
@@ -63,12 +73,19 @@ export function usePickerKeyboard(options: UsePickerKeyboardOptions): void {
       opts.setSelectedIndex((i) => moveListIndex(i, "down", opts.listLength));
       return;
     }
-    if (key.backspace || key.delete) {
+    const editAction = queryEditAction(input, {
+      ctrl: key.ctrl,
+      meta: key.meta,
+      super: key.super,
+      backspace: key.backspace,
+      delete: key.delete,
+    });
+    if (editAction) {
       resetTabCycle();
-      opts.setQuery((q) => q.slice(0, -1));
+      opts.setQuery((q) => applyQueryEdit(q, editAction));
       return;
     }
-    if (!key.ctrl && !key.meta && input) {
+    if (!key.ctrl && !key.meta && !key.super && input && input.charCodeAt(0) >= 32) {
       resetTabCycle();
       opts.setQuery((q) => q + input);
     }
