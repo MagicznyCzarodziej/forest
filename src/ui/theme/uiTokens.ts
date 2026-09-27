@@ -1,23 +1,23 @@
-import { oneDark } from './one-dark';
-import type { HintRole, SuffixRole } from '../labels';
+import { oneDarkTheme } from './oneDarkTheme';
+import { HintRole, SuffixRole } from '../components/ListRowBar/buildRowParts';
 
 export const ui = {
   /** repository / branch names — highest contrast. */
-  listName: oneDark.bright,
-  listNameOnSelection: oneDark.bright,
-  filter: oneDark.bright,
-  screenTitle: oneDark.blue,
-  border: oneDark.border,
-  selectionBg: oneDark.selection,
-  scrollAffordance: oneDark.comment,
-  footer: oneDark.comment,
-  progressLog: oneDark.comment,
-  muted: oneDark.comment,
+  listName: oneDarkTheme.bright,
+  listNameOnSelection: oneDarkTheme.bright,
+  filter: oneDarkTheme.bright,
+  screenTitle: oneDarkTheme.blue,
+  border: oneDarkTheme.border,
+  selectionBg: oneDarkTheme.selection,
+  scrollAffordance: oneDarkTheme.comment,
+  footer: oneDarkTheme.comment,
+  progressLog: oneDarkTheme.comment,
+  muted: oneDarkTheme.comment,
   status: {
-    success: oneDark.green,
-    inactive: oneDark.comment,
-    info: oneDark.blue,
-    caution: oneDark.yellow,
+    success: oneDarkTheme.green,
+    inactive: oneDarkTheme.comment,
+    info: oneDarkTheme.blue,
+    caution: oneDarkTheme.yellow,
   },
 } as const;
 

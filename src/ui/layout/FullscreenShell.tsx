@@ -15,7 +15,7 @@ import {
   resolveAppWidth,
   resolveContentWidth,
 } from './contentWidth';
-import { ui } from '../theme/ui-tokens';
+import { ui } from '../theme/uiTokens';
 import { truncateToVisibleWidth } from '../text-width';
 
 const DEFAULT_FOOTER =

@@ -1,13 +1,13 @@
 import { useForestNavigation } from '../../context/ForestNavigationContext';
 import { useForestOperationsContext } from '../../context/ForestOperationsContext';
-import { RepositoryPickerScreen } from '../RepositoryPickerScreen';
+import { RepositoriesScreen } from './RepositoriesScreen';
 
 export function RepositoriesRoute() {
   const { goBack } = useForestNavigation();
   const { repositories, githubListStatus, openRepository } = useForestOperationsContext();
 
   return (
-    <RepositoryPickerScreen
+    <RepositoriesScreen
       repositories={repositories}
       onSelect={(repository) => void openRepository(repository)}
       onEscape={goBack}

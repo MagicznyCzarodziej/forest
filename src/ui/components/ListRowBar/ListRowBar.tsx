@@ -1,8 +1,7 @@
 import { memo } from 'react';
 import { Text } from 'ink';
-import type { HintRole, SuffixRole } from '../../labels';
-import { hintColor, suffixColor, ui } from '../../theme/ui-tokens';
-import { buildRowParts } from './buildRowParts';
+import { hintColor, suffixColor, ui } from '../../theme/uiTokens';
+import { buildRowParts, HintRole, SuffixRole } from './buildRowParts';
 
 export interface ListRowBarProps {
   row: ListRowData;

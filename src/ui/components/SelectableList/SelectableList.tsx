@@ -3,7 +3,7 @@ import { Box, Text } from 'ink';
 import { computeListViewport } from './listViewport';
 import { useTerminalLayout } from '../../hooks/useTerminalLayout';
 import { ListRowBar, type ListRowData } from '../ListRowBar/ListRowBar';
-import { ui } from '../../theme/ui-tokens';
+import { ui } from '../../theme/uiTokens';
 
 export type ListRow = ListRowData;
 

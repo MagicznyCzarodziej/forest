@@ -7,7 +7,7 @@ import {
   wrapLinesForViewport,
   wrapToVisibleLines,
 } from '../../src/ui/text-width';
-import { ICON_END_MARGIN, rowIcons } from '../../src/ui/labels';
+import { ICON_END_MARGIN, rowIcons } from '../../src/ui/components/ListRowBar/buildRowParts';
 
 describe('visible text width', () => {
   it('pads using terminal display width', () => {

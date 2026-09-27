@@ -1,5 +1,5 @@
 import { Text } from 'ink';
-import { ui } from '../theme/ui-tokens';
+import { ui } from '../../theme/uiTokens';
 
 interface SearchQueryProps {
   query: string;

@@ -1,26 +1,26 @@
 import { useMemo, useState } from 'react';
-import type { RepositoryCatalogEntry } from '../../domain/types';
-import { SearchQuery } from '../components/SearchQuery';
-import { SelectableList } from '../components/SelectableList/SelectableList';
-import { useFilteredIndex } from '../hooks/useFilteredIndex';
-import { filterRepositoryCatalogBySearch } from '../../domain/repositories/repository-catalog';
-import { repositoryToListRow } from '../format/repository-rows';
-import { usePickerKeyboard } from '../hooks/usePickerKeyboard/usePickerKeyboard';
-import { PickerBody } from './PickerBody';
+import type { RepositoryCatalogEntry } from '../../../domain/types';
+import { SearchQuery } from '../../components/PickerBody/SearchQuery';
+import { SelectableList } from '../../components/SelectableList/SelectableList';
+import { useFilteredIndex } from '../../hooks/useFilteredIndex';
+import { filterRepositoryCatalogBySearch } from '../../../domain/repositories/repository-catalog';
+import { repositoryToListRow } from './repositoryToListRow';
+import { usePickerKeyboard } from '../../hooks/usePickerKeyboard/usePickerKeyboard';
+import { PickerBody } from '../../components/PickerBody/PickerBody';
 
-export interface RepositoryPickerScreenProps {
+export interface RepositoriesScreenProps {
   repositories: RepositoryCatalogEntry[];
   onSelect: (repository: RepositoryCatalogEntry) => void;
   onEscape: () => void;
   emptyMessage?: string;
 }
 
-export function RepositoryPickerScreen({
+export function RepositoriesScreen({
   repositories,
   onSelect,
   onEscape,
   emptyMessage = 'No matching repositories',
-}: RepositoryPickerScreenProps) {
+}: RepositoriesScreenProps) {
   const [query, setQuery] = useState('');
   const { filtered, selectedIndex, setSelectedIndex } = useFilteredIndex(
     repositories,

@@ -1,10 +1,10 @@
-import { useForestNavigation } from '../../context/ForestNavigationContext';
-import { BranchesRoute } from './BranchesRoute';
-import { ConfirmCloneRoute } from './ConfirmCloneRoute';
-import { ConfirmConvertRoute } from './ConfirmConvertRoute';
-import { ProgressRoute } from './ProgressRoute';
-import { RepositoriesRoute } from './RepositoriesRoute';
-import { WorktreesRoute } from './WorktreesRoute';
+import { useForestNavigation } from '../context/ForestNavigationContext';
+import { BranchesRoute } from './BranchesScreen/BranchesRoute';
+import { ConfirmCloneRoute } from './ConfirmCloneScreen/ConfirmCloneRoute';
+import { ConfirmConvertRoute } from './ConfirmConvertScreen/ConfirmConvertRoute';
+import { ProgressRoute } from './ProgressScreen/ProgressRoute';
+import { RepositoriesRoute } from './RepositoriesScreen/RepositoriesRoute';
+import { WorktreesRoute } from './WorktreesScreen/WorktreesRoute';
 
 export function ScreenRouter() {
   const { screen } = useForestNavigation();

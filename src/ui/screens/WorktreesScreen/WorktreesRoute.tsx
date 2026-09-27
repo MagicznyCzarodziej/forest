@@ -1,7 +1,7 @@
 import type { ScreenState } from '../../navigation/navigation';
 import { useForestNavigation } from '../../context/ForestNavigationContext';
 import { useForestOperationsContext } from '../../context/ForestOperationsContext';
-import { WorktreePickerScreen } from '../WorktreePickerScreen';
+import { WorktreesScreen } from './WorktreesScreen';
 
 interface WorktreesRouteProps {
   screen: Extract<ScreenState, { type: 'worktrees' }>;
@@ -12,7 +12,7 @@ export function WorktreesRoute({ screen }: WorktreesRouteProps) {
   const { worktrees, ready, openingWorktreePath, openWorktree } = useForestOperationsContext();
 
   return (
-    <WorktreePickerScreen
+    <WorktreesScreen
       key={screen.repositoryPath}
       worktrees={ready ? worktrees : []}
       openingWorktreePath={openingWorktreePath}

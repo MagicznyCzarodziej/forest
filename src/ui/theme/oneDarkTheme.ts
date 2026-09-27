@@ -1,5 +1,5 @@
 /** Atom One Dark palette (hex for Ink). */
-export const oneDark = {
+export const oneDarkTheme = {
   background: '#282c34',
   foreground: '#abb2bf',
   /** High-contrast text for primary list content. */

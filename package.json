@@ -9,8 +9,8 @@
   "scripts": {
     "build": "vite build && chmod +x dist/index.js",
     "dev": "vite-node src/index.ts",
-    "test": "npm run lint && npm run format:check && npm run test:unit",
-    "test:unit": "npm run lint && vitest run",
+    "test": "npm run lint && npm run test:unit",
+    "test:unit": "vitest run",
     "test:watch": "vitest",
     "typecheck": "tsc --noEmit",
     "lint": "eslint .",

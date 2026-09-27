@@ -1,12 +1,12 @@
 import { useMemo, useState } from 'react';
-import type { WorktreeEntry } from '../../domain/types';
-import { SearchQuery } from '../components/SearchQuery';
-import { SelectableList } from '../components/SelectableList/SelectableList';
-import { useFilteredIndex } from '../hooks/useFilteredIndex';
-import { usePickerKeyboard } from '../hooks/usePickerKeyboard/usePickerKeyboard';
-import { PickerBody } from './PickerBody';
+import type { WorktreeEntry } from '../../../domain/types';
+import { SearchQuery } from '../../components/PickerBody/SearchQuery';
+import { SelectableList } from '../../components/SelectableList/SelectableList';
+import { useFilteredIndex } from '../../hooks/useFilteredIndex';
+import { usePickerKeyboard } from '../../hooks/usePickerKeyboard/usePickerKeyboard';
+import { PickerBody } from '../../components/PickerBody/PickerBody';
 
-export interface WorktreePickerScreenProps {
+export interface WorktreesScreenProps {
   worktrees: WorktreeEntry[];
   openingWorktreePath?: string | null;
   onOpenWorktree: (worktree: WorktreeEntry) => void;
@@ -15,14 +15,14 @@ export interface WorktreePickerScreenProps {
   emptyMessage?: string;
 }
 
-export function WorktreePickerScreen({
+export function WorktreesScreen({
   worktrees,
   openingWorktreePath = null,
   onOpenWorktree,
   onCreateFromQuery,
   onEscape,
   emptyMessage = 'No matching worktrees — Enter to create one',
-}: WorktreePickerScreenProps) {
+}: WorktreesScreenProps) {
   const [query, setQuery] = useState('');
   const { filtered, selectedIndex, setSelectedIndex } = useFilteredIndex(
     worktrees,

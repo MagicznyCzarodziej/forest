@@ -1,7 +1,7 @@
 import { FullscreenShell } from '../layout/FullscreenShell';
 import { useForestNavigation } from '../context/ForestNavigationContext';
 import { useScreenSubtitle } from '../hooks/useScreenSubtitle';
-import { ScreenRouter } from './routes/ScreenRouter';
+import { ScreenRouter } from './ScreenRouter';
 import { ScreenState } from '../navigation/navigation';
 
 export function ForestScreen() {

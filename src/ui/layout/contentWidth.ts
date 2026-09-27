@@ -1,4 +1,4 @@
-import { HINT_COLUMN_WIDTH, SUFFIX_COLUMN_WIDTH } from '../labels';
+import { HINT_COLUMN_WIDTH, SUFFIX_COLUMN_WIDTH } from '../components/ListRowBar/buildRowParts';
 
 const MIN_APP_WIDTH = 48;
 export const MAX_APP_WIDTH = 96;

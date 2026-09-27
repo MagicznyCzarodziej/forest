@@ -1,6 +1,6 @@
 import { Box, Text } from 'ink';
 import { useTerminalLayout } from '../hooks/useTerminalLayout';
-import { ui } from '../theme/ui-tokens';
+import { ui } from '../theme/uiTokens';
 
 interface ConfirmPromptProps {
   title: string;

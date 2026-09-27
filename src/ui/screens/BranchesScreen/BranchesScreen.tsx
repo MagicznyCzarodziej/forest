@@ -1,23 +1,23 @@
 import { useMemo, useState } from 'react';
-import { SearchQuery } from '../components/SearchQuery';
-import { SelectableList } from '../components/SelectableList/SelectableList';
-import { useFilteredIndex } from '../hooks/useFilteredIndex';
-import { usePickerKeyboard } from '../hooks/usePickerKeyboard/usePickerKeyboard';
-import { PickerBody } from './PickerBody';
+import { SearchQuery } from '../../components/PickerBody/SearchQuery';
+import { SelectableList } from '../../components/SelectableList/SelectableList';
+import { useFilteredIndex } from '../../hooks/useFilteredIndex';
+import { usePickerKeyboard } from '../../hooks/usePickerKeyboard/usePickerKeyboard';
+import { PickerBody } from '../../components/PickerBody/PickerBody';
 
-export interface BranchPickerScreenProps {
+export interface BranchesScreenProps {
   branches: string[];
   onSelectBranch: (branch: string) => void;
   onEscape: () => void;
   emptyMessage?: string;
 }
 
-export function BranchPickerScreen({
+export function BranchesScreen({
   branches,
   onSelectBranch,
   onEscape,
   emptyMessage = 'No matching branches',
-}: BranchPickerScreenProps) {
+}: BranchesScreenProps) {
   const [query, setQuery] = useState('');
 
   const { filtered, selectedIndex, setSelectedIndex } = useFilteredIndex(

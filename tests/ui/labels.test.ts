@@ -6,7 +6,7 @@ import {
   rowIcons,
   SUFFIX_COLUMN_WIDTH,
   suffixIcon,
-} from '../../src/ui/labels';
+} from '../../src/ui/components/ListRowBar/buildRowParts';
 
 describe('row icons', () => {
   it('uses compact icon columns', () => {
