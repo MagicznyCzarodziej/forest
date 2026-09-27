@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { canConfirmBranchSelection, sortBranches } from '../../src/ui/branch-picker';
+import { sortBranches } from '../../src/ui/hooks/useWorktreeCatalog/sortBranches';
 
 describe('sortBranches', () => {
   it('places default branch first then alphabetical', () => {
@@ -8,17 +8,5 @@ describe('sortBranches', () => {
       'develop',
       'feature',
     ]);
-  });
-});
-
-describe('canConfirmBranchSelection', () => {
-  const branches = ['master', 'feature-a'];
-
-  it('returns false when filter has no matches', () => {
-    expect(canConfirmBranchSelection(branches, 'zzz', ['master'])).toBe(false);
-  });
-
-  it('returns true when filter matches at least one branch', () => {
-    expect(canConfirmBranchSelection(branches, 'feat', ['feature-a'])).toBe(true);
   });
 });

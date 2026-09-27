@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { popScreen, pushScreen, type ScreenState } from '../../src/ui/navigation/screen-stack';
+import { popScreen, pushScreen, type ScreenState } from '../../src/ui/navigation/navigation';
 
 describe('screen stack', () => {
   it('pushes a new screen onto the stack', () => {

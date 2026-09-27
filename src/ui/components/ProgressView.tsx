@@ -1,26 +1,29 @@
 import { Box, Text } from 'ink';
+import { useTerminalLayout } from '../hooks/useTerminalLayout';
 import { ui } from '../theme/ui-tokens';
+import { wrapLinesForViewport } from '../text-width';
 
 interface ProgressViewProps {
-  title: string;
   lines: string[];
 }
 
-const MAX_LINES = 12;
+const MAX_LOGICAL_LINES = 40;
 
-export function ProgressView({ title, lines }: ProgressViewProps) {
-  const visible = lines.slice(-MAX_LINES);
+export function ProgressView({ lines }: ProgressViewProps) {
+  const { contentWidth, contentHeight } = useTerminalLayout();
+  const maxDisplayLines = Math.max(1, contentHeight);
+  const visible = lines.slice(-MAX_LOGICAL_LINES);
+  const displayLines =
+    visible.length === 0 ? [] : wrapLinesForViewport(visible, contentWidth, maxDisplayLines);
+
   return (
-    <Box flexDirection="column" height="100%" overflow="hidden">
-      <Text bold color={ui.listName}>
-        {title}
-      </Text>
-      <Box flexDirection="column" marginTop={1} flexGrow={1}>
-        {visible.length === 0 ? (
+    <Box flexDirection="column" width={contentWidth} height="100%" overflow="hidden">
+      <Box flexDirection="column" width={contentWidth} flexGrow={1} overflow="hidden">
+        {displayLines.length === 0 ? (
           <Text color={ui.muted}>Working…</Text>
         ) : (
-          visible.map((line) => (
-            <Text key={line} color={ui.progressLog} wrap="truncate">
+          displayLines.map((line) => (
+            <Text key={`log:${line}`} color={ui.progressLog}>
               {line}
             </Text>
           ))

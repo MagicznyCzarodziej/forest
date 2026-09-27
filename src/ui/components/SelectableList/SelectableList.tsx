@@ -1,16 +1,15 @@
 import { memo, useMemo } from 'react';
 import { Box, Text } from 'ink';
-import { computeListViewport } from '../list-viewport';
-import { useTerminalLayout } from '../hooks/useTerminalLayout';
-import { ListRowBar, type ListRowData } from './ListRowBar';
-import { ui } from '../theme/ui-tokens';
+import { computeListViewport } from './listViewport';
+import { useTerminalLayout } from '../../hooks/useTerminalLayout';
+import { ListRowBar, type ListRowData } from '../ListRowBar/ListRowBar';
+import { ui } from '../../theme/ui-tokens';
 
 export type ListRow = ListRowData;
 
 interface SelectableListProps {
   rows: ListRow[];
   selectedIndex: number;
-  listActive: boolean;
   emptyMessage?: string;
   showSuffixColumn?: boolean;
   showHintColumn?: boolean;
@@ -19,17 +18,15 @@ interface SelectableListProps {
 export const SelectableList = memo(function SelectableList({
   rows,
   selectedIndex,
-  listActive,
   emptyMessage = 'No matches',
   showSuffixColumn = false,
   showHintColumn = false,
 }: SelectableListProps) {
   const { contentWidth, listViewportRows } = useTerminalLayout();
-  const rowSlots = listViewportRows;
 
   const { offset, visibleCount } = useMemo(
-    () => computeListViewport(selectedIndex, rows.length, rowSlots),
-    [selectedIndex, rows.length, rowSlots],
+    () => computeListViewport(selectedIndex, rows.length, listViewportRows),
+    [selectedIndex, rows.length, listViewportRows],
   );
 
   const visibleRows = useMemo(
@@ -47,22 +44,19 @@ export const SelectableList = memo(function SelectableList({
 
   return (
     <Box flexDirection="column" flexGrow={1} width={contentWidth}>
-      <Box flexDirection="column" height={rowSlots} width={contentWidth}>
-        {visibleRows.map((row, index) => {
-          const absoluteIndex = offset + index;
-          return (
-            <ListRowBar
-              key={row.id}
-              row={row}
-              selected={absoluteIndex === selectedIndex}
-              active={listActive}
-              contentWidth={contentWidth}
-              showSuffixColumn={showSuffixColumn}
-              showHintColumn={showHintColumn}
-            />
-          );
-        })}
-      </Box>
+      {visibleRows.map((row, index) => {
+        const absoluteIndex = offset + index;
+        return (
+          <ListRowBar
+            key={row.id}
+            row={row}
+            isSelected={absoluteIndex === selectedIndex}
+            contentWidth={contentWidth}
+            showSuffixColumn={showSuffixColumn}
+            showHintColumn={showHintColumn}
+          />
+        );
+      })}
     </Box>
   );
 });

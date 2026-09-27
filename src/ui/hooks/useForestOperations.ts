@@ -5,9 +5,10 @@ import { convertLegacyRepository } from '../../infrastructure/git/convert-reposi
 import { createWorktreeFromBare } from '../../infrastructure/git/create-worktree';
 import { buildCloneUrl, detectGitProtocol } from '../../infrastructure/github/clone-url';
 import { openInIdea } from '../../infrastructure/idea/open-in-idea';
-import { popScreen, pushScreen, type ScreenState } from '../navigation/screen-stack';
+import { popScreen, pushScreen, type ScreenState } from '../navigation/navigation';
 import { useForest } from './useForest';
 import { useRepositoryList } from './useRepositoryList';
+import { normalizeTerminalLine } from '../text-width';
 
 const STACK_FLOOR = 1;
 
@@ -28,7 +29,11 @@ export function useForestOperations({ setStack, worktreeCatalog }: ForestOperati
   const [openingWorktreePath, setOpeningWorktreePath] = useState<string | null>(null);
 
   const appendProgress = (line: string) => {
-    setProgressLines((lines) => [...lines.slice(-200), line]);
+    const normalized = normalizeTerminalLine(line);
+    if (normalized.trim().length === 0) {
+      return;
+    }
+    setProgressLines((lines) => [...lines.slice(-200), normalized]);
   };
 
   const runProgress = async (title: string, action: () => Promise<void>) => {

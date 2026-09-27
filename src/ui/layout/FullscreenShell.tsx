@@ -16,6 +16,7 @@ import {
   resolveContentWidth,
 } from './contentWidth';
 import { ui } from '../theme/ui-tokens';
+import { truncateToVisibleWidth } from '../text-width';
 
 const DEFAULT_FOOTER =
   '↑↓ Home End list · type to filter · Tab complete · Enter · Esc back · Ctrl+C quit';
@@ -72,6 +73,8 @@ export function FullscreenShell({
         <Box
           width={appWidth}
           height={appHeight}
+          minWidth={appWidth}
+          maxWidth={appWidth}
           marginLeft={paddingX}
           flexDirection="column"
           borderStyle="single"
@@ -82,7 +85,9 @@ export function FullscreenShell({
         >
           {hasSubtitle ? (
             <Box height={SUBTITLE_LINES} paddingX={APP_HORIZONTAL_PADDING_WIDTH}>
-              <Text color={ui.screenTitle}>{subtitle}</Text>
+              <Text color={ui.screenTitle} wrap="truncate-end">
+                {truncateToVisibleWidth(subtitle, contentWidth)}
+              </Text>
             </Box>
           ) : null}
 
@@ -96,8 +101,8 @@ export function FullscreenShell({
           </Box>
 
           <Box height={1} paddingX={APP_HORIZONTAL_PADDING_WIDTH}>
-            <Text color={ui.footer} wrap="truncate">
-              {footer}
+            <Text color={ui.footer} wrap="truncate-end">
+              {truncateToVisibleWidth(footer, contentWidth)}
             </Text>
           </Box>
         </Box>

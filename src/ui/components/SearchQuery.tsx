@@ -1,8 +1,15 @@
 import { Text } from 'ink';
 import { ui } from '../theme/ui-tokens';
 
-export function SearchQuery({ query, hint = '' }: { query: string; hint?: string }) {
+interface SearchQueryProps {
+  query: string;
+  hint?: string;
+}
+
+export function SearchQuery({ query, hint = '' }: SearchQueryProps) {
+  // Keep empty line rendered if empty query
   const display = query.length > 0 ? query : ' ';
+
   return (
     <Text bold>
       <Text color={ui.filter}>{display}</Text>

@@ -31,7 +31,7 @@ export default defineConfig(({ command }) => ({
     noExternal: true,
   },
   test: {
-    include: ['tests/**/*.test.ts'],
+    include: ['tests/**/*.test.ts', 'tests/**/*.test.tsx'],
     environment: 'node',
   },
 }));

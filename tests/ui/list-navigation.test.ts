@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { jumpListIndex, moveListIndex } from '../../src/ui/list-navigation';
+import { jumpListIndex, moveListIndex } from '../../src/ui/hooks/usePickerKeyboard/indexHelpers';
 
 describe('moveListIndex', () => {
   const len = 5;

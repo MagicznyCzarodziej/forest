@@ -1,4 +1,5 @@
 import { Box, Text } from 'ink';
+import { useTerminalLayout } from '../hooks/useTerminalLayout';
 import { ui } from '../theme/ui-tokens';
 
 interface ConfirmPromptProps {
@@ -8,12 +9,16 @@ interface ConfirmPromptProps {
 }
 
 export function ConfirmPrompt({ title, message, selected }: ConfirmPromptProps) {
+  const { contentWidth } = useTerminalLayout();
+
   return (
-    <Box flexDirection="column" flexGrow={1} justifyContent="center">
-      <Text bold color={ui.listName}>
+    <Box flexDirection="column" flexGrow={1} justifyContent="center" width={contentWidth}>
+      <Text bold color={ui.listName} wrap="wrap">
         {title}
       </Text>
-      <Text color={ui.muted}>{message}</Text>
+      <Text color={ui.muted} wrap="wrap">
+        {message}
+      </Text>
       <Box marginTop={1} gap={2}>
         <Text
           backgroundColor={selected === 'yes' ? ui.selectionBg : undefined}

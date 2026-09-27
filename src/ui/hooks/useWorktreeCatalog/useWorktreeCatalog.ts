@@ -1,15 +1,15 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { sortBranches } from '../branch-picker';
-import type { WorktreeEntry } from '../../domain/types';
+import { sortBranches } from './sortBranches';
+import type { WorktreeEntry } from '../../../domain/types';
 import {
   DEFAULT_BRANCH,
   detectDefaultBranchFromBare,
-} from '../../infrastructure/git/default-branch';
-import type { ScreenState } from '../navigation/screen-stack';
-import { bareRepositoryPath } from '../../domain/repositories/repository-structure';
-import { buildWorktreeList } from '../../domain/worktrees/worktree-catalog';
-import { listRemoteBranches, scanWorktrees } from '../../domain/worktrees/scan-worktrees';
-import { useForest } from './useForest';
+} from '../../../infrastructure/git/default-branch';
+import type { ScreenState } from '../../navigation/navigation';
+import { bareRepositoryPath } from '../../../domain/repositories/repository-structure';
+import { buildWorktreeList } from '../../../domain/worktrees/worktree-catalog';
+import { listRemoteBranches, scanWorktrees } from '../../../domain/worktrees/scan-worktrees';
+import { useForest } from '../useForest';
 
 function activeRepository(screen: ScreenState) {
   if (screen.type !== 'worktrees' && screen.type !== 'branches') {

@@ -1,7 +1,19 @@
-import type { ScreenState } from '../navigation/screen-stack';
-import { GitHubListStatus } from '../hooks/useRepositoryList';
+import { useForestNavigation } from '../context/ForestNavigationContext';
+import { useForestOperationsContext } from '../context/ForestOperationsContext';
+import type { ScreenState } from '../navigation/navigation';
+import { GitHubListStatus } from './useRepositoryList';
 
-export function repositoriesSubtitle(githubListStatus: GitHubListStatus): string {
+export function useScreenSubtitle(): string {
+  const { screen } = useForestNavigation();
+  const { githubListStatus } = useForestOperationsContext();
+
+  if (screen.type === 'repositories') {
+    return repositoriesSubtitle(githubListStatus);
+  }
+  return screenSubtitle(screen);
+}
+
+function repositoriesSubtitle(githubListStatus: GitHubListStatus): string {
   if (githubListStatus === 'loading') {
     return 'Repositories · Loading from GitHub…';
   }
@@ -11,7 +23,7 @@ export function repositoriesSubtitle(githubListStatus: GitHubListStatus): string
   return 'Repositories';
 }
 
-export function screenSubtitle(screen: ScreenState): string {
+function screenSubtitle(screen: ScreenState): string {
   switch (screen.type) {
     case 'repositories':
       return repositoriesSubtitle('ready');
@@ -28,14 +40,4 @@ export function screenSubtitle(screen: ScreenState): string {
     default:
       return '';
   }
-}
-
-export function screenFooter(screen: ScreenState): string | undefined {
-  if (screen.type === 'confirm-clone' || screen.type === 'confirm-convert') {
-    return '←→ choose · Y/N · Enter confirm · Esc cancel';
-  }
-  if (screen.type === 'progress') {
-    return 'Working…';
-  }
-  return undefined;
 }

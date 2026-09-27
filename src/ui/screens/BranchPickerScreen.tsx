@@ -1,14 +1,12 @@
 import { useMemo, useState } from 'react';
 import { SearchQuery } from '../components/SearchQuery';
-import { SelectableList } from '../components/SelectableList';
+import { SelectableList } from '../components/SelectableList/SelectableList';
 import { useFilteredIndex } from '../hooks/useFilteredIndex';
-import { usePickerKeyboard } from '../hooks/usePickerKeyboard';
-import { canConfirmBranchSelection } from '../branch-picker';
+import { usePickerKeyboard } from '../hooks/usePickerKeyboard/usePickerKeyboard';
 import { PickerBody } from './PickerBody';
 
 export interface BranchPickerScreenProps {
   branches: string[];
-  initialQuery: string;
   onSelectBranch: (branch: string) => void;
   onEscape: () => void;
   emptyMessage?: string;
@@ -16,16 +14,22 @@ export interface BranchPickerScreenProps {
 
 export function BranchPickerScreen({
   branches,
-  initialQuery,
   onSelectBranch,
   onEscape,
   emptyMessage = 'No matching branches',
 }: BranchPickerScreenProps) {
-  const [query, setQuery] = useState(initialQuery);
-  const { filtered, selectedIndex, setSelectedIndex } = useFilteredIndex(branches, query, (b) => b);
+  const [query, setQuery] = useState('');
 
-  const canConfirm = canConfirmBranchSelection(branches, query, filtered);
-  const listRows = useMemo(() => filtered.map((b) => ({ id: b, primary: b })), [filtered]);
+  const { filtered, selectedIndex, setSelectedIndex } = useFilteredIndex(
+    branches,
+    query,
+    (branch) => branch,
+  );
+
+  const listRows = useMemo(
+    () => filtered.map((branch) => ({ id: branch, primary: branch })),
+    [filtered],
+  );
 
   const tabHint = usePickerKeyboard({
     items: branches,
@@ -36,11 +40,8 @@ export function BranchPickerScreen({
     query,
     setQuery,
     onEscape,
-    onEnter: () => {
-      if (!canConfirm) {
-        return;
-      }
-      const selected = filtered[selectedIndex];
+    onEnter: (_, length, index) => {
+      const selected = length > 0 ? filtered[index] : undefined;
       if (selected) {
         onSelectBranch(selected);
       }
@@ -50,12 +51,7 @@ export function BranchPickerScreen({
   return (
     <PickerBody>
       <SearchQuery query={query} hint={tabHint} />
-      <SelectableList
-        rows={listRows}
-        selectedIndex={selectedIndex}
-        listActive
-        emptyMessage={emptyMessage}
-      />
+      <SelectableList rows={listRows} selectedIndex={selectedIndex} emptyMessage={emptyMessage} />
     </PickerBody>
   );
 }

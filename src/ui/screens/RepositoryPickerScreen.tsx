@@ -1,11 +1,11 @@
 import { useMemo, useState } from 'react';
 import type { RepositoryCatalogEntry } from '../../domain/types';
 import { SearchQuery } from '../components/SearchQuery';
-import { SelectableList } from '../components/SelectableList';
+import { SelectableList } from '../components/SelectableList/SelectableList';
 import { useFilteredIndex } from '../hooks/useFilteredIndex';
 import { filterRepositoryCatalogBySearch } from '../../domain/repositories/repository-catalog';
 import { repositoryToListRow } from '../format/repository-rows';
-import { usePickerKeyboard } from '../hooks/usePickerKeyboard';
+import { usePickerKeyboard } from '../hooks/usePickerKeyboard/usePickerKeyboard';
 import { PickerBody } from './PickerBody';
 
 export interface RepositoryPickerScreenProps {
@@ -25,7 +25,7 @@ export function RepositoryPickerScreen({
   const { filtered, selectedIndex, setSelectedIndex } = useFilteredIndex(
     repositories,
     query,
-    (r) => r.name,
+    (repository) => repository.name,
     filterRepositoryCatalogBySearch,
   );
 
@@ -33,7 +33,7 @@ export function RepositoryPickerScreen({
 
   const tabHint = usePickerKeyboard({
     items: repositories,
-    getLabel: (r) => r.name,
+    getLabel: (repository) => repository.name,
     filterItems: filterRepositoryCatalogBySearch,
     listLength: filtered.length,
     selectedIndex,
@@ -41,10 +41,10 @@ export function RepositoryPickerScreen({
     query,
     setQuery,
     onEscape,
-    onEnter: (_q, len, index) => {
-      const selected = len > 0 ? filtered[index] : undefined;
-      if (selected) {
-        onSelect(selected);
+    onEnter: (_, length, index) => {
+      const selectedRepository = length > 0 ? filtered[index] : undefined;
+      if (selectedRepository) {
+        onSelect(selectedRepository);
       }
     },
   });
@@ -55,7 +55,6 @@ export function RepositoryPickerScreen({
       <SelectableList
         rows={listRows}
         selectedIndex={selectedIndex}
-        listActive
         showSuffixColumn
         showHintColumn
         emptyMessage={emptyMessage}

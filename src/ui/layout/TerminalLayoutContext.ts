@@ -18,5 +18,5 @@ export const TerminalLayoutContext = createContext<TerminalLayoutContextValue>({
   contentWidth: 92,
   contentHeight: 20,
   paddingX: 0,
-  listViewportRows: 18,
+  listViewportRows: 0,
 });

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { computeListViewport } from '../../src/ui/list-viewport';
+import { computeListViewport } from '../../src/ui/components/SelectableList/listViewport';
 import { listDataRowSlots } from '../../src/ui/layout/terminalChrome';
 
 describe('computeListViewport', () => {

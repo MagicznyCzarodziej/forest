@@ -14,8 +14,9 @@ export async function runGitStreaming(
     const emit = (chunk: Buffer) => {
       const text = chunk.toString();
       for (const line of text.split(/\r?\n/)) {
-        if (line.trim()) {
-          options.onOutput?.(line);
+        const payload = line.includes('\r') ? line.slice(line.lastIndexOf('\r') + 1) : line;
+        if (payload.trim()) {
+          options.onOutput?.(payload);
         }
       }
     };

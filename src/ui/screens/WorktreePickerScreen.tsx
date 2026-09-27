@@ -1,9 +1,9 @@
 import { useMemo, useState } from 'react';
 import type { WorktreeEntry } from '../../domain/types';
 import { SearchQuery } from '../components/SearchQuery';
-import { SelectableList } from '../components/SelectableList';
+import { SelectableList } from '../components/SelectableList/SelectableList';
 import { useFilteredIndex } from '../hooks/useFilteredIndex';
-import { usePickerKeyboard } from '../hooks/usePickerKeyboard';
+import { usePickerKeyboard } from '../hooks/usePickerKeyboard/usePickerKeyboard';
 import { PickerBody } from './PickerBody';
 
 export interface WorktreePickerScreenProps {
@@ -27,18 +27,18 @@ export function WorktreePickerScreen({
   const { filtered, selectedIndex, setSelectedIndex } = useFilteredIndex(
     worktrees,
     query,
-    (w) => w.branch,
+    (worktree) => worktree.branch,
   );
 
   const listRows = useMemo(
     () =>
-      filtered.map((w) => {
-        const opening = w.path === openingWorktreePath;
+      filtered.map((worktree) => {
+        const opening = worktree.path === openingWorktreePath;
         return {
-          id: w.path,
-          primary: w.branch,
+          id: worktree.path,
+          primary: worktree.branch,
           statusText: opening ? 'Opening...' : undefined,
-          suffixRole: w.isDefaultBranch ? ('default' as const) : undefined,
+          suffixRole: worktree.isDefaultBranch ? ('default' as const) : undefined,
         };
       }),
     [filtered, openingWorktreePath],
@@ -46,15 +46,15 @@ export function WorktreePickerScreen({
 
   const tabHint = usePickerKeyboard({
     items: worktrees,
-    getLabel: (w) => w.branch,
+    getLabel: (worktree) => worktree.branch,
     listLength: filtered.length,
     selectedIndex,
     setSelectedIndex,
     query,
     setQuery,
     onEscape,
-    onEnter: (q, len, index) => {
-      if (len > 0) {
+    onEnter: (q, length, index) => {
+      if (length > 0) {
         const selected = filtered[index];
         if (selected) {
           onOpenWorktree(selected);
@@ -73,7 +73,6 @@ export function WorktreePickerScreen({
       <SelectableList
         rows={listRows}
         selectedIndex={selectedIndex}
-        listActive
         showSuffixColumn
         emptyMessage={emptyMessage}
       />

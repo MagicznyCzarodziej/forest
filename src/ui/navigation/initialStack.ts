@@ -1,4 +1,4 @@
-import type { ScreenState } from './screen-stack';
+import type { ScreenState } from './navigation';
 import type { StartContext } from '../../domain/repositories/detect-context';
 
 export function initialStack(start: StartContext): ScreenState[] {
