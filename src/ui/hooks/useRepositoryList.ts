@@ -1,5 +1,8 @@
 import { useCallback, useEffect, useState } from 'react';
-import { buildRepositoryCatalog } from '../../domain/repositories/repository-catalog';
+import {
+  buildRepositoryCatalog,
+  sortRepositoriesByLastOpened,
+} from '../../domain/repositories/repository-catalog';
 import { useForest } from './useForest';
 
 export type GitHubListStatus = 'ready' | 'loading' | 'error';
@@ -43,26 +46,30 @@ export function useRepositoryList() {
 
   const markOpened = useCallback((repositoryName: string) => {
     setRepositories((list) =>
-      list.map((repository) =>
-        repository.name === repositoryName
-          ? { ...repository, lastOpenedAt: Date.now() }
-          : repository,
+      sortRepositoriesByLastOpened(
+        list.map((repository) =>
+          repository.name === repositoryName
+            ? { ...repository, lastOpenedAt: Date.now() }
+            : repository,
+        ),
       ),
     );
   }, []);
 
   const markCloned = useCallback((repositoryName: string, repositoryPath: string) => {
     setRepositories((list) =>
-      list.map((repository) =>
-        repository.name === repositoryName
-          ? {
-              ...repository,
-              clonedLocally: true,
-              structure: 'standard',
-              path: repositoryPath,
-              lastOpenedAt: Date.now(),
-            }
-          : repository,
+      sortRepositoriesByLastOpened(
+        list.map((repository) =>
+          repository.name === repositoryName
+            ? {
+                ...repository,
+                clonedLocally: true,
+                structure: 'standard',
+                path: repositoryPath,
+                lastOpenedAt: Date.now(),
+              }
+            : repository,
+        ),
       ),
     );
   }, []);

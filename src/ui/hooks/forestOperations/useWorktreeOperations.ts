@@ -12,6 +12,7 @@ export function useWorktreeOperations({
   setStack,
   runProgress,
   appendProgress,
+  repositoryList,
   worktreeCatalog,
 }: OperationDeps) {
   const { config, stateStore } = useForest();
@@ -23,6 +24,7 @@ export function useWorktreeOperations({
 
       try {
         await stateStore.touchRepository(repositoryName);
+        repositoryList.markOpened(repositoryName);
         await stateStore.touchWorktree(worktree.path);
         await openInIdea(worktree.path);
         await worktreeCatalog.load(repositoryName, repositoryPath); // Trigger reload after updating last used time
@@ -30,7 +32,7 @@ export function useWorktreeOperations({
         setOpeningWorktreePath(null);
       }
     },
-    [stateStore, worktreeCatalog],
+    [repositoryList, stateStore, worktreeCatalog],
   );
 
   const createWorktree = useCallback(
@@ -52,6 +54,8 @@ export function useWorktreeOperations({
           onOutput: appendProgress,
         });
 
+        await stateStore.touchRepository(repositoryName);
+        repositoryList.markOpened(repositoryName);
         await stateStore.touchWorktree(result.worktreePath);
         setOpeningWorktreePath(result.worktreePath);
         setStack((stack) => popOverlayScreens(stack, STACK_FLOOR));
@@ -69,6 +73,7 @@ export function useWorktreeOperations({
       config.repositoryWorktreeSeparator,
       runProgress,
       setStack,
+      repositoryList,
       stateStore,
       worktreeCatalog,
     ],
