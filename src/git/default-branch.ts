@@ -29,6 +29,36 @@ async function runGit(
   return stdout.trim();
 }
 
+/**
+ * Default branch of a normal clone, from `origin/HEAD`.
+ * A bare clone of that checkout points HEAD at the branch that was checked out,
+ * so this has to be read before `.git` is moved.
+ */
+export async function detectDefaultBranchFromCheckout(repoPath: string): Promise<string> {
+  try {
+    const sym = await runGit(
+      ["symbolic-ref", "--quiet", "refs/remotes/origin/HEAD"],
+      repoPath,
+    );
+    const match = sym.match(/^refs\/remotes\/origin\/(\S+)/);
+    if (match?.[1]) {
+      return match[1];
+    }
+  } catch {
+    // No origin, or origin has no default branch.
+  }
+
+  try {
+    const head = await runGit(["symbolic-ref", "--short", "HEAD"], repoPath);
+    if (head) {
+      return head;
+    }
+  } catch {
+    // Detached HEAD.
+  }
+  return DEFAULT_BRANCH;
+}
+
 export async function detectDefaultBranchFromRemote(
   cloneUrl: string,
   onOutput?: GitOutputHandler,

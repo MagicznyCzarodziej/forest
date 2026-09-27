@@ -54,6 +54,20 @@ describe("detectRepoStructure", () => {
     ).toBe("legacy");
   });
 
+  it("returns legacy when .bare exists but no worktree checkout was registered", () => {
+    expect(
+      detectRepoStructure({
+        repoPath: "/dev/forest",
+        repoName: "forest",
+        hasBareDir: true,
+        hasRootGit: false,
+        hasWorktreeCheckout: false,
+        childDirNames: ["forest__master", ".bare"],
+        defaultBranch: "master",
+      }),
+    ).toBe("legacy");
+  });
+
   it("returns unknown when folder exists but is not a git repo", () => {
     expect(
       detectRepoStructure({

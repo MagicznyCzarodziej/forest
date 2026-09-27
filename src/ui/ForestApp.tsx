@@ -209,11 +209,17 @@ export function ForestApp({ bootstrap }: ForestAppProps) {
   };
 
   const handleConvert = async (repoName: string, repoPath: string) => {
+    const originUrl = buildCloneUrl(
+      bootstrap.config.githubOwner,
+      repoName,
+      await detectGitProtocol(),
+    );
     await runProgress(`Converting ${repoName}`, async () => {
       await convertLegacyRepository({
         repoPath,
         repoName,
         repoSlugSeparator: bootstrap.config.repoSlugSeparator,
+        originUrl,
         onOutput: appendProgress,
       });
       setRepos((list) =>

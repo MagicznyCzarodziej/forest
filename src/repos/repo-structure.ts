@@ -34,9 +34,14 @@ export interface DetectRepoStructureInput {
   childDirNames: string[];
   defaultBranch: string;
   repoSlugSeparator?: string;
+  /** False when `.bare` exists but no child checkout has a `.git` file yet. */
+  hasWorktreeCheckout?: boolean;
 }
 
 export function detectRepoStructure(input: DetectRepoStructureInput): RepoStructure {
+  if (input.hasBareDir && input.hasWorktreeCheckout === false && !input.hasRootGit) {
+    return "legacy";
+  }
   const expectedDefault = worktreeFolderName(
     input.repoName,
     input.defaultBranch,

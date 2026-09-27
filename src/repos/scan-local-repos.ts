@@ -58,6 +58,19 @@ export async function scanLocalRepos(
 
     const children = await readdir(repoPath);
     const defaultBranch = await readDefaultBranch(repoPath, hasBare);
+    let hasWorktreeCheckout: boolean | undefined;
+    if (hasBare) {
+      hasWorktreeCheckout = false;
+      for (const child of children) {
+        if (child === ".bare" || child.startsWith(".")) {
+          continue;
+        }
+        if (await pathExists(join(repoPath, child, ".git"))) {
+          hasWorktreeCheckout = true;
+          break;
+        }
+      }
+    }
     const structure = detectRepoStructure({
       repoPath,
       repoName: name,
@@ -66,6 +79,7 @@ export async function scanLocalRepos(
       childDirNames: children,
       defaultBranch,
       repoSlugSeparator,
+      hasWorktreeCheckout,
     });
 
     if (structure !== "standard" && structure !== "legacy") {
