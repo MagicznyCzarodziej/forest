@@ -43,6 +43,17 @@ describe("filterRepoCatalogBySearch", () => {
       filterRepoCatalogBySearch(repos, "acme", (r) => r.name).map((r) => r.name),
     ).toEqual(["acme-local", "acme-remote-only"]);
   });
+
+  it("sorts filtered matches by lastOpenedAt within each tier", () => {
+    const repos: RepoCatalogEntry[] = [
+      { name: "forest-old", clonedLocally: true, structure: "standard", lastOpenedAt: 10 },
+      { name: "forest-new", clonedLocally: true, structure: "standard", lastOpenedAt: 100 },
+      { name: "forest-remote", clonedLocally: false, structure: "none", lastOpenedAt: 999 },
+    ];
+    expect(
+      filterRepoCatalogBySearch(repos, "forest", (r) => r.name).map((r) => r.name),
+    ).toEqual(["forest-new", "forest-old", "forest-remote"]);
+  });
 });
 
 describe("buildRepoCatalog", () => {

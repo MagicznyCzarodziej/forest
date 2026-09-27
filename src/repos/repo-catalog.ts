@@ -56,10 +56,5 @@ export function filterRepoCatalogBySearch(
   if (!query.trim()) {
     return matched;
   }
-  return [...matched].sort((a, b) => {
-    if (a.clonedLocally !== b.clonedLocally) {
-      return a.clonedLocally ? -1 : 1;
-    }
-    return 0;
-  });
+  return sortReposByLastOpened(matched);
 }
