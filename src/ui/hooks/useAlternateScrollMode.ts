@@ -1,9 +1,9 @@
-import { useStdout } from "ink";
-import { useLayoutEffect } from "react";
+import { useStdout } from 'ink';
+import { useLayoutEffect } from 'react';
 import {
   disableAlternateScrollMode,
   enableAlternateScrollMode,
-} from "../../terminal/alternate-scroll-mode.js";
+} from '../../terminal/alternate-scroll-mode.js';
 
 /**
  * Map mouse wheel to ↑/↓ keys in the alternate screen so the terminal viewport

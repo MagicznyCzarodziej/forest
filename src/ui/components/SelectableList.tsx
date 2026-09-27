@@ -1,9 +1,9 @@
-import { memo, useMemo } from "react";
-import { Box, Text } from "ink";
-import { computeListViewport } from "../list-viewport.js";
-import { useTerminalLayout } from "../hooks/useTerminalLayout.js";
-import { ListRowBar, type ListRowData } from "./ListRowBar.js";
-import { ui } from "../theme/ui-tokens.js";
+import { memo, useMemo } from 'react';
+import { Box, Text } from 'ink';
+import { computeListViewport } from '../list-viewport.js';
+import { useTerminalLayout } from '../hooks/useTerminalLayout.js';
+import { ListRowBar, type ListRowData } from './ListRowBar.js';
+import { ui } from '../theme/ui-tokens.js';
 
 export type ListRow = ListRowData;
 
@@ -20,7 +20,7 @@ export const SelectableList = memo(function SelectableList({
   rows,
   selectedIndex,
   listActive,
-  emptyMessage = "No matches",
+  emptyMessage = 'No matches',
   showSuffixColumn = false,
   showHintColumn = false,
 }: SelectableListProps) {

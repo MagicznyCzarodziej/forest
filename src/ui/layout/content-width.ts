@@ -1,4 +1,4 @@
-import { HINT_COLUMN_WIDTH, SUFFIX_COLUMN_WIDTH } from "../labels.js";
+import { HINT_COLUMN_WIDTH, SUFFIX_COLUMN_WIDTH } from '../labels.js';
 
 /** ~2/3 of the previous 144-column panel. */
 export const MAX_PANEL_WIDTH = 96;

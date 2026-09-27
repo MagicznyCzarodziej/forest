@@ -1,13 +1,13 @@
-import { mkdir } from "node:fs/promises";
-import { join } from "node:path";
-import { withGitHubCredentials } from "../github/clone-url.js";
+import { mkdir } from 'node:fs/promises';
+import { join } from 'node:path';
+import { withGitHubCredentials } from '../github/clone-url.js';
 import {
   bareRepoPath,
   defaultWorktreePath as worktreePathForBranch,
-} from "../repos/repo-structure.js";
-import { detectDefaultBranchFromRemote } from "./default-branch.js";
-import type { GitOutputHandler } from "./default-branch.js";
-import { runGitStreaming } from "./run-git.js";
+} from '../repos/repo-structure.js';
+import { detectDefaultBranchFromRemote } from './default-branch.js';
+import type { GitOutputHandler } from './default-branch.js';
+import { runGitStreaming } from './run-git.js';
 
 export interface CloneRepositoryResult {
   repoDir: string;
@@ -35,9 +35,9 @@ export async function cloneRepository(input: {
   input.onOutput(`Cloning bare into ${barePath}`);
   await runGitStreaming(
     withGitHubCredentials(input.cloneUrl, [
-      "clone",
-      "--bare",
-      "--progress",
+      'clone',
+      '--bare',
+      '--progress',
       input.cloneUrl,
       barePath,
     ]),
@@ -53,7 +53,7 @@ export async function cloneRepository(input: {
 
   input.onOutput(`Cloning ${defaultBranch} into ${defaultWtPath}`);
   await runGitStreaming(
-    ["clone", "--branch", defaultBranch, "--progress", barePath, defaultWtPath],
+    ['clone', '--branch', defaultBranch, '--progress', barePath, defaultWtPath],
     { onOutput: input.onOutput },
   );
 

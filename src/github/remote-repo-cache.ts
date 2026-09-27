@@ -1,8 +1,8 @@
-import { readFile, writeFile, mkdir } from "node:fs/promises";
-import { dirname } from "node:path";
-import type { GitHubOwner } from "../domain/github-owner.js";
-import { githubOwnerCacheKey } from "../domain/github-owner.js";
-import type { GitHubRepoListProvider } from "./repo-list-provider.js";
+import { readFile, writeFile, mkdir } from 'node:fs/promises';
+import { dirname } from 'node:path';
+import type { GitHubOwner } from '../domain/github-owner.js';
+import { githubOwnerCacheKey } from '../domain/github-owner.js';
+import type { GitHubRepoListProvider } from './repo-list-provider.js';
 
 const THIRTY_DAYS = 30 * 24 * 60 * 60 * 1000;
 
@@ -25,9 +25,9 @@ export function shouldRefreshCache(fetchedAt?: number, now = Date.now()): boolea
 
 export async function readRemoteRepoCache(path: string): Promise<RemoteRepoCacheFile | null> {
   try {
-    const raw = await readFile(path, "utf8");
+    const raw = await readFile(path, 'utf8');
     const parsed = JSON.parse(raw) as RemoteRepoCacheFile;
-    if (parsed.version !== 1 || !parsed.entries || typeof parsed.entries !== "object") {
+    if (parsed.version !== 1 || !parsed.entries || typeof parsed.entries !== 'object') {
       return null;
     }
     return parsed;
@@ -36,12 +36,9 @@ export async function readRemoteRepoCache(path: string): Promise<RemoteRepoCache
   }
 }
 
-export async function writeRemoteRepoCache(
-  path: string,
-  file: RemoteRepoCacheFile,
-): Promise<void> {
+export async function writeRemoteRepoCache(path: string, file: RemoteRepoCacheFile): Promise<void> {
   await mkdir(dirname(path), { recursive: true });
-  await writeFile(path, JSON.stringify(file, null, 2), "utf8");
+  await writeFile(path, JSON.stringify(file, null, 2), 'utf8');
 }
 
 export interface ResolveRemoteRepoNamesOptions {

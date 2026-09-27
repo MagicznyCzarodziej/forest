@@ -16,17 +16,17 @@ function namesStartingWith(query: string, candidates: string[]): string[] {
 
 function longestCommonPrefix(names: string[]): string {
   if (names.length === 0) {
-    return "";
+    return '';
   }
-  let end = names[0]!.length;
+  let end = names[0].length;
   for (let i = 1; i < names.length; i += 1) {
-    const name = names[i]!;
+    const name = names[i];
     const nameLower = name.toLowerCase();
     let shared = 0;
     while (
       shared < end &&
       shared < nameLower.length &&
-      names[0]!.toLowerCase()[shared] === nameLower[shared]
+      names[0].toLowerCase()[shared] === nameLower[shared]
     ) {
       shared += 1;
     }
@@ -35,7 +35,7 @@ function longestCommonPrefix(names: string[]): string {
       break;
     }
   }
-  return names[0]!.slice(0, end);
+  return names[0].slice(0, end);
 }
 
 export interface TabCycleState {
@@ -57,13 +57,13 @@ export function tabCompleteHint(
   state: TabCycleState | null,
 ): string {
   if (query.trim().length === 0) {
-    return "";
+    return '';
   }
   const { query: completed } = tabCompleteAdvance(query, candidates, state);
   const queryLower = query.toLowerCase();
   const completedLower = completed.toLowerCase();
   if (!completedLower.startsWith(queryLower) || completed.length <= query.length) {
-    return "";
+    return '';
   }
   return completed.slice(query.length);
 }
@@ -83,7 +83,7 @@ export function tabCompleteAdvance(
       nextIndex = (nextIndex + 1) % matches.length;
     }
     return {
-      query: matches[nextIndex]!,
+      query: matches[nextIndex],
       state: { baseQuery: state.baseQuery, index: nextIndex },
     };
   }
@@ -101,9 +101,10 @@ export function tabCompleteAdvance(
     };
   }
 
-  const startIndex = matches.length > 1 && matches[0]!.toLowerCase() === query.trim().toLowerCase() ? 1 : 0;
+  const startIndex =
+    matches.length > 1 && matches[0].toLowerCase() === query.trim().toLowerCase() ? 1 : 0;
   return {
-    query: matches[startIndex]!,
+    query: matches[startIndex],
     state: { baseQuery: query, index: startIndex },
   };
 }

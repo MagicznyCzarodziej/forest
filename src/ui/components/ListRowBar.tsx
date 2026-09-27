@@ -1,15 +1,15 @@
-import { memo } from "react";
-import { Text } from "ink";
+import { memo } from 'react';
+import { Text } from 'ink';
 import {
   HINT_COLUMN_WIDTH,
   ICON_END_MARGIN,
   hintIcon,
   SUFFIX_COLUMN_WIDTH,
   suffixIcon,
-} from "../labels.js";
-import type { HintRole, SuffixRole } from "../labels.js";
-import { hintColor, suffixColor, ui } from "../theme/ui-tokens.js";
-import { padEndVisible, padStartVisible } from "../text-width.js";
+} from '../labels.js';
+import type { HintRole, SuffixRole } from '../labels.js';
+import { hintColor, suffixColor, ui } from '../theme/ui-tokens.js';
+import { padEndVisible, padStartVisible } from '../text-width.js';
 
 export interface ListRowData {
   id: string;
@@ -39,19 +39,15 @@ function buildRowParts(props: ListRowBarProps): {
   const suffixWidth = showSuffixColumn ? SUFFIX_COLUMN_WIDTH : 0;
   const hintWidth = showHintColumn ? HINT_COLUMN_WIDTH : 0;
   const endMargin = showSuffixColumn || showHintColumn ? ICON_END_MARGIN : 0;
-  const marker = selected ? "› " : "  ";
+  const marker = selected ? '› ' : '  ';
   const titleWidth = contentWidth - suffixWidth - hintWidth - endMargin;
-  const titleLabel = row.statusText
-    ? `${row.primary}  ${row.statusText}`
-    : row.primary;
+  const titleLabel = row.statusText ? `${row.primary}  ${row.statusText}` : row.primary;
   const titlePart = padEndVisible(`${marker}${titleLabel}`, titleWidth);
   const suffixPart = showSuffixColumn
     ? padStartVisible(suffixIcon(row.suffixRole), suffixWidth)
-    : "";
-  const hintPart = showHintColumn
-    ? padStartVisible(hintIcon(row.hintRole), hintWidth)
-    : "";
-  return { titlePart, suffixPart, hintPart, endMarginPart: " ".repeat(endMargin) };
+    : '';
+  const hintPart = showHintColumn ? padStartVisible(hintIcon(row.hintRole), hintWidth) : '';
+  return { titlePart, suffixPart, hintPart, endMarginPart: ' '.repeat(endMargin) };
 }
 
 function rowPropsEqual(a: ListRowBarProps, b: ListRowBarProps): boolean {

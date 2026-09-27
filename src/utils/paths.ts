@@ -1,4 +1,4 @@
-import { resolve, sep } from "node:path";
+import { resolve, sep } from 'node:path';
 
 function normalizePath(path: string): string {
   const resolved = resolve(path);

@@ -28,24 +28,24 @@ export function deleteWordBackward(query: string): string {
     return query;
   }
 
-  const last = query[end - 1]!;
+  const last = query[end - 1];
 
   if (isQueryWhitespace(last)) {
-    while (end > 0 && isQueryWhitespace(query[end - 1]!)) {
+    while (end > 0 && isQueryWhitespace(query[end - 1])) {
       end -= 1;
     }
     return query.slice(0, end);
   }
 
   if (isQuerySeparator(last)) {
-    while (end > 0 && isQuerySeparator(query[end - 1]!)) {
+    while (end > 0 && isQuerySeparator(query[end - 1])) {
       end -= 1;
     }
     return query.slice(0, end);
   }
 
   if (isQueryAlnum(last)) {
-    while (end > 0 && isQueryAlnum(query[end - 1]!)) {
+    while (end > 0 && isQueryAlnum(query[end - 1])) {
       end -= 1;
     }
     return query.slice(0, end);
@@ -54,33 +54,33 @@ export function deleteWordBackward(query: string): string {
   return query.slice(0, end - 1);
 }
 
-export type QueryEditAction = "line" | "word" | "char";
+export type QueryEditAction = 'line' | 'word' | 'char';
 
 export function queryEditAction(input: string, key: QueryEditKey): QueryEditAction | null {
   if (key.super && (key.backspace || key.delete)) {
-    return "line";
+    return 'line';
   }
 
   if (key.meta && (key.backspace || key.delete)) {
-    return "word";
+    return 'word';
   }
   if (CSI_OPTION_BACKSPACE.test(input)) {
-    return "word";
+    return 'word';
   }
-  if (input === "\x17") {
-    return "word";
+  if (input === '\x17') {
+    return 'word';
   }
-  if (key.meta && input.toLowerCase() === "w") {
-    return "word";
+  if (key.meta && input.toLowerCase() === 'w') {
+    return 'word';
   }
 
   // iTerm2 often maps ⌘+Backspace to readline kill-line (^U).
-  if (input === "\x15") {
-    return "line";
+  if (input === '\x15') {
+    return 'line';
   }
 
   if (key.backspace || key.delete) {
-    return "char";
+    return 'char';
   }
 
   return null;
@@ -88,11 +88,11 @@ export function queryEditAction(input: string, key: QueryEditKey): QueryEditActi
 
 export function applyQueryEdit(query: string, action: QueryEditAction): string {
   switch (action) {
-    case "line":
-      return "";
-    case "word":
+    case 'line':
+      return '';
+    case 'word':
       return deleteWordBackward(query);
-    case "char":
+    case 'char':
       return query.slice(0, -1);
   }
 }

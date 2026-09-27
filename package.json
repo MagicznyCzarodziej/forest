@@ -1,7 +1,7 @@
 {
   "name": "forest",
   "version": "0.1.0",
-  "description": "CLI for managing locally cloned repos and git worktrees",
+  "description": "CLI for managing repos and git worktrees",
   "type": "module",
   "bin": {
     "forest": "./dist/index.js"
@@ -9,9 +9,13 @@
   "scripts": {
     "build": "tsc",
     "dev": "tsx src/index.ts",
-    "test": "vitest run",
+    "test": "npm run lint && vitest run",
     "test:watch": "vitest",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
   },
   "engines": {
     "node": ">=20"
@@ -24,10 +28,19 @@
     "string-width": "^7.2.0"
   },
   "devDependencies": {
+    "@eslint-react/eslint-plugin": "^5.20.8",
+    "@eslint/js": "^10.0.1",
     "@types/node": "^26.0.0",
     "@types/react": "^19.3.0",
+    "@vitest/eslint-plugin": "^1.6.27",
+    "eslint": "^10.11.0",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-prettier": "^5.5.6",
+    "eslint-plugin-react-hooks": "^7.1.1",
+    "prettier": "^3.9.9",
     "tsx": "^4.23.0",
     "typescript": "^5.9.0",
+    "typescript-eslint": "^8.70.1",
     "vitest": "^5.0.0"
   }
 }

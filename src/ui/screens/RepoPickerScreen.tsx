@@ -1,12 +1,12 @@
-import { useMemo, useState } from "react";
-import type { RepoCatalogEntry } from "../../domain/types.js";
-import { SearchQuery } from "../components/SearchQuery.js";
-import { SelectableList } from "../components/SelectableList.js";
-import { useFilteredIndex } from "../hooks/useFilteredIndex.js";
-import { filterRepoCatalogBySearch } from "../../repos/repo-catalog.js";
-import { repoToListRow } from "../format/repo-rows.js";
-import { usePickerKeyboard } from "../hooks/usePickerKeyboard.js";
-import { PickerBody } from "./PickerBody.js";
+import { useMemo, useState } from 'react';
+import type { RepoCatalogEntry } from '../../domain/types.js';
+import { SearchQuery } from '../components/SearchQuery.js';
+import { SelectableList } from '../components/SelectableList.js';
+import { useFilteredIndex } from '../hooks/useFilteredIndex.js';
+import { filterRepoCatalogBySearch } from '../../repos/repo-catalog.js';
+import { repoToListRow } from '../format/repo-rows.js';
+import { usePickerKeyboard } from '../hooks/usePickerKeyboard.js';
+import { PickerBody } from './PickerBody.js';
 
 export interface RepoPickerScreenProps {
   repos: RepoCatalogEntry[];
@@ -19,9 +19,9 @@ export function RepoPickerScreen({
   repos,
   onSelect,
   onEscape,
-  emptyMessage = "No matching repositories",
+  emptyMessage = 'No matching repositories',
 }: RepoPickerScreenProps) {
-  const [query, setQuery] = useState("");
+  const [query, setQuery] = useState('');
   const { filtered, selectedIndex, setSelectedIndex } = useFilteredIndex(
     repos,
     query,

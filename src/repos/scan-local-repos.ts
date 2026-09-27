@@ -1,9 +1,9 @@
-import { readdir, stat, readFile } from "node:fs/promises";
-import { join } from "node:path";
-import type { LocalRepoMeta } from "../domain/types.js";
-import { DEFAULT_BRANCH } from "../git/default-branch.js";
-import { DEFAULT_REPO_SLUG_SEPARATOR, detectRepoStructure } from "./repo-structure.js";
-import type { RepoStateStore } from "../state/repo-state.js";
+import { readdir, stat, readFile } from 'node:fs/promises';
+import { join } from 'node:path';
+import type { LocalRepoMeta } from '../domain/types.js';
+import { DEFAULT_BRANCH } from '../git/default-branch.js';
+import { DEFAULT_REPO_SLUG_SEPARATOR, detectRepoStructure } from './repo-structure.js';
+import type { RepoStateStore } from '../state/repo-state.js';
 
 async function pathExists(path: string): Promise<boolean> {
   try {
@@ -15,11 +15,9 @@ async function pathExists(path: string): Promise<boolean> {
 }
 
 async function readDefaultBranch(repoPath: string, hasBare: boolean): Promise<string> {
-  const headPath = hasBare
-    ? join(repoPath, ".bare", "HEAD")
-    : join(repoPath, ".git", "HEAD");
+  const headPath = hasBare ? join(repoPath, '.bare', 'HEAD') : join(repoPath, '.git', 'HEAD');
   try {
-    const head = await readFile(headPath, "utf8");
+    const head = await readFile(headPath, 'utf8');
     const match = head.match(/ref: refs\/heads\/(.+)/);
     return match?.[1]?.trim() || DEFAULT_BRANCH;
   } catch {
@@ -41,7 +39,7 @@ export async function scanLocalRepos(
 
   const repos: LocalRepoMeta[] = [];
   for (const name of entries) {
-    if (name.startsWith(".")) {
+    if (name.startsWith('.')) {
       continue;
     }
     const repoPath = join(root, name);
@@ -50,8 +48,8 @@ export async function scanLocalRepos(
       continue;
     }
 
-    const hasBare = await pathExists(join(repoPath, ".bare"));
-    const hasRootGit = await pathExists(join(repoPath, ".git"));
+    const hasBare = await pathExists(join(repoPath, '.bare'));
+    const hasRootGit = await pathExists(join(repoPath, '.git'));
     if (!hasBare && !hasRootGit) {
       continue;
     }
@@ -62,10 +60,10 @@ export async function scanLocalRepos(
     if (hasBare) {
       hasWorktreeCheckout = false;
       for (const child of children) {
-        if (child === ".bare" || child.startsWith(".")) {
+        if (child === '.bare' || child.startsWith('.')) {
           continue;
         }
-        if (await pathExists(join(repoPath, child, ".git"))) {
+        if (await pathExists(join(repoPath, child, '.git'))) {
           hasWorktreeCheckout = true;
           break;
         }
@@ -82,7 +80,7 @@ export async function scanLocalRepos(
       hasWorktreeCheckout,
     });
 
-    if (structure !== "standard" && structure !== "legacy") {
+    if (structure !== 'standard' && structure !== 'legacy') {
       continue;
     }
 

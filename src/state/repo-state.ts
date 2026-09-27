@@ -1,5 +1,5 @@
-import { readFile, writeFile, mkdir } from "node:fs/promises";
-import { dirname, join } from "node:path";
+import { readFile, writeFile, mkdir } from 'node:fs/promises';
+import { dirname, join } from 'node:path';
 
 export interface RepoState {
   lastOpenedAt?: number;
@@ -21,14 +21,14 @@ export class RepoStateStore {
 
   static defaultPath(home = process.env.HOME): string {
     if (!home) {
-      throw new Error("HOME is not set");
+      throw new Error('HOME is not set');
     }
-    return join(home, ".config", "forest", "state.json");
+    return join(home, '.config', 'forest', 'state.json');
   }
 
   async read(): Promise<RepoStateFile> {
     try {
-      const raw = await readFile(this.filePath, "utf8");
+      const raw = await readFile(this.filePath, 'utf8');
       const parsed = JSON.parse(raw) as RepoStateFile;
       return {
         repos: parsed.repos ?? {},
@@ -41,7 +41,7 @@ export class RepoStateStore {
 
   async write(state: RepoStateFile): Promise<void> {
     await mkdir(dirname(this.filePath), { recursive: true });
-    await writeFile(this.filePath, JSON.stringify(state, null, 2), "utf8");
+    await writeFile(this.filePath, JSON.stringify(state, null, 2), 'utf8');
   }
 
   async getRepo(name: string): Promise<RepoState | undefined> {

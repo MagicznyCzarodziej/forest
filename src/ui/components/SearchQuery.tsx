@@ -1,8 +1,8 @@
-import { Text } from "ink";
-import { ui } from "../theme/ui-tokens.js";
+import { Text } from 'ink';
+import { ui } from '../theme/ui-tokens.js';
 
-export function SearchQuery({ query, hint = "" }: { query: string; hint?: string }) {
-  const display = query.length > 0 ? query : " ";
+export function SearchQuery({ query, hint = '' }: { query: string; hint?: string }) {
+  const display = query.length > 0 ? query : ' ';
   return (
     <Text bold>
       <Text color={ui.filter}>{display}</Text>

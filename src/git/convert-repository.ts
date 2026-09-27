@@ -1,33 +1,33 @@
-import { execFile } from "node:child_process";
-import { lstat, mkdir, readFile, readdir, realpath, rename, rm, stat } from "node:fs/promises";
-import { dirname, isAbsolute, join, resolve } from "node:path";
-import { promisify } from "node:util";
-import { bareRepoPath, worktreeFolderName } from "../repos/repo-structure.js";
+import { execFile } from 'node:child_process';
+import { lstat, mkdir, readFile, readdir, realpath, rename, rm, stat } from 'node:fs/promises';
+import { dirname, isAbsolute, join, resolve } from 'node:path';
+import { promisify } from 'node:util';
+import { bareRepoPath, worktreeFolderName } from '../repos/repo-structure.js';
 import {
   detectCurrentBranch,
   detectDefaultBranchFromCheckout,
   detectDefaultBranchFromRemote,
   repositoryHasCommits,
   type GitOutputHandler,
-} from "./default-branch.js";
-import { runGitStreaming } from "./run-git.js";
+} from './default-branch.js';
+import { runGitStreaming } from './run-git.js';
 
 const execFileAsync = promisify(execFile);
 
 const PER_WORKTREE_FILES = [
-  "index",
-  "ORIG_HEAD",
-  "FETCH_HEAD",
-  "MERGE_HEAD",
-  "MERGE_MODE",
-  "MERGE_MSG",
-  "CHERRY_PICK_HEAD",
-  "REVERT_HEAD",
-  "REBASE_HEAD",
-  "AUTO_MERGE",
+  'index',
+  'ORIG_HEAD',
+  'FETCH_HEAD',
+  'MERGE_HEAD',
+  'MERGE_MODE',
+  'MERGE_MSG',
+  'CHERRY_PICK_HEAD',
+  'REVERT_HEAD',
+  'REBASE_HEAD',
+  'AUTO_MERGE',
 ];
 
-const PER_WORKTREE_DIRS = ["sequencer", "rebase-merge", "rebase-apply"];
+const PER_WORKTREE_DIRS = ['sequencer', 'rebase-merge', 'rebase-apply'];
 
 async function moveRootIntoWorktree(
   repoPath: string,
@@ -60,14 +60,14 @@ export async function convertLegacyRepository(input: {
   onOutput: GitOutputHandler;
 }): Promise<ConvertRepositoryResult> {
   const barePath = bareRepoPath(input.repoPath);
-  const rootGit = join(input.repoPath, ".git");
+  const rootGit = join(input.repoPath, '.git');
   const rootGitStat = await lstatOrNull(rootGit);
 
   if (rootGitStat?.isDirectory()) {
     return convertMainCheckout(input, barePath, rootGit);
   }
   if (rootGitStat) {
-    throw new Error("Cannot convert a linked worktree");
+    throw new Error('Cannot convert a linked worktree');
   }
   if (await isDirectory(barePath)) {
     return resumeBareConversion(input, barePath);
@@ -160,22 +160,22 @@ async function finishConversion(input: {
     input.repoSlugSeparator,
   );
   const currentWt = join(input.repoPath, currentFolder);
-  const alreadyRegistered = await pathExists(join(currentWt, ".git"));
+  const alreadyRegistered = await pathExists(join(currentWt, '.git'));
   await registerCurrentWorktree(input.barePath, currentWt, input.currentBranch, input.onOutput);
   if (input.moveRootFiles) {
     await moveRootIntoWorktree(
       input.repoPath,
       currentWt,
-      new Set([".bare", currentFolder]),
+      new Set(['.bare', currentFolder]),
       input.onOutput,
     );
   }
-  const hadIndex = await pathExists(join(input.barePath, "index"));
+  const hadIndex = await pathExists(join(input.barePath, 'index'));
   await movePerWorktreeState(input.barePath, currentWt);
   if (!hadIndex && !alreadyRegistered) {
     // `worktree add --no-checkout` leaves an empty index, so every tracked file
     // looks deleted. Load HEAD into the index and keep the files on disk.
-    await runGitStreaming(["reset", "--quiet"], {
+    await runGitStreaming(['reset', '--quiet'], {
       cwd: currentWt,
       onOutput: input.onOutput,
     });
@@ -190,11 +190,10 @@ async function finishConversion(input: {
     const defaultWt = join(input.repoPath, defaultFolder);
     if (!(await pathExists(defaultWt))) {
       input.onOutput(`Checking out ${defaultBranch} into ${defaultWt}`);
-      await runGitStreaming(
-        ["-C", input.barePath, "worktree", "add", defaultWt, defaultBranch],
-        { onOutput: input.onOutput },
-      );
-    } else if (!(await pathExists(join(defaultWt, ".git")))) {
+      await runGitStreaming(['-C', input.barePath, 'worktree', 'add', defaultWt, defaultBranch], {
+        onOutput: input.onOutput,
+      });
+    } else if (!(await pathExists(join(defaultWt, '.git')))) {
       throw new Error(
         `Cannot check out ${defaultBranch}: ${defaultWt} already exists and is not a worktree`,
       );
@@ -202,7 +201,7 @@ async function finishConversion(input: {
   }
 
   await runGitStreaming(
-    ["-C", input.barePath, "symbolic-ref", "HEAD", `refs/heads/${defaultBranch}`],
+    ['-C', input.barePath, 'symbolic-ref', 'HEAD', `refs/heads/${defaultBranch}`],
     { onOutput: input.onOutput },
   );
   return { defaultBranch, currentBranch: input.currentBranch };
@@ -219,7 +218,7 @@ async function registerCurrentWorktree(
   branch: string,
   onOutput: GitOutputHandler,
 ): Promise<void> {
-  if (await pathExists(join(worktreePath, ".git"))) {
+  if (await pathExists(join(worktreePath, '.git'))) {
     return;
   }
 
@@ -232,20 +231,20 @@ async function registerCurrentWorktree(
 
   onOutput(`Registering worktree for ${branch}`);
   await runGitStreaming(
-    ["-C", barePath, "worktree", "add", "--no-checkout", "--force", worktreePath, branch],
+    ['-C', barePath, 'worktree', 'add', '--no-checkout', '--force', worktreePath, branch],
     { onOutput },
   );
 
   if (stash) {
-    await moveRootIntoWorktree(stash, worktreePath, new Set([".git"]), onOutput);
+    await moveRootIntoWorktree(stash, worktreePath, new Set(['.git']), onOutput);
     await rm(stash, { recursive: true, force: true });
   }
 }
 
 async function configureBare(barePath: string): Promise<void> {
-  await runGitStreaming(["-C", barePath, "config", "core.bare", "true"]);
+  await runGitStreaming(['-C', barePath, 'config', 'core.bare', 'true']);
   try {
-    await execFileAsync("git", ["-C", barePath, "config", "--unset-all", "core.worktree"]);
+    await execFileAsync('git', ['-C', barePath, 'config', '--unset-all', 'core.worktree']);
   } catch {
     // A normal clone does not set core.worktree.
   }
@@ -260,9 +259,9 @@ async function repairOrigin(
   if (!originUrl) {
     return;
   }
-  let current: string | null = null;
+  let current: string | null;
   try {
-    const { stdout } = await execFileAsync("git", ["-C", barePath, "remote", "get-url", "origin"]);
+    const { stdout } = await execFileAsync('git', ['-C', barePath, 'remote', 'get-url', 'origin']);
     current = stdout.trim();
   } catch {
     current = null;
@@ -272,30 +271,30 @@ async function repairOrigin(
   }
   onOutput(`Restoring origin to ${originUrl}`);
   if (current) {
-    await runGitStreaming(["-C", barePath, "remote", "set-url", "origin", originUrl], {
+    await runGitStreaming(['-C', barePath, 'remote', 'set-url', 'origin', originUrl], {
       onOutput,
     });
   } else {
-    await runGitStreaming(["-C", barePath, "remote", "add", "origin", originUrl], { onOutput });
+    await runGitStreaming(['-C', barePath, 'remote', 'add', 'origin', originUrl], { onOutput });
   }
 }
 
 async function originPointsAtRepo(originUrl: string, repoPath: string): Promise<boolean> {
   const trimmed = originUrl.trim();
-  if (trimmed === "." || trimmed === "./" || trimmed === "./.") {
+  if (trimmed === '.' || trimmed === './' || trimmed === './.') {
     return true;
   }
   let originPath = trimmed;
-  if (trimmed.includes("://") || /^[^/:]+:/.test(trimmed)) {
-    if (!trimmed.startsWith("file://")) {
+  if (trimmed.includes('://') || /^[^/:]+:/.test(trimmed)) {
+    if (!trimmed.startsWith('file://')) {
       return false;
     }
-    originPath = trimmed.slice("file://".length);
+    originPath = trimmed.slice('file://'.length);
   }
   try {
     const originReal = await realpath(resolve(repoPath, originPath));
     const repoReal = await realpath(repoPath);
-    return originReal === repoReal || originReal === join(repoReal, ".bare");
+    return originReal === repoReal || originReal === join(repoReal, '.bare');
   } catch {
     return false;
   }
@@ -313,10 +312,9 @@ async function resolveDefaultBranch(
   const remoteRef = `refs/remotes/origin/${preferred}`;
   if (await refExists(barePath, remoteRef)) {
     onOutput(`Creating local branch ${preferred} from origin/${preferred}`);
-    await runGitStreaming(
-      ["-C", barePath, "branch", "--no-track", preferred, remoteRef],
-      { onOutput },
-    );
+    await runGitStreaming(['-C', barePath, 'branch', '--no-track', preferred, remoteRef], {
+      onOutput,
+    });
     return preferred;
   }
   return currentBranch;
@@ -324,7 +322,7 @@ async function resolveDefaultBranch(
 
 async function refExists(barePath: string, ref: string): Promise<boolean> {
   try {
-    await execFileAsync("git", ["-C", barePath, "show-ref", "--verify", "--quiet", ref]);
+    await execFileAsync('git', ['-C', barePath, 'show-ref', '--verify', '--quiet', ref]);
     return true;
   } catch {
     return false;
@@ -339,11 +337,11 @@ async function movePerWorktreeState(barePath: string, worktreePath: string): Pro
   for (const name of PER_WORKTREE_DIRS) {
     await moveIfExists(join(barePath, name), join(gitDir, name));
   }
-  await moveIfExists(join(barePath, "logs", "HEAD"), join(gitDir, "logs", "HEAD"));
+  await moveIfExists(join(barePath, 'logs', 'HEAD'), join(gitDir, 'logs', 'HEAD'));
 }
 
 async function linkedGitDir(worktreePath: string): Promise<string> {
-  const raw = await readFile(join(worktreePath, ".git"), "utf8");
+  const raw = await readFile(join(worktreePath, '.git'), 'utf8');
   const match = raw.match(/^gitdir:\s*(.+)\s*$/);
   const gitDir = match?.[1];
   if (!gitDir) {
@@ -356,7 +354,7 @@ async function moveIfExists(from: string, to: string): Promise<void> {
   try {
     await stat(from);
   } catch (error) {
-    if ((error as NodeJS.ErrnoException).code === "ENOENT") {
+    if ((error as NodeJS.ErrnoException).code === 'ENOENT') {
       return;
     }
     throw error;
@@ -382,7 +380,7 @@ async function convertUnbornRepository(
 
   input.onOutput(`No commits yet on ${currentBranch}`);
   input.onOutput(`Creating bare repository at ${barePath}`);
-  await runGitStreaming(["init", "--bare", "-b", currentBranch, barePath], {
+  await runGitStreaming(['init', '--bare', '-b', currentBranch, barePath], {
     onOutput: input.onOutput,
   });
 
@@ -390,10 +388,10 @@ async function convertUnbornRepository(
   await moveRootIntoWorktree(
     input.repoPath,
     worktreePath,
-    new Set([".bare", folder]),
+    new Set(['.bare', folder]),
     input.onOutput,
   );
-  await runGitStreaming(["remote", "add", "origin", barePath], {
+  await runGitStreaming(['remote', 'add', 'origin', barePath], {
     cwd: worktreePath,
     onOutput: input.onOutput,
   });
@@ -406,7 +404,7 @@ async function pathExists(path: string): Promise<boolean> {
     await stat(path);
     return true;
   } catch (error) {
-    if ((error as NodeJS.ErrnoException).code === "ENOENT") {
+    if ((error as NodeJS.ErrnoException).code === 'ENOENT') {
       return false;
     }
     throw error;
@@ -422,7 +420,7 @@ async function lstatOrNull(path: string): Promise<Awaited<ReturnType<typeof lsta
   try {
     return await lstat(path);
   } catch (error) {
-    if ((error as NodeJS.ErrnoException).code === "ENOENT") {
+    if ((error as NodeJS.ErrnoException).code === 'ENOENT') {
       return null;
     }
     throw error;

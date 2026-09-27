@@ -1,10 +1,10 @@
-import { useMemo, useState } from "react";
-import type { WorktreeEntry } from "../../domain/types.js";
-import { SearchQuery } from "../components/SearchQuery.js";
-import { SelectableList } from "../components/SelectableList.js";
-import { useFilteredIndex } from "../hooks/useFilteredIndex.js";
-import { usePickerKeyboard } from "../hooks/usePickerKeyboard.js";
-import { PickerBody } from "./PickerBody.js";
+import { useMemo, useState } from 'react';
+import type { WorktreeEntry } from '../../domain/types.js';
+import { SearchQuery } from '../components/SearchQuery.js';
+import { SelectableList } from '../components/SelectableList.js';
+import { useFilteredIndex } from '../hooks/useFilteredIndex.js';
+import { usePickerKeyboard } from '../hooks/usePickerKeyboard.js';
+import { PickerBody } from './PickerBody.js';
 
 export interface WorktreePickerScreenProps {
   worktrees: WorktreeEntry[];
@@ -21,9 +21,9 @@ export function WorktreePickerScreen({
   onOpenWorktree,
   onCreateFromQuery,
   onEscape,
-  emptyMessage = "No matching worktrees — Enter to create one",
+  emptyMessage = 'No matching worktrees — Enter to create one',
 }: WorktreePickerScreenProps) {
-  const [query, setQuery] = useState("");
+  const [query, setQuery] = useState('');
   const { filtered, selectedIndex, setSelectedIndex } = useFilteredIndex(
     worktrees,
     query,
@@ -37,8 +37,8 @@ export function WorktreePickerScreen({
         return {
           id: w.path,
           primary: w.branch,
-          statusText: opening ? "Opening..." : undefined,
-          suffixRole: w.isDefaultBranch ? ("default" as const) : undefined,
+          statusText: opening ? 'Opening...' : undefined,
+          suffixRole: w.isDefaultBranch ? ('default' as const) : undefined,
         };
       }),
     [filtered, openingWorktreePath],

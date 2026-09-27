@@ -1,24 +1,24 @@
-import { Box, Text } from "ink";
-import { type ReactNode, useMemo } from "react";
-import { useAlternateScrollMode } from "../hooks/useAlternateScrollMode.js";
-import { useTerminalDimensions } from "../hooks/useTerminalDimensions.js";
-import { TerminalLayoutContext } from "./terminal-layout-context.js";
+import { Box, Text } from 'ink';
+import { type ReactNode, useMemo } from 'react';
+import { useAlternateScrollMode } from '../hooks/useAlternateScrollMode.js';
+import { useTerminalDimensions } from '../hooks/useTerminalDimensions.js';
+import { TerminalLayoutContext } from './terminal-layout-context.js';
 import {
   listDataRowSlots,
   panelRenderHeight,
   shellBodyHeight,
   SUBTITLE_LINES,
-} from "./terminal-chrome.js";
+} from './terminal-chrome.js';
 import {
   horizontalPadding,
   INNER_PADDING_X,
   resolveInnerContentWidth,
   resolvePanelWidth,
-} from "./content-width.js";
-import { ui } from "../theme/ui-tokens.js";
+} from './content-width.js';
+import { ui } from '../theme/ui-tokens.js';
 
 const DEFAULT_FOOTER =
-  "↑↓ Home End list · type to filter · Tab complete · Enter · Esc back · Ctrl+C quit";
+  '↑↓ Home End list · type to filter · Tab complete · Enter · Esc back · Ctrl+C quit';
 
 interface FullscreenShellProps {
   subtitle?: string;
@@ -55,14 +55,9 @@ export function FullscreenShell({
   );
 
   return (
-    <TerminalLayoutContext.Provider value={layoutValue}>
+    <TerminalLayoutContext value={layoutValue}>
       <Box width={columns} height={panelHeight} flexDirection="column" overflow="hidden">
-        <Box
-          marginLeft={paddingX}
-          flexDirection="column"
-          width={panelWidth}
-          height={panelHeight}
-        >
+        <Box marginLeft={paddingX} flexDirection="column" width={panelWidth} height={panelHeight}>
           <Box
             flexDirection="column"
             width={panelWidth}
@@ -89,11 +84,13 @@ export function FullscreenShell({
             </Box>
 
             <Box height={1} paddingX={INNER_PADDING_X}>
-              <Text color={ui.footer} wrap="truncate">{footer}</Text>
+              <Text color={ui.footer} wrap="truncate">
+                {footer}
+              </Text>
             </Box>
           </Box>
         </Box>
       </Box>
-    </TerminalLayoutContext.Provider>
+    </TerminalLayoutContext>
   );
 }

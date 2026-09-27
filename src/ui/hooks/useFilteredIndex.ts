@@ -1,12 +1,5 @@
-import {
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-  type Dispatch,
-  type SetStateAction,
-} from "react";
-import { fuzzyFilter } from "../../search/fuzzy-filter.js";
+import { useMemo, useState, type Dispatch, type SetStateAction } from 'react';
+import { fuzzyFilter } from '../../search/fuzzy-filter.js';
 
 export type FilteredIndexFilter<T> = (
   items: T[],
@@ -24,30 +17,23 @@ export function useFilteredIndex<T>(
   selectedIndex: number;
   setSelectedIndex: Dispatch<SetStateAction<number>>;
 } {
-  const getLabelRef = useRef(getLabel);
-  getLabelRef.current = getLabel;
-
   const filtered = useMemo(
-    () => filterItems(items, query, (item) => getLabelRef.current(item)),
-    [items, query, filterItems],
+    () => filterItems(items, query, getLabel),
+    [items, query, filterItems, getLabel],
   );
   const [selectedIndex, setSelectedIndex] = useState(0);
+  const resetKey = `${query}\0${items.length}`;
+  const [prevResetKey, setPrevResetKey] = useState(resetKey);
 
-  useEffect(() => {
+  if (prevResetKey !== resetKey) {
+    setPrevResetKey(resetKey);
     setSelectedIndex(0);
-  }, [query, items.length]);
+  }
 
-  useEffect(() => {
-    setSelectedIndex((current) => {
-      if (filtered.length === 0) {
-        return 0;
-      }
-      if (current >= filtered.length) {
-        return filtered.length - 1;
-      }
-      return current;
-    });
-  }, [filtered.length]);
+  const effectiveIndex = filtered.length === 0 ? 0 : Math.min(selectedIndex, filtered.length - 1);
+  if (effectiveIndex !== selectedIndex) {
+    setSelectedIndex(effectiveIndex);
+  }
 
-  return { filtered, selectedIndex, setSelectedIndex };
+  return { filtered, selectedIndex: effectiveIndex, setSelectedIndex };
 }

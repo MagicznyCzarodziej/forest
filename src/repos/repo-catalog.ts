@@ -1,5 +1,5 @@
-import type { LocalRepoMeta, RepoCatalogEntry } from "../domain/types.js";
-import { fuzzyFilter } from "../search/fuzzy-filter.js";
+import type { LocalRepoMeta, RepoCatalogEntry } from '../domain/types.js';
+import { fuzzyFilter } from '../search/fuzzy-filter.js';
 
 export function sortReposByLastOpened(repos: RepoCatalogEntry[]): RepoCatalogEntry[] {
   return [...repos].sort((a, b) => {
@@ -19,10 +19,7 @@ export interface BuildRepoCatalogInput {
 
 export function buildRepoCatalog(input: BuildRepoCatalogInput): RepoCatalogEntry[] {
   const localByName = new Map(input.localRepos.map((r) => [r.name, r]));
-  const names = new Set<string>([
-    ...input.remoteRepoNames,
-    ...input.localRepos.map((r) => r.name),
-  ]);
+  const names = new Set<string>([...input.remoteRepoNames, ...input.localRepos.map((r) => r.name)]);
 
   const entries: RepoCatalogEntry[] = [];
   for (const name of names) {
@@ -39,7 +36,7 @@ export function buildRepoCatalog(input: BuildRepoCatalogInput): RepoCatalogEntry
       entries.push({
         name,
         clonedLocally: false,
-        structure: "none",
+        structure: 'none',
       });
     }
   }

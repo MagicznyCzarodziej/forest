@@ -1,11 +1,11 @@
-import { readdir, readFile, stat } from "node:fs/promises";
-import { join } from "node:path";
-import { execFile } from "node:child_process";
-import { promisify } from "node:util";
-import { branchFromHead, detectCurrentBranch } from "../git/default-branch.js";
-import { DEFAULT_REPO_SLUG_SEPARATOR } from "../repos/repo-structure.js";
-import type { RawWorktree } from "./worktree-catalog.js";
-import { RepoStateStore } from "../state/repo-state.js";
+import { readdir, readFile, stat } from 'node:fs/promises';
+import { join } from 'node:path';
+import { execFile } from 'node:child_process';
+import { promisify } from 'node:util';
+import { branchFromHead, detectCurrentBranch } from '../git/default-branch.js';
+import { DEFAULT_REPO_SLUG_SEPARATOR } from '../repos/repo-structure.js';
+import type { RawWorktree } from './worktree-catalog.js';
+import { type RepoStateStore } from '../state/repo-state.js';
 
 const execFileAsync = promisify(execFile);
 
@@ -55,10 +55,10 @@ export async function scanWorktrees(
 
 export function parseBranchNames(output: string, remoteTracking: boolean): string[] {
   return output
-    .split("\n")
+    .split('\n')
     .map((line) => line.trim())
-    .map((branch) => (remoteTracking ? branch.replace(/^origin\//, "") : branch))
-    .filter((branch) => branch && !branch.includes("HEAD"));
+    .map((branch) => (remoteTracking ? branch.replace(/^origin\//, '') : branch))
+    .filter((branch) => branch && !branch.includes('HEAD'));
 }
 
 /** An unborn bare repo has a symbolic HEAD but no `refs/heads` entries yet. */
@@ -71,19 +71,19 @@ export function withUnbornHeadBranch(branches: string[], head: string): string[]
 }
 
 export async function listRemoteBranches(repoPath: string, bare: boolean): Promise<string[]> {
-  const cwd = bare ? join(repoPath, ".bare") : repoPath;
+  const cwd = bare ? join(repoPath, '.bare') : repoPath;
   try {
     // `git clone --bare` copies remote branches to refs/heads rather than
     // refs/remotes/origin, so `git branch -r` is empty in forest's layout.
     const args = bare
-      ? ["for-each-ref", "--format=%(refname:strip=2)", "refs/heads"]
-      : ["branch", "-r"];
-    const { stdout } = await execFileAsync("git", args, { cwd });
+      ? ['for-each-ref', '--format=%(refname:strip=2)', 'refs/heads']
+      : ['branch', '-r'];
+    const { stdout } = await execFileAsync('git', args, { cwd });
     const names = parseBranchNames(stdout, !bare);
     if (!bare || names.length > 0) {
       return names;
     }
-    const head = await readFile(join(cwd, "HEAD"), "utf8");
+    const head = await readFile(join(cwd, 'HEAD'), 'utf8');
     return withUnbornHeadBranch(names, head);
   } catch {
     return [];

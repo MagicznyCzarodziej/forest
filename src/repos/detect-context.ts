@@ -1,4 +1,4 @@
-import { isPathInside } from "../utils/paths.js";
+import { isPathInside } from '../utils/paths.js';
 
 export interface RepoContext {
   repoName: string;
@@ -6,8 +6,7 @@ export interface RepoContext {
 }
 
 export type StartContext =
-  | { screen: "repos" }
-  | { screen: "worktrees"; repoName: string; repoPath: string };
+  { screen: 'repos' } | { screen: 'worktrees'; repoName: string; repoPath: string };
 
 export function detectStartContext(
   cwd: string,
@@ -20,10 +19,10 @@ export function detectStartContext(
     isPathInside(root, repoContext.repoPath)
   ) {
     return {
-      screen: "worktrees",
+      screen: 'worktrees',
       repoName: repoContext.repoName,
       repoPath: repoContext.repoPath,
     };
   }
-  return { screen: "repos" };
+  return { screen: 'repos' };
 }

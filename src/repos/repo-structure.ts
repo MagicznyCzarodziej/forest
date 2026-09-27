@@ -1,20 +1,20 @@
-import { join } from "node:path";
-import type { RepoStructure } from "../domain/types.js";
-import { branchToWorktreeSlug } from "../git/branch-slug.js";
+import { join } from 'node:path';
+import type { RepoStructure } from '../domain/types.js';
+import { branchToWorktreeSlug } from '../git/branch-slug.js';
 
-export const DEFAULT_REPO_SLUG_SEPARATOR = "__";
+export const DEFAULT_REPO_SLUG_SEPARATOR = '__';
 
 export function worktreeFolderName(
   repoName: string,
   branchOrSlug: string,
   separator = DEFAULT_REPO_SLUG_SEPARATOR,
 ): string {
-  const slug = branchOrSlug.includes("/") ? branchToWorktreeSlug(branchOrSlug) : branchOrSlug;
+  const slug = branchOrSlug.includes('/') ? branchToWorktreeSlug(branchOrSlug) : branchOrSlug;
   return `${repoName}${separator}${slug}`;
 }
 
 export function bareRepoPath(repoPath: string): string {
-  return join(repoPath, ".bare");
+  return join(repoPath, '.bare');
 }
 
 export function defaultWorktreePath(
@@ -40,7 +40,7 @@ export interface DetectRepoStructureInput {
 
 export function detectRepoStructure(input: DetectRepoStructureInput): RepoStructure {
   if (input.hasBareDir && input.hasWorktreeCheckout === false && !input.hasRootGit) {
-    return "legacy";
+    return 'legacy';
   }
   const expectedDefault = worktreeFolderName(
     input.repoName,
@@ -48,13 +48,13 @@ export function detectRepoStructure(input: DetectRepoStructureInput): RepoStruct
     input.repoSlugSeparator,
   );
   if (input.hasBareDir && input.childDirNames.includes(expectedDefault)) {
-    return "standard";
+    return 'standard';
   }
   if (input.hasRootGit && !input.hasBareDir) {
-    return "legacy";
+    return 'legacy';
   }
   if (input.hasBareDir) {
-    return "standard";
+    return 'standard';
   }
-  return "unknown";
+  return 'unknown';
 }

@@ -1,10 +1,10 @@
-import { useMemo, useState } from "react";
-import { SearchQuery } from "../components/SearchQuery.js";
-import { SelectableList } from "../components/SelectableList.js";
-import { useFilteredIndex } from "../hooks/useFilteredIndex.js";
-import { usePickerKeyboard } from "../hooks/usePickerKeyboard.js";
-import { canConfirmBranchSelection } from "../../branches/branch-picker.js";
-import { PickerBody } from "./PickerBody.js";
+import { useMemo, useState } from 'react';
+import { SearchQuery } from '../components/SearchQuery.js';
+import { SelectableList } from '../components/SelectableList.js';
+import { useFilteredIndex } from '../hooks/useFilteredIndex.js';
+import { usePickerKeyboard } from '../hooks/usePickerKeyboard.js';
+import { canConfirmBranchSelection } from '../../branches/branch-picker.js';
+import { PickerBody } from './PickerBody.js';
 
 export interface BranchPickerScreenProps {
   branches: string[];
@@ -19,20 +19,13 @@ export function BranchPickerScreen({
   initialQuery,
   onSelectBranch,
   onEscape,
-  emptyMessage = "No matching branches",
+  emptyMessage = 'No matching branches',
 }: BranchPickerScreenProps) {
   const [query, setQuery] = useState(initialQuery);
-  const { filtered, selectedIndex, setSelectedIndex } = useFilteredIndex(
-    branches,
-    query,
-    (b) => b,
-  );
+  const { filtered, selectedIndex, setSelectedIndex } = useFilteredIndex(branches, query, (b) => b);
 
   const canConfirm = canConfirmBranchSelection(branches, query, filtered);
-  const listRows = useMemo(
-    () => filtered.map((b) => ({ id: b, primary: b })),
-    [filtered],
-  );
+  const listRows = useMemo(() => filtered.map((b) => ({ id: b, primary: b })), [filtered]);
 
   const tabHint = usePickerKeyboard({
     items: branches,

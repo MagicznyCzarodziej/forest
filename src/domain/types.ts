@@ -1,6 +1,6 @@
-import type { GitHubOwner } from "./github-owner.js";
+import type { GitHubOwner } from './github-owner.js';
 
-export type RepoStructure = "standard" | "legacy" | "unknown" | "none";
+export type RepoStructure = 'standard' | 'legacy' | 'unknown' | 'none';
 
 export interface ForestConfig {
   root: string;
@@ -12,7 +12,7 @@ export interface ForestConfig {
 export interface LocalRepoMeta {
   name: string;
   path: string;
-  structure: Exclude<RepoStructure, "none">;
+  structure: Exclude<RepoStructure, 'none'>;
   lastOpenedAt?: number;
 }
 

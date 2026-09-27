@@ -1,9 +1,9 @@
-import { stat } from "node:fs/promises";
-import { join } from "node:path";
-import { bareRepoPath, worktreeFolderName } from "../repos/repo-structure.js";
-import { branchToWorktreeSlug } from "./branch-slug.js";
-import { repositoryHasCommits, type GitOutputHandler } from "./default-branch.js";
-import { runGitStreaming } from "./run-git.js";
+import { stat } from 'node:fs/promises';
+import { join } from 'node:path';
+import { bareRepoPath, worktreeFolderName } from '../repos/repo-structure.js';
+import { branchToWorktreeSlug } from './branch-slug.js';
+import { repositoryHasCommits, type GitOutputHandler } from './default-branch.js';
+import { runGitStreaming } from './run-git.js';
 
 export interface CreateWorktreeResult {
   worktreePath: string;
@@ -15,7 +15,7 @@ async function pathExists(path: string): Promise<boolean> {
     await stat(path);
     return true;
   } catch (error) {
-    if ((error as NodeJS.ErrnoException).code === "ENOENT") {
+    if ((error as NodeJS.ErrnoException).code === 'ENOENT') {
       return false;
     }
     throw error;
@@ -47,10 +47,10 @@ export async function createWorktreeFromBare(input: {
     input.onOutput(
       `${input.baseBranch} has no commits yet. Creating empty worktree ${input.newBranchName}`,
     );
-    await runGitStreaming(["init", "-b", input.newBranchName, worktreePath], {
+    await runGitStreaming(['init', '-b', input.newBranchName, worktreePath], {
       onOutput: input.onOutput,
     });
-    await runGitStreaming(["remote", "add", "origin", barePath], {
+    await runGitStreaming(['remote', 'add', 'origin', barePath], {
       cwd: worktreePath,
       onOutput: input.onOutput,
     });
@@ -58,18 +58,18 @@ export async function createWorktreeFromBare(input: {
   }
 
   input.onOutput(`Fetching ${input.baseBranch}…`);
-  await runGitStreaming(["-C", barePath, "fetch", "origin", input.baseBranch, "--progress"], {
+  await runGitStreaming(['-C', barePath, 'fetch', 'origin', input.baseBranch, '--progress'], {
     onOutput: input.onOutput,
   });
 
   input.onOutput(`Cloning ${input.baseBranch} into ${worktreePath}`);
   await runGitStreaming(
-    ["clone", "--branch", input.baseBranch, "--progress", barePath, worktreePath],
+    ['clone', '--branch', input.baseBranch, '--progress', barePath, worktreePath],
     { onOutput: input.onOutput },
   );
 
   input.onOutput(`Creating branch ${input.newBranchName} from ${input.baseBranch}`);
-  await runGitStreaming(["checkout", "-b", input.newBranchName], {
+  await runGitStreaming(['checkout', '-b', input.newBranchName], {
     cwd: worktreePath,
     onOutput: input.onOutput,
   });

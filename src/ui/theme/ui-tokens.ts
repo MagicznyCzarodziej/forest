@@ -1,5 +1,5 @@
-import { oneDark } from "./one-dark.js";
-import type { HintRole, SuffixRole } from "../labels.js";
+import { oneDark } from './one-dark.js';
+import type { HintRole, SuffixRole } from '../labels.js';
 
 export const ui = {
   /** Repo / branch names — highest contrast. */
@@ -26,11 +26,11 @@ export function suffixColor(role: SuffixRole | undefined, onSelectedRow: boolean
     return ui.listNameOnSelection;
   }
   switch (role) {
-    case "cloned":
+    case 'cloned':
       return ui.status.success;
-    case "not-cloned":
+    case 'not-cloned':
       return ui.status.inactive;
-    case "default":
+    case 'default':
       return ui.status.info;
     default:
       return ui.muted;
@@ -41,5 +41,5 @@ export function hintColor(role: HintRole | undefined, onSelectedRow: boolean): s
   if (onSelectedRow) {
     return ui.listNameOnSelection;
   }
-  return role === "legacy" ? ui.status.caution : ui.muted;
+  return role === 'legacy' ? ui.status.caution : ui.muted;
 }

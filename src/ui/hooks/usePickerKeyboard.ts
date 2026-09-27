@@ -1,14 +1,14 @@
-import { useMemo, useRef, type Dispatch, type SetStateAction } from "react";
-import { useInput } from "ink";
-import { queryEditAction, applyQueryEdit } from "../../search/query-editing.js";
-import { fuzzyFilter } from "../../search/fuzzy-filter.js";
+import { useEffect, useMemo, useRef, useState, type Dispatch, type SetStateAction } from 'react';
+import { useInput } from 'ink';
+import { queryEditAction, applyQueryEdit } from '../../search/query-editing.js';
+import { fuzzyFilter } from '../../search/fuzzy-filter.js';
 import {
   tabCompleteAdvance,
   tabCompleteHint,
   type TabCycleState,
-} from "../../search/tab-complete.js";
-import { jumpListIndex, moveListIndex } from "../list-navigation.js";
-import type { FilteredIndexFilter } from "./useFilteredIndex.js";
+} from '../../search/tab-complete.js';
+import { jumpListIndex, moveListIndex } from '../list-navigation.js';
+import type { FilteredIndexFilter } from './useFilteredIndex.js';
 
 interface UsePickerKeyboardOptions<T> {
   items: T[];
@@ -24,23 +24,27 @@ interface UsePickerKeyboardOptions<T> {
 }
 
 export function usePickerKeyboard<T>(options: UsePickerKeyboardOptions<T>): string {
-  const tabCycleRef = useRef<TabCycleState | null>(null);
+  const [tabCycle, setTabCycle] = useState<TabCycleState | null>(null);
+  const tabCycleRef = useRef(tabCycle);
   const optionsRef = useRef(options);
-  optionsRef.current = options;
-  const getLabelRef = useRef(options.getLabel);
-  getLabelRef.current = options.getLabel;
   const filterItems = options.filterItems ?? fuzzyFilter;
 
-  const tabOrderQuery = tabCycleRef.current?.baseQuery ?? options.query;
+  useEffect(() => {
+    tabCycleRef.current = tabCycle;
+  }, [tabCycle]);
+
+  useEffect(() => {
+    optionsRef.current = options;
+  });
+
+  const tabOrderQuery = tabCycle?.baseQuery ?? options.query;
   const tabCandidates = useMemo(() => {
-    const filtered = filterItems(options.items, tabOrderQuery, (item) =>
-      getLabelRef.current(item),
-    );
-    return filtered.map((item) => getLabelRef.current(item));
-  }, [filterItems, options.items, tabOrderQuery]);
+    const filtered = filterItems(options.items, tabOrderQuery, options.getLabel);
+    return filtered.map(options.getLabel);
+  }, [filterItems, options.items, tabOrderQuery, options.getLabel]);
 
   const resetTabCycle = () => {
-    tabCycleRef.current = null;
+    setTabCycle(null);
   };
 
   useInput((input, key) => {
@@ -55,7 +59,7 @@ export function usePickerKeyboard<T>(options: UsePickerKeyboardOptions<T>): stri
     if (key.escape) {
       resetTabCycle();
       if (opts.query.length > 0) {
-        opts.setQuery("");
+        opts.setQuery('');
         return;
       }
       opts.onEscape();
@@ -64,15 +68,9 @@ export function usePickerKeyboard<T>(options: UsePickerKeyboardOptions<T>): stri
     if (key.tab) {
       const filter = opts.filterItems ?? fuzzyFilter;
       const orderQuery = tabCycleRef.current?.baseQuery ?? opts.query;
-      const candidates = filter(opts.items, orderQuery, (item) =>
-        getLabelRef.current(item),
-      ).map((item) => getLabelRef.current(item));
-      const { query, state } = tabCompleteAdvance(
-        opts.query,
-        candidates,
-        tabCycleRef.current,
-      );
-      tabCycleRef.current = state;
+      const candidates = filter(opts.items, orderQuery, opts.getLabel).map(opts.getLabel);
+      const { query, state } = tabCompleteAdvance(opts.query, candidates, tabCycleRef.current);
+      setTabCycle(state);
       opts.setQuery(query);
       return;
     }
@@ -83,18 +81,18 @@ export function usePickerKeyboard<T>(options: UsePickerKeyboardOptions<T>): stri
     }
     if ((key.home || key.end) && opts.listLength > 0) {
       resetTabCycle();
-      const edge = key.home ? "home" : "end";
+      const edge = key.home ? 'home' : 'end';
       opts.setSelectedIndex(jumpListIndex(edge, opts.listLength));
       return;
     }
     if (key.upArrow && opts.listLength > 0) {
       resetTabCycle();
-      opts.setSelectedIndex((i) => moveListIndex(i, "up", opts.listLength));
+      opts.setSelectedIndex((i) => moveListIndex(i, 'up', opts.listLength));
       return;
     }
     if (key.downArrow && opts.listLength > 0) {
       resetTabCycle();
-      opts.setSelectedIndex((i) => moveListIndex(i, "down", opts.listLength));
+      opts.setSelectedIndex((i) => moveListIndex(i, 'down', opts.listLength));
       return;
     }
     const editAction = queryEditAction(input, {
@@ -115,5 +113,5 @@ export function usePickerKeyboard<T>(options: UsePickerKeyboardOptions<T>): stri
     }
   });
 
-  return tabCompleteHint(options.query, tabCandidates, tabCycleRef.current);
+  return tabCompleteHint(options.query, tabCandidates, tabCycle);
 }

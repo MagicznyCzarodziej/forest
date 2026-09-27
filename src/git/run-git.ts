@@ -1,14 +1,14 @@
-import { spawn } from "node:child_process";
-import type { GitOutputHandler } from "./default-branch.js";
+import { spawn } from 'node:child_process';
+import type { GitOutputHandler } from './default-branch.js';
 
 export async function runGitStreaming(
   args: string[],
   options: { cwd?: string; onOutput?: GitOutputHandler } = {},
 ): Promise<void> {
   await new Promise<void>((resolve, reject) => {
-    const child = spawn("git", args, {
+    const child = spawn('git', args, {
       cwd: options.cwd,
-      stdio: ["ignore", "pipe", "pipe"],
+      stdio: ['ignore', 'pipe', 'pipe'],
     });
 
     const emit = (chunk: Buffer) => {
@@ -20,14 +20,14 @@ export async function runGitStreaming(
       }
     };
 
-    child.stdout?.on("data", emit);
-    child.stderr?.on("data", emit);
-    child.on("error", reject);
-    child.on("close", (code) => {
+    child.stdout?.on('data', emit);
+    child.stderr?.on('data', emit);
+    child.on('error', reject);
+    child.on('close', (code) => {
       if (code === 0) {
         resolve();
       } else {
-        reject(new Error(`git ${args.join(" ")} failed with code ${code}`));
+        reject(new Error(`git ${args.join(' ')} failed with code ${code}`));
       }
     });
   });

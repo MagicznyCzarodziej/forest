@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
-import { useStdout } from "ink";
+import { useEffect, useState } from 'react';
+import { useStdout } from 'ink';
 
 export interface TerminalDimensions {
   rows: number;
@@ -20,10 +20,9 @@ export function useTerminalDimensions(): TerminalDimensions {
         columns: stdout.columns ?? 80,
       });
     };
-    stdout.on("resize", onResize);
-    onResize();
+    stdout.on('resize', onResize);
     return () => {
-      stdout.off("resize", onResize);
+      stdout.off('resize', onResize);
     };
   }, [stdout]);
 
