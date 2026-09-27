@@ -1,4 +1,5 @@
 import { execFile } from "node:child_process";
+import { withGitHubCredentials } from "../github/clone-url.js";
 import { readFile } from "node:fs/promises";
 import { isAbsolute, join } from "node:path";
 import { promisify } from "node:util";
@@ -33,7 +34,7 @@ export async function detectDefaultBranchFromRemote(
   onOutput?: GitOutputHandler,
 ): Promise<string> {
   const out = await runGit(
-    ["ls-remote", "--symref", cloneUrl, "HEAD"],
+    withGitHubCredentials(cloneUrl, ["ls-remote", "--symref", cloneUrl, "HEAD"]),
     undefined,
     onOutput,
   );

@@ -10,6 +10,7 @@ describe("worktreeFolderName", () => {
   it("joins repo name and worktree slug with double underscore", () => {
     expect(worktreeFolderName("forest", "master")).toBe("forest__master");
     expect(worktreeFolderName("forest", "feature-login")).toBe("forest__feature-login");
+    expect(worktreeFolderName("forest", "master", "--")).toBe("forest--master");
   });
 });
 

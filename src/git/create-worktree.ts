@@ -29,13 +29,14 @@ export async function createWorktreeFromBare(input: {
   newBranchName: string;
   /** Existing branch the new branch starts from. */
   baseBranch: string;
+  repoSlugSeparator?: string;
   onOutput: GitOutputHandler;
 }): Promise<CreateWorktreeResult> {
   const barePath = bareRepoPath(input.repoPath);
   const slug = branchToWorktreeSlug(input.newBranchName);
   const worktreePath = join(
     input.repoPath,
-    worktreeFolderName(input.repoName, slug),
+    worktreeFolderName(input.repoName, slug, input.repoSlugSeparator),
   );
 
   if (await pathExists(worktreePath)) {

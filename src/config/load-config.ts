@@ -1,6 +1,7 @@
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 import type { ForestConfig } from "../domain/types.js";
+import { DEFAULT_REPO_SLUG_SEPARATOR } from "../repos/repo-structure.js";
 import { expandPath } from "../utils/expand-path.js";
 import { ConfigError } from "./config-error.js";
 import { parseGitHubOwnerFromConfig } from "./parse-github-owner.js";
@@ -52,5 +53,19 @@ export async function loadConfig(home = process.env.HOME): Promise<ForestConfig>
   return {
     root: expandPath(root.trim(), home),
     githubOwner,
+    repoSlugSeparator: parseRepoSlugSeparator(record.repoSlugSeparator),
   };
+}
+
+function parseRepoSlugSeparator(value: unknown): string {
+  if (value === undefined) {
+    return DEFAULT_REPO_SLUG_SEPARATOR;
+  }
+  if (typeof value !== "string" || !value.trim()) {
+    throw new ConfigError('Config field "repoSlugSeparator" must be a non-empty string');
+  }
+  if (value.includes("/") || value.includes("\\")) {
+    throw new ConfigError('Config field "repoSlugSeparator" cannot contain a path separator');
+  }
+  return value;
 }

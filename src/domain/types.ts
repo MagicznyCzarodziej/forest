@@ -5,6 +5,8 @@ export type RepoStructure = "standard" | "legacy" | "unknown" | "none";
 export interface ForestConfig {
   root: string;
   githubOwner: GitHubOwner;
+  /** Between the repo name and branch slug in a worktree folder, such as `repo__master`. */
+  repoSlugSeparator: string;
 }
 
 export interface LocalRepoMeta {

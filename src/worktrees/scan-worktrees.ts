@@ -3,6 +3,7 @@ import { join } from "node:path";
 import { execFile } from "node:child_process";
 import { promisify } from "node:util";
 import { branchFromHead, detectCurrentBranch } from "../git/default-branch.js";
+import { DEFAULT_REPO_SLUG_SEPARATOR } from "../repos/repo-structure.js";
 import type { RawWorktree } from "./worktree-catalog.js";
 import { RepoStateStore } from "../state/repo-state.js";
 
@@ -21,9 +22,10 @@ export async function scanWorktrees(
   repoPath: string,
   repoName: string,
   stateStore: RepoStateStore,
+  repoSlugSeparator = DEFAULT_REPO_SLUG_SEPARATOR,
 ): Promise<RawWorktree[]> {
   const entries = await readdir(repoPath);
-  const prefix = `${repoName}__`;
+  const prefix = `${repoName}${repoSlugSeparator}`;
   const worktrees: RawWorktree[] = [];
 
   for (const entry of entries) {

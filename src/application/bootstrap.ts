@@ -25,7 +25,7 @@ export interface BootstrapResult {
 export async function bootstrap(cwd = process.cwd()): Promise<BootstrapResult> {
   const config = await loadConfig();
   const stateStore = new RepoStateStore(RepoStateStore.defaultPath());
-  const localRepos = await scanLocalRepos(config.root, stateStore);
+  const localRepos = await scanLocalRepos(config.root, stateStore, config.repoSlugSeparator);
   const cachePath = remoteRepoCachePath();
   const cached = await cachedRemoteRepoNames(cachePath, config.githubOwner);
   const repos = buildRepoCatalog({ remoteRepoNames: cached.repoNames, localRepos });

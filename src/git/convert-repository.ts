@@ -34,6 +34,7 @@ export interface ConvertRepositoryResult {
 export async function convertLegacyRepository(input: {
   repoPath: string;
   repoName: string;
+  repoSlugSeparator?: string;
   onOutput: GitOutputHandler;
 }): Promise<ConvertRepositoryResult> {
   const currentBranch = await detectCurrentBranch(input.repoPath, input.onOutput);
@@ -56,7 +57,7 @@ export async function convertLegacyRepository(input: {
   const reserved = new Set<string>([".bare"]);
 
   if (currentBranch === defaultBranch) {
-    const folder = worktreeFolderName(input.repoName, currentBranch);
+    const folder = worktreeFolderName(input.repoName, currentBranch, input.repoSlugSeparator);
     const wtPath = join(input.repoPath, folder);
     reserved.add(folder);
     await moveRootIntoWorktree(input.repoPath, wtPath, reserved, input.onOutput);
@@ -66,7 +67,11 @@ export async function convertLegacyRepository(input: {
       { onOutput: input.onOutput },
     );
   } else {
-    const currentFolder = worktreeFolderName(input.repoName, currentBranch);
+    const currentFolder = worktreeFolderName(
+      input.repoName,
+      currentBranch,
+      input.repoSlugSeparator,
+    );
     const currentWt = join(input.repoPath, currentFolder);
     reserved.add(currentFolder);
     await moveRootIntoWorktree(input.repoPath, currentWt, reserved, input.onOutput);
@@ -76,7 +81,11 @@ export async function convertLegacyRepository(input: {
       { onOutput: input.onOutput },
     );
 
-    const defaultFolder = worktreeFolderName(input.repoName, defaultBranch);
+    const defaultFolder = worktreeFolderName(
+      input.repoName,
+      defaultBranch,
+      input.repoSlugSeparator,
+    );
     const defaultWt = join(input.repoPath, defaultFolder);
     input.onOutput(`Cloning ${defaultBranch} into ${defaultWt}`);
     await runGitStreaming(
@@ -93,12 +102,13 @@ async function convertUnbornRepository(
   input: {
     repoPath: string;
     repoName: string;
+    repoSlugSeparator?: string;
     onOutput: GitOutputHandler;
   },
   currentBranch: string,
 ): Promise<ConvertRepositoryResult> {
   const barePath = bareRepoPath(input.repoPath);
-  const folder = worktreeFolderName(input.repoName, currentBranch);
+  const folder = worktreeFolderName(input.repoName, currentBranch, input.repoSlugSeparator);
   const worktreePath = join(input.repoPath, folder);
 
   input.onOutput(`No commits yet on ${currentBranch}`);

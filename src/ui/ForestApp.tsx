@@ -4,7 +4,7 @@ import { FullscreenShell } from "./layout/FullscreenShell.js";
 import { reposSubtitle, screenFooter, screenSubtitle } from "./layout/screen-chrome.js";
 import type { BootstrapResult } from "../application/bootstrap.js";
 import type { RepoCatalogEntry, WorktreeEntry } from "../domain/types.js";
-import { buildCloneUrl } from "../github/clone-url.js";
+import { buildCloneUrl, detectGitProtocol } from "../github/clone-url.js";
 import { cloneRepository } from "../git/clone-repository.js";
 import { convertLegacyRepository } from "../git/convert-repository.js";
 import { createWorktreeFromBare } from "../git/create-worktree.js";
@@ -80,7 +80,12 @@ export function ForestApp({ bootstrap }: ForestAppProps) {
 
   const refreshWorktrees = useCallback(
     async (repoName: string, repoPath: string) => {
-      const raw = await scanWorktrees(repoPath, repoName, bootstrap.stateStore);
+      const raw = await scanWorktrees(
+        repoPath,
+        repoName,
+        bootstrap.stateStore,
+        bootstrap.config.repoSlugSeparator,
+      );
       const remote = await listRemoteBranches(repoPath, true);
       let defaultBr = DEFAULT_BRANCH;
       try {
@@ -163,12 +168,17 @@ export function ForestApp({ bootstrap }: ForestAppProps) {
   };
 
   const handleClone = async (repoName: string) => {
-    const cloneUrl = buildCloneUrl(bootstrap.config.githubOwner, repoName);
+    const cloneUrl = buildCloneUrl(
+      bootstrap.config.githubOwner,
+      repoName,
+      await detectGitProtocol(),
+    );
     await runProgress(`Cloning ${repoName}`, async () => {
       const result = await cloneRepository({
         root: bootstrap.config.root,
         repoName,
         cloneUrl,
+        repoSlugSeparator: bootstrap.config.repoSlugSeparator,
         onOutput: appendProgress,
       });
       await bootstrap.stateStore.touchRepo(repoName);
@@ -203,6 +213,7 @@ export function ForestApp({ bootstrap }: ForestAppProps) {
       await convertLegacyRepository({
         repoPath,
         repoName,
+        repoSlugSeparator: bootstrap.config.repoSlugSeparator,
         onOutput: appendProgress,
       });
       setRepos((list) =>
@@ -249,6 +260,7 @@ export function ForestApp({ bootstrap }: ForestAppProps) {
         repoName,
         newBranchName,
         baseBranch,
+        repoSlugSeparator: bootstrap.config.repoSlugSeparator,
         onOutput: appendProgress,
       });
       await bootstrap.stateStore.touchWorktree(result.worktreePath);
