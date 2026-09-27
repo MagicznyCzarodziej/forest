@@ -1,7 +1,7 @@
 import { readFile, writeFile, mkdir } from 'node:fs/promises';
 import { dirname, join } from 'node:path';
 
-export interface RepoState {
+export interface RepositoryState {
   lastOpenedAt?: number;
 }
 
@@ -9,14 +9,14 @@ export interface WorktreeState {
   lastUsedAt?: number;
 }
 
-export interface RepoStateFile {
-  repos: Record<string, RepoState>;
+export interface RepositoryStateFile {
+  repositories: Record<string, RepositoryState>;
   worktrees: Record<string, WorktreeState>;
 }
 
-const emptyState = (): RepoStateFile => ({ repos: {}, worktrees: {} });
+const emptyState = (): RepositoryStateFile => ({ repositories: {}, worktrees: {} });
 
-export class RepoStateStore {
+export class RepositoryStateStore {
   constructor(private readonly filePath: string) {}
 
   static defaultPath(home = process.env.HOME): string {
@@ -26,12 +26,12 @@ export class RepoStateStore {
     return join(home, '.config', 'forest', 'state.json');
   }
 
-  async read(): Promise<RepoStateFile> {
+  async read(): Promise<RepositoryStateFile> {
     try {
       const raw = await readFile(this.filePath, 'utf8');
-      const parsed = JSON.parse(raw) as RepoStateFile;
+      const parsed = JSON.parse(raw) as RepositoryStateFile;
       return {
-        repos: parsed.repos ?? {},
+        repositories: parsed.repositories ?? {},
         worktrees: parsed.worktrees ?? {},
       };
     } catch {
@@ -39,19 +39,19 @@ export class RepoStateStore {
     }
   }
 
-  async write(state: RepoStateFile): Promise<void> {
+  async write(state: RepositoryStateFile): Promise<void> {
     await mkdir(dirname(this.filePath), { recursive: true });
     await writeFile(this.filePath, JSON.stringify(state, null, 2), 'utf8');
   }
 
-  async getRepo(name: string): Promise<RepoState | undefined> {
+  async getRepository(name: string): Promise<RepositoryState | undefined> {
     const state = await this.read();
-    return state.repos[name];
+    return state.repositories[name];
   }
 
-  async touchRepo(name: string, at = Date.now()): Promise<void> {
+  async touchRepository(name: string, at = Date.now()): Promise<void> {
     const state = await this.read();
-    state.repos[name] = { ...state.repos[name], lastOpenedAt: at };
+    state.repositories[name] = { ...state.repositories[name], lastOpenedAt: at };
     await this.write(state);
   }
 

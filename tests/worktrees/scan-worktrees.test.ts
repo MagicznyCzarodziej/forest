@@ -14,7 +14,7 @@ describe('parseBranchNames', () => {
 });
 
 describe('withUnbornHeadBranch', () => {
-  it('uses the symbolic HEAD when the bare repo has no branch refs', () => {
+  it('uses the symbolic HEAD when the bare repository has no branch refs', () => {
     expect(withUnbornHeadBranch([], 'ref: refs/heads/master\n')).toEqual(['master']);
   });
 

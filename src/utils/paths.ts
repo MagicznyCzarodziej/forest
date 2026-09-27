@@ -6,10 +6,11 @@ function normalizePath(path: string): string {
 }
 
 export function isPathInside(parent: string, child: string): boolean {
-  const parentNorm = normalizePath(parent);
-  const childNorm = normalizePath(child);
-  if (childNorm === parentNorm) {
+  const normalizedParent = normalizePath(parent);
+  const normalizedChild = normalizePath(child);
+
+  if (normalizedChild === normalizedParent) {
     return true;
   }
-  return childNorm.startsWith(parentNorm + sep);
+  return normalizedChild.startsWith(normalizedParent + sep);
 }

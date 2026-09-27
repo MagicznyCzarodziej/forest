@@ -45,10 +45,10 @@ async function initOrigin(origin: string): Promise<void> {
   await git(['checkout', 'master'], origin);
 }
 
-async function classicClone(origin: string, repoPath: string, branch: string): Promise<void> {
-  await git(['clone', origin, repoPath]);
+async function classicClone(origin: string, repositoryPath: string, branch: string): Promise<void> {
+  await git(['clone', origin, repositoryPath]);
   if (branch !== 'master') {
-    await git(['checkout', branch], repoPath);
+    await git(['checkout', branch], repositoryPath);
   }
 }
 
@@ -56,28 +56,28 @@ describe('convertLegacyRepository', () => {
   it('keeps a feature-branch checkout and also checks out master', async () => {
     const root = await tempRoot();
     const origin = join(root, 'origin');
-    const repoPath = join(root, 'demo');
+    const repositoryPath = join(root, 'demo');
     await initOrigin(origin);
-    await classicClone(origin, repoPath, 'feature/login');
-    await writeFile(join(repoPath, 'feature.txt'), 'feature-content\ndirty\n');
-    await writeFile(join(repoPath, 'staged.txt'), 'staged\n');
-    await git(['add', 'staged.txt'], repoPath);
-    await writeFile(join(repoPath, 'untracked.txt'), 'untracked\n');
+    await classicClone(origin, repositoryPath, 'feature/login');
+    await writeFile(join(repositoryPath, 'feature.txt'), 'feature-content\ndirty\n');
+    await writeFile(join(repositoryPath, 'staged.txt'), 'staged\n');
+    await git(['add', 'staged.txt'], repositoryPath);
+    await writeFile(join(repositoryPath, 'untracked.txt'), 'untracked\n');
 
     const logs: string[] = [];
     const result = await convertLegacyRepository({
-      repoPath,
-      repoName: 'demo',
+      repositoryPath,
+      repositoryName: 'demo',
       onOutput: (line) => logs.push(line),
     });
 
     expect(result).toEqual({ defaultBranch: 'master', currentBranch: 'feature/login' });
     expect(logs.some((line) => line.startsWith('fatal:'))).toBe(false);
-    expect(await detectDefaultBranchFromBare(join(repoPath, '.bare'))).toBe('master');
-    expect(await git(['remote', 'get-url', 'origin'], join(repoPath, '.bare'))).toBe(origin);
+    expect(await detectDefaultBranchFromBare(join(repositoryPath, '.bare'))).toBe('master');
+    expect(await git(['remote', 'get-url', 'origin'], join(repositoryPath, '.bare'))).toBe(origin);
 
-    const featureWt = join(repoPath, 'demo__feature-login');
-    const masterWt = join(repoPath, 'demo__master');
+    const featureWt = join(repositoryPath, 'demo__feature-login');
+    const masterWt = join(repositoryPath, 'demo__master');
     expect(await git(['symbolic-ref', '--short', 'HEAD'], featureWt)).toBe('feature/login');
     expect(await git(['symbolic-ref', '--short', 'HEAD'], masterWt)).toBe('master');
     expect(await readFile(join(featureWt, 'feature.txt'), 'utf8')).toBe('feature-content\ndirty\n');
@@ -87,7 +87,7 @@ describe('convertLegacyRepository', () => {
     expect(featureStatus).toContain('A  staged.txt');
     expect(featureStatus).toContain('?? untracked.txt');
     expect(await git(['status', '--porcelain'], masterWt)).toBe('');
-    expect(await readdir(repoPath)).toEqual(
+    expect(await readdir(repositoryPath)).toEqual(
       expect.arrayContaining(['.bare', 'demo__feature-login', 'demo__master']),
     );
   });
@@ -95,15 +95,15 @@ describe('convertLegacyRepository', () => {
   it('checks out master when that is the branch already in use', async () => {
     const root = await tempRoot();
     const origin = join(root, 'origin');
-    const repoPath = join(root, 'demo');
+    const repositoryPath = join(root, 'demo');
     await initOrigin(origin);
-    await classicClone(origin, repoPath, 'master');
-    await writeFile(join(repoPath, 'README.md'), 'master-content\ndirty\n');
+    await classicClone(origin, repositoryPath, 'master');
+    await writeFile(join(repositoryPath, 'README.md'), 'master-content\ndirty\n');
 
     const logs: string[] = [];
     const result = await convertLegacyRepository({
-      repoPath,
-      repoName: 'demo',
+      repositoryPath,
+      repositoryName: 'demo',
       onOutput: (line) => logs.push(line),
     });
 
@@ -112,34 +112,36 @@ describe('convertLegacyRepository', () => {
       true,
     );
     expect(logs.some((line) => line.startsWith('fatal:'))).toBe(false);
-    const masterWt = join(repoPath, 'demo__master');
+    const masterWt = join(repositoryPath, 'demo__master');
     expect(await readFile(join(masterWt, 'README.md'), 'utf8')).toBe('master-content\ndirty\n');
     expect(await git(['status', '--porcelain'], masterWt)).toContain(' M README.md');
-    expect(await readdir(repoPath)).toEqual(expect.arrayContaining(['.bare', 'demo__master']));
-    expect(await readdir(repoPath)).not.toContain('demo__feature-login');
+    expect(await readdir(repositoryPath)).toEqual(
+      expect.arrayContaining(['.bare', 'demo__master']),
+    );
+    expect(await readdir(repositoryPath)).not.toContain('demo__feature-login');
   });
 
   it('finishes a conversion that died while checking out master', async () => {
     const root = await tempRoot();
     const origin = join(root, 'origin');
-    const repoPath = join(root, 'demo');
+    const repositoryPath = join(root, 'demo');
     await initOrigin(origin);
-    await classicClone(origin, repoPath, 'master');
-    await writeFile(join(repoPath, 'README.md'), 'master-content\ndirty\n');
-    await git(['clone', '--bare', '.', join(repoPath, '.bare')], repoPath);
-    await rm(join(repoPath, '.git'), { recursive: true, force: true });
-    const folder = join(repoPath, 'demo__master');
+    await classicClone(origin, repositoryPath, 'master');
+    await writeFile(join(repositoryPath, 'README.md'), 'master-content\ndirty\n');
+    await git(['clone', '--bare', '.', join(repositoryPath, '.bare')], repositoryPath);
+    await rm(join(repositoryPath, '.git'), { recursive: true, force: true });
+    const folder = join(repositoryPath, 'demo__master');
     await mkdir(folder);
-    for (const entry of await readdir(repoPath)) {
+    for (const entry of await readdir(repositoryPath)) {
       if (entry === '.bare' || entry === 'demo__master') {
         continue;
       }
-      await rename(join(repoPath, entry), join(folder, entry));
+      await rename(join(repositoryPath, entry), join(folder, entry));
     }
 
     const result = await convertLegacyRepository({
-      repoPath,
-      repoName: 'demo',
+      repositoryPath,
+      repositoryName: 'demo',
       originUrl: origin,
       onOutput: () => undefined,
     });
@@ -147,31 +149,31 @@ describe('convertLegacyRepository', () => {
     expect(result).toEqual({ defaultBranch: 'master', currentBranch: 'master' });
     expect(await readFile(join(folder, 'README.md'), 'utf8')).toBe('master-content\ndirty\n');
     expect(await git(['status', '--porcelain'], folder)).toContain(' M README.md');
-    expect(await git(['remote', 'get-url', 'origin'], join(repoPath, '.bare'))).toBe(origin);
+    expect(await git(['remote', 'get-url', 'origin'], join(repositoryPath, '.bare'))).toBe(origin);
     expect(await git(['symbolic-ref', '--short', 'HEAD'], folder)).toBe('master');
   });
 
   it('finishes a feature-branch conversion and still adds master', async () => {
     const root = await tempRoot();
     const origin = join(root, 'origin');
-    const repoPath = join(root, 'demo');
+    const repositoryPath = join(root, 'demo');
     await initOrigin(origin);
-    await classicClone(origin, repoPath, 'feature/login');
-    await writeFile(join(repoPath, 'feature.txt'), 'feature-content\ndirty\n');
-    await git(['clone', '--bare', '.', join(repoPath, '.bare')], repoPath);
-    await rm(join(repoPath, '.git'), { recursive: true, force: true });
-    const folder = join(repoPath, 'demo__feature-login');
+    await classicClone(origin, repositoryPath, 'feature/login');
+    await writeFile(join(repositoryPath, 'feature.txt'), 'feature-content\ndirty\n');
+    await git(['clone', '--bare', '.', join(repositoryPath, '.bare')], repositoryPath);
+    await rm(join(repositoryPath, '.git'), { recursive: true, force: true });
+    const folder = join(repositoryPath, 'demo__feature-login');
     await mkdir(folder);
-    for (const entry of await readdir(repoPath)) {
+    for (const entry of await readdir(repositoryPath)) {
       if (entry === '.bare' || entry === 'demo__feature-login') {
         continue;
       }
-      await rename(join(repoPath, entry), join(folder, entry));
+      await rename(join(repositoryPath, entry), join(folder, entry));
     }
 
     const result = await convertLegacyRepository({
-      repoPath,
-      repoName: 'demo',
+      repositoryPath,
+      repositoryName: 'demo',
       originUrl: origin,
       onOutput: () => undefined,
     });
@@ -179,9 +181,9 @@ describe('convertLegacyRepository', () => {
     expect(result).toEqual({ defaultBranch: 'master', currentBranch: 'feature/login' });
     expect(await readFile(join(folder, 'feature.txt'), 'utf8')).toBe('feature-content\ndirty\n');
     expect(await git(['symbolic-ref', '--short', 'HEAD'], folder)).toBe('feature/login');
-    expect(await git(['symbolic-ref', '--short', 'HEAD'], join(repoPath, 'demo__master'))).toBe(
-      'master',
-    );
-    expect(await git(['remote', 'get-url', 'origin'], join(repoPath, '.bare'))).toBe(origin);
+    expect(
+      await git(['symbolic-ref', '--short', 'HEAD'], join(repositoryPath, 'demo__master')),
+    ).toBe('master');
+    expect(await git(['remote', 'get-url', 'origin'], join(repositoryPath, '.bare'))).toBe(origin);
   });
 });

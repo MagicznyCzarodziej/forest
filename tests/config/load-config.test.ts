@@ -26,10 +26,10 @@ describe('loadConfig', () => {
     const config = await loadConfig();
     expect(config.root).toMatch(/\/dev$/);
     expect(config.githubOwner).toEqual({ kind: 'organization', login: 'acme-corp' });
-    expect(config.repoSlugSeparator).toBe('__');
+    expect(config.repositoryWorktreeSeparator).toBe('__');
   });
 
-  it('reads a custom repo slug separator', async () => {
+  it('reads a custom repository slug separator', async () => {
     const home = await mkdtemp(join(tmpdir(), 'forest-home-'));
     process.env.HOME = home;
     await mkdir(join(home, '.config', 'forest'), { recursive: true });
@@ -38,12 +38,12 @@ describe('loadConfig', () => {
       JSON.stringify({
         root: '/Users/dev',
         githubOwner: { kind: 'user', login: 'octocat' },
-        repoSlugSeparator: '--',
+        repositoryWorktreeSeparator: '--',
       }),
     );
 
     const config = await loadConfig();
-    expect(config.repoSlugSeparator).toBe('--');
+    expect(config.repositoryWorktreeSeparator).toBe('--');
   });
 
   it('throws ConfigError when config file is missing', async () => {

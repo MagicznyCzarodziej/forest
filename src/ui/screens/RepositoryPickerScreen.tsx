@@ -1,40 +1,40 @@
 import { useMemo, useState } from 'react';
-import type { RepoCatalogEntry } from '../../domain/types';
+import type { RepositoryCatalogEntry } from '../../domain/types';
 import { SearchQuery } from '../components/SearchQuery';
 import { SelectableList } from '../components/SelectableList';
 import { useFilteredIndex } from '../hooks/useFilteredIndex';
-import { filterRepoCatalogBySearch } from '../../repos/repo-catalog';
-import { repoToListRow } from '../format/repo-rows';
+import { filterRepositoryCatalogBySearch } from '../../repositories/repository-catalog';
+import { repositoryToListRow } from '../format/repository-rows';
 import { usePickerKeyboard } from '../hooks/usePickerKeyboard';
 import { PickerBody } from './PickerBody';
 
-export interface RepoPickerScreenProps {
-  repos: RepoCatalogEntry[];
-  onSelect: (repo: RepoCatalogEntry) => void;
+export interface RepositoryPickerScreenProps {
+  repositories: RepositoryCatalogEntry[];
+  onSelect: (repository: RepositoryCatalogEntry) => void;
   onEscape: () => void;
   emptyMessage?: string;
 }
 
-export function RepoPickerScreen({
-  repos,
+export function RepositoryPickerScreen({
+  repositories,
   onSelect,
   onEscape,
   emptyMessage = 'No matching repositories',
-}: RepoPickerScreenProps) {
+}: RepositoryPickerScreenProps) {
   const [query, setQuery] = useState('');
   const { filtered, selectedIndex, setSelectedIndex } = useFilteredIndex(
-    repos,
+    repositories,
     query,
     (r) => r.name,
-    filterRepoCatalogBySearch,
+    filterRepositoryCatalogBySearch,
   );
 
-  const listRows = useMemo(() => filtered.map(repoToListRow), [filtered]);
+  const listRows = useMemo(() => filtered.map(repositoryToListRow), [filtered]);
 
   const tabHint = usePickerKeyboard({
-    items: repos,
+    items: repositories,
     getLabel: (r) => r.name,
-    filterItems: filterRepoCatalogBySearch,
+    filterItems: filterRepositoryCatalogBySearch,
     listLength: filtered.length,
     selectedIndex,
     setSelectedIndex,

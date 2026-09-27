@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { tabCompleteAdvance, tabCompleteHint } from '../../src/search/tab-complete';
 
-const repos = [
+const repositories = [
   'table-rotating-blah',
   'table-rotating-garden',
   'table-fuzzy-mine',
@@ -11,57 +11,57 @@ const repos = [
 
 describe('tabCompleteHint', () => {
   it('returns the suffix Tab would add for a shared-prefix extension', () => {
-    expect(tabCompleteHint('ta', repos, null)).toBe('ble');
-    expect(tabCompleteHint('table-r', repos, null)).toBe('otating-');
+    expect(tabCompleteHint('ta', repositories, null)).toBe('ble');
+    expect(tabCompleteHint('table-r', repositories, null)).toBe('otating-');
   });
 
   it('returns the rest of a single matching name', () => {
-    expect(tabCompleteHint('ran', repos, null)).toBe('dom-goat');
+    expect(tabCompleteHint('ran', repositories, null)).toBe('dom-goat');
   });
 
   it('returns empty when there is no completion', () => {
-    expect(tabCompleteHint('zzz', repos, null)).toBe('');
-    expect(tabCompleteHint('', repos, null)).toBe('');
+    expect(tabCompleteHint('zzz', repositories, null)).toBe('');
+    expect(tabCompleteHint('', repositories, null)).toBe('');
   });
 
   it('is case-insensitive for the typed query', () => {
-    expect(tabCompleteHint('TA', repos, null)).toBe('ble');
-    expect(tabCompleteHint('TABLE-R', repos, null)).toBe('otating-');
-    expect(tabCompleteHint('Ran', repos, null)).toBe('dom-goat');
+    expect(tabCompleteHint('TA', repositories, null)).toBe('ble');
+    expect(tabCompleteHint('TABLE-R', repositories, null)).toBe('otating-');
+    expect(tabCompleteHint('Ran', repositories, null)).toBe('dom-goat');
   });
 
   it('follows the active Tab cycle state', () => {
-    const first = tabCompleteAdvance('table-r', repos, null);
-    expect(tabCompleteHint(first.query, repos, first.state)).toBe('blah');
+    const first = tabCompleteAdvance('table-r', repositories, null);
+    expect(tabCompleteHint(first.query, repositories, first.state)).toBe('blah');
   });
 });
 
 describe('tabCompleteAdvance', () => {
   it('extends to the longest prefix shared by every name that starts with the query', () => {
-    expect(tabCompleteAdvance('ta', repos, null).query).toBe('table');
-    expect(tabCompleteAdvance('table-r', repos, null).query).toBe('table-rotating-');
+    expect(tabCompleteAdvance('ta', repositories, null).query).toBe('table');
+    expect(tabCompleteAdvance('table-r', repositories, null).query).toBe('table-rotating-');
   });
 
   it('completes a single match to the full name', () => {
-    expect(tabCompleteAdvance('tablea', repos, null).query).toBe('tableau-seven');
-    expect(tabCompleteAdvance('ran', repos, null).query).toBe('random-goat');
+    expect(tabCompleteAdvance('tablea', repositories, null).query).toBe('tableau-seven');
+    expect(tabCompleteAdvance('ran', repositories, null).query).toBe('random-goat');
   });
 
   it('leaves the query unchanged when nothing starts with it', () => {
-    expect(tabCompleteAdvance('zzz', repos, null).query).toBe('zzz');
+    expect(tabCompleteAdvance('zzz', repositories, null).query).toBe('zzz');
   });
 
   it('cycles the matching names after the shared prefix', () => {
-    const first = tabCompleteAdvance('table-r', repos, null);
+    const first = tabCompleteAdvance('table-r', repositories, null);
     expect(first.query).toBe('table-rotating-');
 
-    const second = tabCompleteAdvance(first.query, repos, first.state);
+    const second = tabCompleteAdvance(first.query, repositories, first.state);
     expect(second.query).toBe('table-rotating-blah');
 
-    const third = tabCompleteAdvance(second.query, repos, second.state);
+    const third = tabCompleteAdvance(second.query, repositories, second.state);
     expect(third.query).toBe('table-rotating-garden');
 
-    const fourth = tabCompleteAdvance(third.query, repos, third.state);
+    const fourth = tabCompleteAdvance(third.query, repositories, third.state);
     expect(fourth.query).toBe('table-rotating-blah');
   });
 
@@ -84,11 +84,11 @@ describe('tabCompleteAdvance', () => {
   });
 
   it('cycles every name that started with the original query', () => {
-    const first = tabCompleteAdvance('ta', repos, null);
+    const first = tabCompleteAdvance('ta', repositories, null);
     const seen: string[] = [];
     let step = first;
     for (let i = 0; i < 4; i += 1) {
-      step = tabCompleteAdvance(step.query, repos, step.state);
+      step = tabCompleteAdvance(step.query, repositories, step.state);
       seen.push(step.query);
     }
     expect(seen).toEqual([

@@ -23,7 +23,7 @@ describe('sortWorktrees', () => {
 describe('buildWorktreeList', () => {
   it('maps discovered worktrees with default branch flag', () => {
     const list = buildWorktreeList({
-      repoName: 'forest',
+      repositoryName: 'forest',
       defaultBranch: 'master',
       worktrees: [
         {

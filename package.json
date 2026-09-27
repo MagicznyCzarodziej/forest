@@ -1,7 +1,7 @@
 {
   "name": "forest",
   "version": "0.1.0",
-  "description": "CLI for managing repos and git worktrees",
+  "description": "CLI for managing repositories and git worktrees",
   "type": "module",
   "bin": {
     "forest": "./dist/index.js"
@@ -9,7 +9,7 @@
   "scripts": {
     "build": "vite build && chmod +x dist/index.js",
     "dev": "vite-node src/index.ts",
-    "test": "npm run lint && npm run test:unit",
+    "test": "npm run lint && npm run format:check && npm run test:unit",
     "test:unit": "npm run lint && vitest run",
     "test:watch": "vitest",
     "typecheck": "tsc --noEmit",

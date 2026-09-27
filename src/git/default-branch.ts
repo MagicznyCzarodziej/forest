@@ -30,9 +30,12 @@ async function runGit(args: string[], cwd?: string, onOutput?: GitOutputHandler)
  * A bare clone of that checkout points HEAD at the branch that was checked out,
  * so this has to be read before `.git` is moved.
  */
-export async function detectDefaultBranchFromCheckout(repoPath: string): Promise<string> {
+export async function detectDefaultBranchFromCheckout(repositoryPath: string): Promise<string> {
   try {
-    const sym = await runGit(['symbolic-ref', '--quiet', 'refs/remotes/origin/HEAD'], repoPath);
+    const sym = await runGit(
+      ['symbolic-ref', '--quiet', 'refs/remotes/origin/HEAD'],
+      repositoryPath,
+    );
     const match = sym.match(/^refs\/remotes\/origin\/(\S+)/);
     if (match?.[1]) {
       return match[1];
@@ -42,7 +45,7 @@ export async function detectDefaultBranchFromCheckout(repoPath: string): Promise
   }
 
   try {
-    const head = await runGit(['symbolic-ref', '--short', 'HEAD'], repoPath);
+    const head = await runGit(['symbolic-ref', '--short', 'HEAD'], repositoryPath);
     if (head) {
       return head;
     }
@@ -106,11 +109,11 @@ export function branchFromHead(head: string): string | null {
  * so an unborn branch is read from `symbolic-ref` or `.git/HEAD` instead.
  */
 export async function detectCurrentBranch(
-  repoPath: string,
+  repositoryPath: string,
   onOutput?: GitOutputHandler,
 ): Promise<string> {
   try {
-    const branch = await runGit(['symbolic-ref', '--short', 'HEAD'], repoPath, onOutput);
+    const branch = await runGit(['symbolic-ref', '--short', 'HEAD'], repositoryPath, onOutput);
     if (branch) {
       return branch;
     }
@@ -118,22 +121,22 @@ export async function detectCurrentBranch(
     // Detached HEAD has no symbolic ref.
   }
 
-  const fromFile = await readCheckedOutBranch(repoPath);
+  const fromFile = await readCheckedOutBranch(repositoryPath);
   if (fromFile) {
     return fromFile;
   }
 
-  const branch = await runGit(['rev-parse', '--abbrev-ref', 'HEAD'], repoPath, onOutput);
+  const branch = await runGit(['rev-parse', '--abbrev-ref', 'HEAD'], repositoryPath, onOutput);
   if (!branch || branch === 'HEAD') {
     throw new Error('Could not determine the checked-out branch');
   }
   return branch;
 }
 
-export async function repositoryHasCommits(repoPath: string): Promise<boolean> {
+export async function repositoryHasCommits(repositoryPath: string): Promise<boolean> {
   try {
     await execFileAsync('git', ['rev-parse', '--verify', '--quiet', 'HEAD'], {
-      cwd: repoPath,
+      cwd: repositoryPath,
     });
     return true;
   } catch {
@@ -141,14 +144,14 @@ export async function repositoryHasCommits(repoPath: string): Promise<boolean> {
   }
 }
 
-async function readCheckedOutBranch(repoPath: string): Promise<string | null> {
-  const gitPath = join(repoPath, '.git');
+async function readCheckedOutBranch(repositoryPath: string): Promise<string | null> {
+  const gitPath = join(repositoryPath, '.git');
   let headPath = join(gitPath, 'HEAD');
   try {
     const gitMeta = await readFile(gitPath, 'utf8');
     if (gitMeta.startsWith('gitdir:')) {
       const gitDir = gitMeta.slice('gitdir:'.length).trim();
-      headPath = join(isAbsolute(gitDir) ? gitDir : join(repoPath, gitDir), 'HEAD');
+      headPath = join(isAbsolute(gitDir) ? gitDir : join(repositoryPath, gitDir), 'HEAD');
     }
   } catch {
     // `.git` is a directory.

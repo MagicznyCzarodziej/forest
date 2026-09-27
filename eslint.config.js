@@ -7,7 +7,9 @@ import tseslint from 'typescript-eslint';
 import { defineConfig } from 'eslint/config';
 
 export default defineConfig([
-  { ignores: ['dist/**', 'package-lock.json'] },
+  {
+    ignores: ['dist/**', 'package-lock.json'],
+  },
   eslintJs.configs.recommended,
   {
     files: ['**/*.{ts,tsx}'],
@@ -23,4 +25,9 @@ export default defineConfig([
     rules: vitest.configs.recommended.rules,
   },
   eslintPluginPrettierRecommended,
+  {
+    rules: {
+      'prettier/prettier': 'warn',
+    },
+  },
 ]);

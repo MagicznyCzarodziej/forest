@@ -1,7 +1,7 @@
 import { readFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import type { ForestConfig } from '../domain/types';
-import { DEFAULT_REPO_SLUG_SEPARATOR } from '../repos/repo-structure';
+import { DEFAULT_REPOSITORY_WORKTREE_SEPARATOR } from '../repositories/repository-structure';
 import { expandPath } from '../utils/expand-path';
 import { ConfigError } from './config-error';
 import { parseGitHubOwnerFromConfig } from './parse-github-owner';
@@ -15,11 +15,11 @@ export function configPath(home = process.env.HOME): string {
   return join(home, '.config', 'forest', 'config.json');
 }
 
-export function remoteRepoCachePath(home = process.env.HOME): string {
+export function remoteRepositoryCachePath(home = process.env.HOME): string {
   if (!home) {
     throw new ConfigError('HOME is not set');
   }
-  return join(home, '.config', 'forest', 'remote-repos-cache.json');
+  return join(home, '.config', 'forest', 'remote-repositories-cache.json');
 }
 
 export async function loadConfig(home = process.env.HOME): Promise<ForestConfig> {
@@ -53,19 +53,23 @@ export async function loadConfig(home = process.env.HOME): Promise<ForestConfig>
   return {
     root: expandPath(root.trim(), home),
     githubOwner,
-    repoSlugSeparator: parseRepoSlugSeparator(record.repoSlugSeparator),
+    repositoryWorktreeSeparator: parseRepositoryWorktreeSeparator(
+      record.repositoryWorktreeSeparator,
+    ),
   };
 }
 
-function parseRepoSlugSeparator(value: unknown): string {
+function parseRepositoryWorktreeSeparator(value: unknown): string {
   if (value === undefined) {
-    return DEFAULT_REPO_SLUG_SEPARATOR;
+    return DEFAULT_REPOSITORY_WORKTREE_SEPARATOR;
   }
   if (typeof value !== 'string' || !value.trim()) {
-    throw new ConfigError('Config field "repoSlugSeparator" must be a non-empty string');
+    throw new ConfigError('Config field "repositoryWorktreeSeparator" must be a non-empty string');
   }
   if (value.includes('/') || value.includes('\\')) {
-    throw new ConfigError('Config field "repoSlugSeparator" cannot contain a path separator');
+    throw new ConfigError(
+      'Config field "repositoryWorktreeSeparator" cannot contain a path separator',
+    );
   }
   return value;
 }

@@ -1,22 +1,22 @@
 import { useCallback, useEffect, useRef, useState, type ReactNode } from 'react';
 import { Text, useInput } from 'ink';
 import { FullscreenShell } from './layout/FullscreenShell';
-import { reposSubtitle, screenFooter, screenSubtitle } from './layout/screen-chrome';
+import { repositoriesSubtitle, screenFooter, screenSubtitle } from './layout/screen-chrome';
 import type { BootstrapResult } from '../application/bootstrap';
-import type { RepoCatalogEntry, WorktreeEntry } from '../domain/types';
+import type { RepositoryCatalogEntry, WorktreeEntry } from '../domain/types';
 import { buildCloneUrl, detectGitProtocol } from '../github/clone-url';
 import { cloneRepository } from '../git/clone-repository';
 import { convertLegacyRepository } from '../git/convert-repository';
 import { createWorktreeFromBare } from '../git/create-worktree';
 import { DEFAULT_BRANCH, detectDefaultBranchFromBare } from '../git/default-branch';
-import { bareRepoPath } from '../repos/repo-structure';
+import { bareRepositoryPath } from '../repositories/repository-structure';
 import { openInIdea } from '../idea/open-in-idea';
 import { popScreen, pushScreen, currentScreen, type ScreenState } from '../navigation/screen-stack';
-import { buildRepoCatalog } from '../repos/repo-catalog';
+import { buildRepositoryCatalog } from '../repositories/repository-catalog';
 import { buildWorktreeList } from '../worktrees/worktree-catalog';
 import { listRemoteBranches, scanWorktrees } from '../worktrees/scan-worktrees';
 import { sortBranches } from '../branches/branch-picker';
-import { RepoPickerScreen } from './screens/RepoPickerScreen';
+import { RepositoryPickerScreen } from './screens/RepositoryPickerScreen';
 import { WorktreePickerScreen } from './screens/WorktreePickerScreen';
 import { BranchPickerScreen } from './screens/BranchPickerScreen';
 import { ConfirmPrompt } from './components/ConfirmPrompt';
@@ -29,19 +29,23 @@ interface ForestAppProps {
 function initialStack(start: BootstrapResult['startContext']): ScreenState[] {
   if (start.screen === 'worktrees') {
     return [
-      { type: 'repos' },
-      { type: 'worktrees', repoName: start.repoName, repoPath: start.repoPath },
+      { type: 'repositories' },
+      {
+        type: 'worktrees',
+        repositoryName: start.repositoryName,
+        repositoryPath: start.repositoryPath,
+      },
     ];
   }
-  return [{ type: 'repos' }];
+  return [{ type: 'repositories' }];
 }
 
 export function ForestApp({ bootstrap }: ForestAppProps) {
   const [stack, setStack] = useState<ScreenState[]>(() => initialStack(bootstrap.startContext));
-  const [repos, setRepos] = useState(bootstrap.repos);
+  const [repositories, setRepositories] = useState(bootstrap.repositories);
   const [worktrees, setWorktrees] = useState<WorktreeEntry[]>([]);
   const [branches, setBranches] = useState<string[]>([]);
-  const [catalogRepoPath, setCatalogRepoPath] = useState<string | null>(null);
+  const [catalogRepositoryPath, setCatalogRepositoryPath] = useState<string | null>(null);
   const catalogRequestRef = useRef(0);
   const [confirmChoice, setConfirmChoice] = useState<'yes' | 'no'>('yes');
   const [progressLines, setProgressLines] = useState<string[]>([]);
@@ -56,12 +60,12 @@ export function ForestApp({ bootstrap }: ForestAppProps) {
     }
     let cancelled = false;
     void bootstrap
-      .refreshRemoteRepos()
-      .then((remoteRepoNames) => {
+      .refreshRemoteRepositories()
+      .then((remoteRepositoryNames) => {
         if (cancelled) {
           return;
         }
-        setRepos(buildRepoCatalog({ remoteRepoNames, localRepos: bootstrap.localRepos }));
+        setRepositories(buildRepositoryCatalog(remoteRepositoryNames, bootstrap.localRepositories));
         setGithubList('ready');
       })
       .catch(() => {
@@ -82,24 +86,24 @@ export function ForestApp({ bootstrap }: ForestAppProps) {
   };
 
   const refreshWorktrees = useCallback(
-    async (repoName: string, repoPath: string) => {
+    async (repositoryName: string, repositoryPath: string) => {
       const raw = await scanWorktrees(
-        repoPath,
-        repoName,
+        repositoryPath,
+        repositoryName,
         bootstrap.stateStore,
-        bootstrap.config.repoSlugSeparator,
+        bootstrap.config.repositoryWorktreeSeparator,
       );
-      const remote = await listRemoteBranches(repoPath, true);
+      const remote = await listRemoteBranches(repositoryPath, true);
       let defaultBr: string;
       try {
-        defaultBr = await detectDefaultBranchFromBare(bareRepoPath(repoPath));
+        defaultBr = await detectDefaultBranchFromBare(bareRepositoryPath(repositoryPath));
       } catch {
         defaultBr = remote.includes(DEFAULT_BRANCH)
           ? DEFAULT_BRANCH
           : (remote[0] ?? DEFAULT_BRANCH);
       }
       const nextWorktrees = buildWorktreeList({
-        repoName,
+        repositoryName,
         defaultBranch: defaultBr,
         worktrees: raw,
       });
@@ -108,35 +112,35 @@ export function ForestApp({ bootstrap }: ForestAppProps) {
         branches: sortBranches(remote, defaultBr),
       };
     },
-    [bootstrap.config.repoSlugSeparator, bootstrap.stateStore],
+    [bootstrap.config.repositoryWorktreeSeparator, bootstrap.stateStore],
   );
 
-  const loadRepoCatalog = useCallback(
-    async (repoName: string, repoPath: string) => {
+  const loadRepositoryCatalog = useCallback(
+    async (repositoryName: string, repositoryPath: string) => {
       const request = ++catalogRequestRef.current;
-      const catalog = await refreshWorktrees(repoName, repoPath);
+      const catalog = await refreshWorktrees(repositoryName, repositoryPath);
       if (request !== catalogRequestRef.current) {
         return;
       }
       setWorktrees(catalog.worktrees);
       setBranches(catalog.branches);
-      setCatalogRepoPath(repoPath);
+      setCatalogRepositoryPath(repositoryPath);
     },
     [refreshWorktrees],
   );
 
-  const catalogRepoName =
-    screen.type === 'worktrees' || screen.type === 'branches' ? screen.repoName : '';
+  const catalogRepositoryName =
+    screen.type === 'worktrees' || screen.type === 'branches' ? screen.repositoryName : '';
   const catalogScreenPath =
-    screen.type === 'worktrees' || screen.type === 'branches' ? screen.repoPath : '';
-  const catalogReady = catalogScreenPath !== '' && catalogRepoPath === catalogScreenPath;
+    screen.type === 'worktrees' || screen.type === 'branches' ? screen.repositoryPath : '';
+  const catalogReady = catalogScreenPath !== '' && catalogRepositoryPath === catalogScreenPath;
 
   useEffect(() => {
-    if (!catalogRepoName || !catalogScreenPath) {
+    if (!catalogRepositoryName || !catalogScreenPath) {
       return;
     }
-    void loadRepoCatalog(catalogRepoName, catalogScreenPath);
-  }, [catalogRepoName, catalogScreenPath, loadRepoCatalog]);
+    void loadRepositoryCatalog(catalogRepositoryName, catalogScreenPath);
+  }, [catalogRepositoryName, catalogScreenPath, loadRepositoryCatalog]);
 
   const goBack = () => setStack((s) => popScreen(s, stackFloor));
 
@@ -150,49 +154,57 @@ export function ForestApp({ bootstrap }: ForestAppProps) {
     }
   };
 
-  const openRepoFlow = async (repo: RepoCatalogEntry) => {
-    if (!repo.clonedLocally) {
-      setStack((s) => pushScreen(s, { type: 'confirm-clone', repoName: repo.name }));
+  const openRepositoryFlow = async (repository: RepositoryCatalogEntry) => {
+    if (!repository.clonedLocally) {
+      setStack((s) => pushScreen(s, { type: 'confirm-clone', repositoryName: repository.name }));
       return;
     }
-    if (repo.structure === 'legacy' && repo.path) {
+    if (repository.structure === 'legacy' && repository.path) {
       setStack((s) =>
-        pushScreen(s, { type: 'confirm-convert', repoName: repo.name, repoPath: repo.path! }),
+        pushScreen(s, {
+          type: 'confirm-convert',
+          repositoryName: repository.name,
+          repositoryPath: repository.path!,
+        }),
       );
       return;
     }
-    await bootstrap.stateStore.touchRepo(repo.name);
-    setRepos((list) =>
-      list.map((r) => (r.name === repo.name ? { ...r, lastOpenedAt: Date.now() } : r)),
+    await bootstrap.stateStore.touchRepository(repository.name);
+    setRepositories((list) =>
+      list.map((r) => (r.name === repository.name ? { ...r, lastOpenedAt: Date.now() } : r)),
     );
     setStack((s) =>
-      pushScreen(s, { type: 'worktrees', repoName: repo.name, repoPath: repo.path! }),
+      pushScreen(s, {
+        type: 'worktrees',
+        repositoryName: repository.name,
+        repositoryPath: repository.path!,
+      }),
     );
   };
 
-  const handleClone = async (repoName: string) => {
+  const handleClone = async (repositoryName: string) => {
     const cloneUrl = buildCloneUrl(
       bootstrap.config.githubOwner,
-      repoName,
+      repositoryName,
       await detectGitProtocol(),
     );
-    await runProgress(`Cloning ${repoName}`, async () => {
+    await runProgress(`Cloning ${repositoryName}`, async () => {
       const result = await cloneRepository({
         root: bootstrap.config.root,
-        repoName,
+        repositoryName,
         cloneUrl,
-        repoSlugSeparator: bootstrap.config.repoSlugSeparator,
+        repositoryWorktreeSeparator: bootstrap.config.repositoryWorktreeSeparator,
         onOutput: appendProgress,
       });
-      await bootstrap.stateStore.touchRepo(repoName);
-      setRepos((list) =>
+      await bootstrap.stateStore.touchRepository(repositoryName);
+      setRepositories((list) =>
         list.map((r) =>
-          r.name === repoName
+          r.name === repositoryName
             ? {
                 ...r,
                 clonedLocally: true,
                 structure: 'standard',
-                path: result.repoDir,
+                path: result.repositoryDir,
                 lastOpenedAt: Date.now(),
               }
             : r,
@@ -203,80 +215,80 @@ export function ForestApp({ bootstrap }: ForestAppProps) {
         next = popScreen(next, stackFloor);
         return pushScreen(next, {
           type: 'worktrees',
-          repoName,
-          repoPath: result.repoDir,
+          repositoryName,
+          repositoryPath: result.repositoryDir,
         });
       });
-      await loadRepoCatalog(repoName, result.repoDir);
+      await loadRepositoryCatalog(repositoryName, result.repositoryDir);
     });
   };
 
-  const handleOpenLegacyWithoutConvert = async (repoName: string, repoPath: string) => {
+  const handleOpenLegacyWithoutConvert = async (repositoryName: string, repositoryPath: string) => {
     setStack((s) => popScreen(s, stackFloor));
-    await bootstrap.stateStore.touchRepo(repoName);
-    setRepos((list) =>
-      list.map((r) => (r.name === repoName ? { ...r, lastOpenedAt: Date.now() } : r)),
+    await bootstrap.stateStore.touchRepository(repositoryName);
+    setRepositories((list) =>
+      list.map((r) => (r.name === repositoryName ? { ...r, lastOpenedAt: Date.now() } : r)),
     );
-    await openInIdea(repoPath);
+    await openInIdea(repositoryPath);
   };
 
-  const handleConvert = async (repoName: string, repoPath: string) => {
+  const handleConvert = async (repositoryName: string, repositoryPath: string) => {
     const originUrl = buildCloneUrl(
       bootstrap.config.githubOwner,
-      repoName,
+      repositoryName,
       await detectGitProtocol(),
     );
-    await runProgress(`Converting ${repoName}`, async () => {
+    await runProgress(`Converting ${repositoryName}`, async () => {
       await convertLegacyRepository({
-        repoPath,
-        repoName,
-        repoSlugSeparator: bootstrap.config.repoSlugSeparator,
+        repositoryPath,
+        repositoryName,
+        repositoryWorktreeSeparator: bootstrap.config.repositoryWorktreeSeparator,
         originUrl,
         onOutput: appendProgress,
       });
-      setRepos((list) =>
-        list.map((r) => (r.name === repoName ? { ...r, structure: 'standard' } : r)),
+      setRepositories((list) =>
+        list.map((r) => (r.name === repositoryName ? { ...r, structure: 'standard' } : r)),
       );
       setStack((s) => {
         let next = popScreen(s, stackFloor);
         next = popScreen(next, stackFloor);
-        return pushScreen(next, { type: 'worktrees', repoName, repoPath });
+        return pushScreen(next, { type: 'worktrees', repositoryName, repositoryPath });
       });
-      await loadRepoCatalog(repoName, repoPath);
+      await loadRepositoryCatalog(repositoryName, repositoryPath);
     });
   };
 
   const handleOpenWorktree = async (
-    repoName: string,
-    repoPath: string,
+    repositoryName: string,
+    repositoryPath: string,
     worktree: WorktreeEntry,
   ) => {
     setOpeningWorktreePath(worktree.path);
     try {
-      await bootstrap.stateStore.touchRepo(repoName);
+      await bootstrap.stateStore.touchRepository(repositoryName);
       await bootstrap.stateStore.touchWorktree(worktree.path);
       await openInIdea(worktree.path);
-      await loadRepoCatalog(repoName, repoPath);
+      await loadRepositoryCatalog(repositoryName, repositoryPath);
     } finally {
       setOpeningWorktreePath(null);
     }
   };
 
   const handleCreateWorktree = async (
-    repoName: string,
-    repoPath: string,
+    repositoryName: string,
+    repositoryPath: string,
     newBranchName: string,
     baseBranch: string,
   ) => {
     catalogRequestRef.current += 1;
-    setCatalogRepoPath(null);
+    setCatalogRepositoryPath(null);
     await runProgress(`Creating ${newBranchName} from ${baseBranch}`, async () => {
       const result = await createWorktreeFromBare({
-        repoPath,
-        repoName,
+        repositoryPath,
+        repositoryName,
         newBranchName,
         baseBranch,
-        repoSlugSeparator: bootstrap.config.repoSlugSeparator,
+        repositoryWorktreeSeparator: bootstrap.config.repositoryWorktreeSeparator,
         onOutput: appendProgress,
       });
       await bootstrap.stateStore.touchWorktree(result.worktreePath);
@@ -284,7 +296,7 @@ export function ForestApp({ bootstrap }: ForestAppProps) {
       setStack((s) => popScreen(popScreen(s, stackFloor), stackFloor));
       try {
         await openInIdea(result.worktreePath);
-        await loadRepoCatalog(repoName, repoPath);
+        await loadRepositoryCatalog(repositoryName, repositoryPath);
       } finally {
         setOpeningWorktreePath(null);
       }
@@ -309,16 +321,16 @@ export function ForestApp({ bootstrap }: ForestAppProps) {
         if (key.return) {
           if (confirmChoice === 'no') {
             if (current.type === 'confirm-convert') {
-              void handleOpenLegacyWithoutConvert(current.repoName, current.repoPath);
+              void handleOpenLegacyWithoutConvert(current.repositoryName, current.repositoryPath);
             } else {
               setStack((s) => popScreen(s, stackFloor));
             }
             return;
           }
           if (current.type === 'confirm-clone') {
-            void handleClone(current.repoName);
+            void handleClone(current.repositoryName);
           } else {
-            void handleConvert(current.repoName, current.repoPath);
+            void handleConvert(current.repositoryName, current.repositoryPath);
           }
         }
       }
@@ -328,11 +340,11 @@ export function ForestApp({ bootstrap }: ForestAppProps) {
 
   let content: ReactNode;
 
-  if (screen.type === 'repos') {
+  if (screen.type === 'repositories') {
     content = (
-      <RepoPickerScreen
-        repos={repos}
-        onSelect={(repo) => void openRepoFlow(repo)}
+      <RepositoryPickerScreen
+        repositories={repositories}
+        onSelect={(repository) => void openRepositoryFlow(repository)}
         onEscape={goBack}
         emptyMessage={githubList === 'loading' ? 'Loading from GitHub…' : undefined}
       />
@@ -340,16 +352,18 @@ export function ForestApp({ bootstrap }: ForestAppProps) {
   } else if (screen.type === 'worktrees') {
     content = (
       <WorktreePickerScreen
-        key={screen.repoPath}
+        key={screen.repositoryPath}
         worktrees={catalogReady ? worktrees : []}
         openingWorktreePath={openingWorktreePath}
-        onOpenWorktree={(wt) => void handleOpenWorktree(screen.repoName, screen.repoPath, wt)}
+        onOpenWorktree={(wt) =>
+          void handleOpenWorktree(screen.repositoryName, screen.repositoryPath, wt)
+        }
         onCreateFromQuery={(newBranchName) =>
           setStack((s) =>
             pushScreen(s, {
               type: 'branches',
-              repoName: screen.repoName,
-              repoPath: screen.repoPath,
+              repositoryName: screen.repositoryName,
+              repositoryPath: screen.repositoryPath,
               newBranchName,
             }),
           )
@@ -361,14 +375,14 @@ export function ForestApp({ bootstrap }: ForestAppProps) {
   } else if (screen.type === 'branches') {
     content = (
       <BranchPickerScreen
-        key={`${screen.repoPath}\0${screen.newBranchName}`}
+        key={`${screen.repositoryPath}\0${screen.newBranchName}`}
         branches={catalogReady ? branches : []}
         initialQuery=""
         emptyMessage={catalogReady ? 'No matching branches' : 'Loading…'}
         onSelectBranch={(baseBranch) =>
           void handleCreateWorktree(
-            screen.repoName,
-            screen.repoPath,
+            screen.repositoryName,
+            screen.repositoryPath,
             screen.newBranchName,
             baseBranch,
           )
@@ -379,7 +393,7 @@ export function ForestApp({ bootstrap }: ForestAppProps) {
   } else if (screen.type === 'confirm-clone') {
     content = (
       <ConfirmPrompt
-        title={`Clone ${screen.repoName}?`}
+        title={`Clone ${screen.repositoryName}?`}
         message="This repository is not on disk yet."
         selected={confirmChoice}
       />
@@ -387,7 +401,7 @@ export function ForestApp({ bootstrap }: ForestAppProps) {
   } else if (screen.type === 'confirm-convert') {
     content = (
       <ConfirmPrompt
-        title={`Convert ${screen.repoName}?`}
+        title={`Convert ${screen.repositoryName}?`}
         message="Legacy layout detected. Convert to .bare + worktrees structure?"
         selected={confirmChoice}
       />
@@ -402,7 +416,9 @@ export function ForestApp({ bootstrap }: ForestAppProps) {
 
   return (
     <FullscreenShell
-      subtitle={screen.type === 'repos' ? reposSubtitle(githubList) : screenSubtitle(screen)}
+      subtitle={
+        screen.type === 'repositories' ? repositoriesSubtitle(githubList) : screenSubtitle(screen)
+      }
       footer={footer ?? undefined}
     >
       {content}

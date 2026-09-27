@@ -6,12 +6,13 @@ import { ForestApp } from '../ui/ForestApp';
 export async function runForest(): Promise<void> {
   try {
     const data = await bootstrap(process.cwd());
+
     const instance = render(<ForestApp bootstrap={data} />, {
       patchConsole: false,
       incrementalRendering: true,
-      /** Separate buffer: no scrollback growth while the UI is open (vim/htop-style). */
       alternateScreen: true,
     });
+
     await instance.waitUntilExit();
   } catch (error) {
     if (error instanceof ConfigError) {

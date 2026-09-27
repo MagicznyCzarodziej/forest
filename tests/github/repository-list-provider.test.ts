@@ -1,9 +1,12 @@
 import { describe, expect, it } from 'vitest';
-import { parseRepoNameLines, repoNamesGraphql } from '../../src/github/repo-list-provider';
+import {
+  parseRepositoryNameLines,
+  repositoryNamesGraphql,
+} from '../../src/github/repository-list-provider';
 
-describe('repoNamesGraphql', () => {
+describe('repositoryNamesGraphql', () => {
   it('pages organization repository names', () => {
-    const { query, jq } = repoNamesGraphql({ kind: 'organization', login: 'acme' });
+    const { query, jq } = repositoryNamesGraphql({ kind: 'organization', login: 'acme' });
     expect(query).toContain('organization(login: $login)');
     expect(query).toContain('repositories(first: 100, after: $endCursor');
     expect(query).toContain('nodes { name }');
@@ -13,15 +16,15 @@ describe('repoNamesGraphql', () => {
   });
 
   it('pages user repository names', () => {
-    const { query, jq } = repoNamesGraphql({ kind: 'user', login: 'octocat' });
+    const { query, jq } = repositoryNamesGraphql({ kind: 'user', login: 'octocat' });
     expect(query).toContain('user(login: $login)');
     expect(query).not.toContain('octocat');
     expect(jq).toBe('.data.user.repositories.nodes[] | select(. != null) | .name');
   });
 });
 
-describe('parseRepoNameLines', () => {
+describe('parseRepositoryNameLines', () => {
   it('drops blank lines', () => {
-    expect(parseRepoNameLines('alpha\n\nbeta\n')).toEqual(['alpha', 'beta']);
+    expect(parseRepositoryNameLines('alpha\n\nbeta\n')).toEqual(['alpha', 'beta']);
   });
 });

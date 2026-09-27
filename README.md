@@ -19,9 +19,9 @@ worktrees in IntelliJ IDEA.
 }
 ```
 
-`kind` is `user` or `organization`. Optional `repoSlugSeparator` defaults to `__`, so a worktree
-folder is named `repo__branch`. Remote repo lists are cached per owner in
-`~/.config/forest/remote-repos-cache.json` (refreshed every 30 days).
+`kind` is `user` or `organization`. Optional `repositoryWorktreeSeparator` defaults to `__`, so a
+worktree folder is named `repository__branch`. Remote repository lists are cached per owner in
+`~/.config/forest/remote-repositories-cache.json` (refreshed every 30 days).
 
 ## Install
 
@@ -35,7 +35,8 @@ npm link
 
 Then run `forest` from any directory. Quit with Ctrl+C.
 
-After pulling changes, run `npm run build` again (Vite bundles the CLI to `dist/index.js`). `npm link` does not need to be repeated.
+After pulling changes, run `npm run build` again (Vite bundles the CLI to `dist/index.js`).
+`npm link` does not need to be repeated.
 
 Remove the command with `npm unlink -g forest`.
 

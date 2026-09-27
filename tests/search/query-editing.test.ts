@@ -22,13 +22,13 @@ describe('deleteWordBackward', () => {
   it('splits on hyphens and other non-alphanumeric separators', () => {
     expect(deleteWordBackward('some-text')).toBe('some-');
     expect(deleteWordBackward('forest-cli')).toBe('forest-');
-    expect(deleteWordBackward('repo__master')).toBe('repo__');
+    expect(deleteWordBackward('repository__master')).toBe('repository__');
   });
 
   it('deletes trailing separators before the next segment', () => {
     expect(deleteWordBackward('test_')).toBe('test');
     expect(deleteWordBackward('some-')).toBe('some');
-    expect(deleteWordBackward('repo__')).toBe('repo');
+    expect(deleteWordBackward('repository__')).toBe('repository');
   });
 
   it('deletes trailing whitespace as its own step', () => {

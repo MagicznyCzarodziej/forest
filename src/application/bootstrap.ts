@@ -1,47 +1,54 @@
-import { loadConfig, remoteRepoCachePath } from '../config/load-config';
-import { GhCliRepoListProvider } from '../github/repo-list-provider';
-import { cachedRemoteRepoNames, resolveRemoteRepoNames } from '../github/remote-repo-cache';
-import { buildRepoCatalog } from '../repos/repo-catalog';
-import { detectStartContext } from '../repos/detect-context';
-import { resolveRepoContextFromCwd } from '../repos/resolve-repo-context';
-import { scanLocalRepos } from '../repos/scan-local-repos';
-import { RepoStateStore } from '../state/repo-state';
-import type { LocalRepoMeta, RepoCatalogEntry } from '../domain/types';
-import type { StartContext } from '../repos/detect-context';
+import { loadConfig, remoteRepositoryCachePath } from '../config/load-config';
+import { GitHubCliRepositoryListProvider } from '../github/repository-list-provider';
+import {
+  cachedRemoteRepositoryNames,
+  resolveRemoteRepositoryNames,
+} from '../github/remote-repository-cache';
+import { buildRepositoryCatalog } from '../repositories/repository-catalog';
+import { resolveStartContext } from '../repositories/detect-context';
+import { resolveRepositoryContextFromCurrentPath } from '../repositories/resolve-repository-context';
+import { scanLocalRepositories } from '../repositories/scan-local-repositories';
+import { RepositoryStateStore } from '../state/repository-state';
+import type { ForestConfig, LocalRepositoryMeta, RepositoryCatalogEntry } from '../domain/types';
+import type { StartContext } from '../repositories/detect-context';
 
-const defaultRepoListProvider = new GhCliRepoListProvider();
+const defaultRepositoryListProvider = new GitHubCliRepositoryListProvider();
 
 export interface BootstrapResult {
-  config: Awaited<ReturnType<typeof loadConfig>>;
-  repos: RepoCatalogEntry[];
-  localRepos: LocalRepoMeta[];
+  config: ForestConfig;
+  repositories: RepositoryCatalogEntry[];
+  localRepositories: LocalRepositoryMeta[];
   /** False when the GitHub list is missing or older than 30 days. */
   remoteListFresh: boolean;
-  refreshRemoteRepos: () => Promise<string[]>;
+  refreshRemoteRepositories: () => Promise<string[]>;
   startContext: StartContext;
-  stateStore: RepoStateStore;
+  stateStore: RepositoryStateStore;
 }
 
-export async function bootstrap(cwd = process.cwd()): Promise<BootstrapResult> {
+export async function bootstrap(startPath: string): Promise<BootstrapResult> {
   const config = await loadConfig();
-  const stateStore = new RepoStateStore(RepoStateStore.defaultPath());
-  const localRepos = await scanLocalRepos(config.root, stateStore, config.repoSlugSeparator);
-  const cachePath = remoteRepoCachePath();
-  const cached = await cachedRemoteRepoNames(cachePath, config.githubOwner);
-  const repos = buildRepoCatalog({ remoteRepoNames: cached.repoNames, localRepos });
-  const repoContext = await resolveRepoContextFromCwd(cwd, config.root);
-  const startContext = detectStartContext(cwd, config.root, repoContext);
+  const stateStore = new RepositoryStateStore(RepositoryStateStore.defaultPath());
+  const localRepositories = await scanLocalRepositories(
+    config.root,
+    stateStore,
+    config.repositoryWorktreeSeparator,
+  );
+  const cachePath = remoteRepositoryCachePath();
+  const cached = await cachedRemoteRepositoryNames(cachePath, config.githubOwner);
+  const repositories = buildRepositoryCatalog(cached.repositoryNames, localRepositories);
+  const repositoryContext = await resolveRepositoryContextFromCurrentPath(startPath, config.root);
+  const startContext = resolveStartContext(repositoryContext);
 
   return {
     config,
-    repos,
-    localRepos,
+    repositories,
+    localRepositories,
     remoteListFresh: cached.fresh,
-    refreshRemoteRepos: () =>
-      resolveRemoteRepoNames({
+    refreshRemoteRepositories: () =>
+      resolveRemoteRepositoryNames({
         cachePath,
         owner: config.githubOwner,
-        provider: defaultRepoListProvider,
+        provider: defaultRepositoryListProvider,
       }),
     startContext,
     stateStore,

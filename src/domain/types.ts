@@ -1,25 +1,25 @@
 import type { GitHubOwner } from './github-owner';
 
-export type RepoStructure = 'standard' | 'legacy' | 'unknown' | 'none';
+export type RepositoryStructure = 'standard' | 'legacy' | 'unknown' | 'none';
 
 export interface ForestConfig {
   root: string;
   githubOwner: GitHubOwner;
-  /** Between the repo name and branch slug in a worktree folder, such as `repo__master`. */
-  repoSlugSeparator: string;
+  /** Between the repository name and branch name in a worktree folder, such as `repository__master`. */
+  repositoryWorktreeSeparator: string;
 }
 
-export interface LocalRepoMeta {
+export interface LocalRepositoryMeta {
   name: string;
   path: string;
-  structure: Exclude<RepoStructure, 'none'>;
+  structure: Exclude<RepositoryStructure, 'none'>;
   lastOpenedAt?: number;
 }
 
-export interface RepoCatalogEntry {
+export interface RepositoryCatalogEntry {
   name: string;
   clonedLocally: boolean;
-  structure: RepoStructure;
+  structure: RepositoryStructure;
   path?: string;
   lastOpenedAt?: number;
 }

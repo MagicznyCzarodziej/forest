@@ -2,7 +2,7 @@ import { execFile } from 'node:child_process';
 import { lstat, mkdir, readFile, readdir, realpath, rename, rm, stat } from 'node:fs/promises';
 import { dirname, isAbsolute, join, resolve } from 'node:path';
 import { promisify } from 'node:util';
-import { bareRepoPath, worktreeFolderName } from '../repos/repo-structure';
+import { bareRepositoryPath, worktreeFolderName } from '../repositories/repository-structure';
 import {
   detectCurrentBranch,
   detectDefaultBranchFromCheckout,
@@ -11,6 +11,7 @@ import {
   type GitOutputHandler,
 } from './default-branch';
 import { runGitStreaming } from './run-git';
+import { Stats } from 'node:fs';
 
 const execFileAsync = promisify(execFile);
 
@@ -30,19 +31,19 @@ const PER_WORKTREE_FILES = [
 const PER_WORKTREE_DIRS = ['sequencer', 'rebase-merge', 'rebase-apply'];
 
 async function moveRootIntoWorktree(
-  repoPath: string,
+  repositoryPath: string,
   worktreePath: string,
   reserved: Set<string>,
   onOutput: GitOutputHandler,
 ): Promise<void> {
   await mkdir(worktreePath, { recursive: true });
-  const entries = await readdir(repoPath);
+  const entries = await readdir(repositoryPath);
   for (const entry of entries) {
     if (reserved.has(entry)) {
       continue;
     }
     onOutput(`Moving ${entry} → worktree`);
-    await rename(join(repoPath, entry), join(worktreePath, entry));
+    await rename(join(repositoryPath, entry), join(worktreePath, entry));
   }
 }
 
@@ -52,15 +53,15 @@ export interface ConvertRepositoryResult {
 }
 
 export async function convertLegacyRepository(input: {
-  repoPath: string;
-  repoName: string;
-  repoSlugSeparator?: string;
-  /** Used when a failed conversion already replaced origin with this repo path. */
+  repositoryPath: string;
+  repositoryName: string;
+  repositoryWorktreeSeparator?: string;
+  /** Used when a failed conversion already replaced origin with this repository path. */
   originUrl?: string;
   onOutput: GitOutputHandler;
 }): Promise<ConvertRepositoryResult> {
-  const barePath = bareRepoPath(input.repoPath);
-  const rootGit = join(input.repoPath, '.git');
+  const barePath = bareRepositoryPath(input.repositoryPath);
+  const rootGit = join(input.repositoryPath, '.git');
   const rootGitStat = await lstatOrNull(rootGit);
 
   if (rootGitStat?.isDirectory()) {
@@ -72,26 +73,26 @@ export async function convertLegacyRepository(input: {
   if (await isDirectory(barePath)) {
     return resumeBareConversion(input, barePath);
   }
-  throw new Error(`No git repository at ${input.repoPath}`);
+  throw new Error(`No git repository at ${input.repositoryPath}`);
 }
 
 async function convertMainCheckout(
   input: {
-    repoPath: string;
-    repoName: string;
-    repoSlugSeparator?: string;
+    repositoryPath: string;
+    repositoryName: string;
+    repositoryWorktreeSeparator?: string;
     originUrl?: string;
     onOutput: GitOutputHandler;
   },
   barePath: string,
   rootGit: string,
 ): Promise<ConvertRepositoryResult> {
-  const currentBranch = await detectCurrentBranch(input.repoPath);
-  if (!(await repositoryHasCommits(input.repoPath))) {
+  const currentBranch = await detectCurrentBranch(input.repositoryPath);
+  if (!(await repositoryHasCommits(input.repositoryPath))) {
     return convertUnbornRepository(input, currentBranch);
   }
 
-  const preferredDefault = await detectDefaultBranchFromCheckout(input.repoPath);
+  const preferredDefault = await detectDefaultBranchFromCheckout(input.repositoryPath);
   input.onOutput(`Creating bare repository at ${barePath}`);
   await rename(rootGit, barePath);
 
@@ -107,9 +108,9 @@ async function convertMainCheckout(
 /** A previous attempt cloned `.bare` and moved the working tree, then `worktree add` failed. */
 async function resumeBareConversion(
   input: {
-    repoPath: string;
-    repoName: string;
-    repoSlugSeparator?: string;
+    repositoryPath: string;
+    repositoryName: string;
+    repositoryWorktreeSeparator?: string;
     originUrl?: string;
     onOutput: GitOutputHandler;
   },
@@ -135,9 +136,9 @@ async function resumeBareConversion(
 }
 
 async function finishConversion(input: {
-  repoPath: string;
-  repoName: string;
-  repoSlugSeparator?: string;
+  repositoryPath: string;
+  repositoryName: string;
+  repositoryWorktreeSeparator?: string;
   originUrl?: string;
   onOutput: GitOutputHandler;
   barePath: string;
@@ -146,7 +147,7 @@ async function finishConversion(input: {
   moveRootFiles: boolean;
 }): Promise<ConvertRepositoryResult> {
   await configureBare(input.barePath);
-  await repairOrigin(input.barePath, input.repoPath, input.originUrl, input.onOutput);
+  await repairOrigin(input.barePath, input.repositoryPath, input.originUrl, input.onOutput);
   const defaultBranch = await resolveDefaultBranch(
     input.barePath,
     input.preferredDefault,
@@ -155,16 +156,16 @@ async function finishConversion(input: {
   );
 
   const currentFolder = worktreeFolderName(
-    input.repoName,
+    input.repositoryName,
     input.currentBranch,
-    input.repoSlugSeparator,
+    input.repositoryWorktreeSeparator,
   );
-  const currentWt = join(input.repoPath, currentFolder);
+  const currentWt = join(input.repositoryPath, currentFolder);
   const alreadyRegistered = await pathExists(join(currentWt, '.git'));
   await registerCurrentWorktree(input.barePath, currentWt, input.currentBranch, input.onOutput);
   if (input.moveRootFiles) {
     await moveRootIntoWorktree(
-      input.repoPath,
+      input.repositoryPath,
       currentWt,
       new Set(['.bare', currentFolder]),
       input.onOutput,
@@ -183,11 +184,11 @@ async function finishConversion(input: {
 
   if (defaultBranch !== input.currentBranch) {
     const defaultFolder = worktreeFolderName(
-      input.repoName,
+      input.repositoryName,
       defaultBranch,
-      input.repoSlugSeparator,
+      input.repositoryWorktreeSeparator,
     );
-    const defaultWt = join(input.repoPath, defaultFolder);
+    const defaultWt = join(input.repositoryPath, defaultFolder);
     if (!(await pathExists(defaultWt))) {
       input.onOutput(`Checking out ${defaultBranch} into ${defaultWt}`);
       await runGitStreaming(['-C', input.barePath, 'worktree', 'add', defaultWt, defaultBranch], {
@@ -252,7 +253,7 @@ async function configureBare(barePath: string): Promise<void> {
 
 async function repairOrigin(
   barePath: string,
-  repoPath: string,
+  repositoryPath: string,
   originUrl: string | undefined,
   onOutput: GitOutputHandler,
 ): Promise<void> {
@@ -266,7 +267,7 @@ async function repairOrigin(
   } catch {
     current = null;
   }
-  if (current && !(await originPointsAtRepo(current, repoPath))) {
+  if (current && !(await originPointsAtRepository(current, repositoryPath))) {
     return;
   }
   onOutput(`Restoring origin to ${originUrl}`);
@@ -279,7 +280,10 @@ async function repairOrigin(
   }
 }
 
-async function originPointsAtRepo(originUrl: string, repoPath: string): Promise<boolean> {
+async function originPointsAtRepository(
+  originUrl: string,
+  repositoryPath: string,
+): Promise<boolean> {
   const trimmed = originUrl.trim();
   if (trimmed === '.' || trimmed === './' || trimmed === './.') {
     return true;
@@ -292,9 +296,9 @@ async function originPointsAtRepo(originUrl: string, repoPath: string): Promise<
     originPath = trimmed.slice('file://'.length);
   }
   try {
-    const originReal = await realpath(resolve(repoPath, originPath));
-    const repoReal = await realpath(repoPath);
-    return originReal === repoReal || originReal === join(repoReal, '.bare');
+    const originReal = await realpath(resolve(repositoryPath, originPath));
+    const repositoryReal = await realpath(repositoryPath);
+    return originReal === repositoryReal || originReal === join(repositoryReal, '.bare');
   } catch {
     return false;
   }
@@ -367,16 +371,20 @@ async function moveIfExists(from: string, to: string): Promise<void> {
 /** A repository with no commits cannot be bare-cloned. Keep its index and files. */
 async function convertUnbornRepository(
   input: {
-    repoPath: string;
-    repoName: string;
-    repoSlugSeparator?: string;
+    repositoryPath: string;
+    repositoryName: string;
+    repositoryWorktreeSeparator?: string;
     onOutput: GitOutputHandler;
   },
   currentBranch: string,
 ): Promise<ConvertRepositoryResult> {
-  const barePath = bareRepoPath(input.repoPath);
-  const folder = worktreeFolderName(input.repoName, currentBranch, input.repoSlugSeparator);
-  const worktreePath = join(input.repoPath, folder);
+  const barePath = bareRepositoryPath(input.repositoryPath);
+  const folder = worktreeFolderName(
+    input.repositoryName,
+    currentBranch,
+    input.repositoryWorktreeSeparator,
+  );
+  const worktreePath = join(input.repositoryPath, folder);
 
   input.onOutput(`No commits yet on ${currentBranch}`);
   input.onOutput(`Creating bare repository at ${barePath}`);
@@ -386,7 +394,7 @@ async function convertUnbornRepository(
 
   input.onOutput(`Moving the working tree into ${folder}`);
   await moveRootIntoWorktree(
-    input.repoPath,
+    input.repositoryPath,
     worktreePath,
     new Set(['.bare', folder]),
     input.onOutput,
@@ -416,7 +424,7 @@ async function isDirectory(path: string): Promise<boolean> {
   return info?.isDirectory() ?? false;
 }
 
-async function lstatOrNull(path: string): Promise<Awaited<ReturnType<typeof lstat>> | null> {
+async function lstatOrNull(path: string): Promise<Stats | null> {
   try {
     return await lstat(path);
   } catch (error) {

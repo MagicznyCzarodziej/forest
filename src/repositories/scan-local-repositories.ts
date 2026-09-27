@@ -1,9 +1,12 @@
 import { readdir, stat, readFile } from 'node:fs/promises';
 import { join } from 'node:path';
-import type { LocalRepoMeta } from '../domain/types';
+import type { LocalRepositoryMeta } from '../domain/types';
 import { DEFAULT_BRANCH } from '../git/default-branch';
-import { DEFAULT_REPO_SLUG_SEPARATOR, detectRepoStructure } from './repo-structure';
-import type { RepoStateStore } from '../state/repo-state';
+import {
+  DEFAULT_REPOSITORY_WORKTREE_SEPARATOR,
+  detectRepositoryStructure,
+} from './repository-structure';
+import type { RepositoryStateStore } from '../state/repository-state';
 
 async function pathExists(path: string): Promise<boolean> {
   try {
@@ -14,8 +17,10 @@ async function pathExists(path: string): Promise<boolean> {
   }
 }
 
-async function readDefaultBranch(repoPath: string, hasBare: boolean): Promise<string> {
-  const headPath = hasBare ? join(repoPath, '.bare', 'HEAD') : join(repoPath, '.git', 'HEAD');
+async function readDefaultBranch(repositoryPath: string, hasBare: boolean): Promise<string> {
+  const headPath = hasBare
+    ? join(repositoryPath, '.bare', 'HEAD')
+    : join(repositoryPath, '.git', 'HEAD');
   try {
     const head = await readFile(headPath, 'utf8');
     const match = head.match(/ref: refs\/heads\/(.+)/);
@@ -25,11 +30,11 @@ async function readDefaultBranch(repoPath: string, hasBare: boolean): Promise<st
   }
 }
 
-export async function scanLocalRepos(
+export async function scanLocalRepositories(
   root: string,
-  stateStore: RepoStateStore,
-  repoSlugSeparator = DEFAULT_REPO_SLUG_SEPARATOR,
-): Promise<LocalRepoMeta[]> {
+  stateStore: RepositoryStateStore,
+  repositoryWorktreeSeparator = DEFAULT_REPOSITORY_WORKTREE_SEPARATOR,
+): Promise<LocalRepositoryMeta[]> {
   let entries: string[];
   try {
     entries = await readdir(root);
@@ -37,25 +42,25 @@ export async function scanLocalRepos(
     return [];
   }
 
-  const repos: LocalRepoMeta[] = [];
+  const repositories: LocalRepositoryMeta[] = [];
   for (const name of entries) {
     if (name.startsWith('.')) {
       continue;
     }
-    const repoPath = join(root, name);
-    const info = await stat(repoPath);
+    const repositoryPath = join(root, name);
+    const info = await stat(repositoryPath);
     if (!info.isDirectory()) {
       continue;
     }
 
-    const hasBare = await pathExists(join(repoPath, '.bare'));
-    const hasRootGit = await pathExists(join(repoPath, '.git'));
+    const hasBare = await pathExists(join(repositoryPath, '.bare'));
+    const hasRootGit = await pathExists(join(repositoryPath, '.git'));
     if (!hasBare && !hasRootGit) {
       continue;
     }
 
-    const children = await readdir(repoPath);
-    const defaultBranch = await readDefaultBranch(repoPath, hasBare);
+    const children = await readdir(repositoryPath);
+    const defaultBranch = await readDefaultBranch(repositoryPath, hasBare);
     let hasWorktreeCheckout: boolean | undefined;
     if (hasBare) {
       hasWorktreeCheckout = false;
@@ -63,20 +68,20 @@ export async function scanLocalRepos(
         if (child === '.bare' || child.startsWith('.')) {
           continue;
         }
-        if (await pathExists(join(repoPath, child, '.git'))) {
+        if (await pathExists(join(repositoryPath, child, '.git'))) {
           hasWorktreeCheckout = true;
           break;
         }
       }
     }
-    const structure = detectRepoStructure({
-      repoPath,
-      repoName: name,
+    const structure = detectRepositoryStructure({
+      repositoryPath,
+      repositoryName: name,
       hasBareDir: hasBare,
       hasRootGit,
       childDirNames: children,
       defaultBranch,
-      repoSlugSeparator,
+      repositoryWorktreeSeparator,
       hasWorktreeCheckout,
     });
 
@@ -84,14 +89,14 @@ export async function scanLocalRepos(
       continue;
     }
 
-    const state = await stateStore.getRepo(name);
-    repos.push({
+    const state = await stateStore.getRepository(name);
+    repositories.push({
       name,
-      path: repoPath,
+      path: repositoryPath,
       structure,
       lastOpenedAt: state?.lastOpenedAt,
     });
   }
 
-  return repos;
+  return repositories;
 }

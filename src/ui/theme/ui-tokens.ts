@@ -2,7 +2,7 @@ import { oneDark } from './one-dark';
 import type { HintRole, SuffixRole } from '../labels';
 
 export const ui = {
-  /** Repo / branch names — highest contrast. */
+  /** repository / branch names — highest contrast. */
   listName: oneDark.bright,
   listNameOnSelection: oneDark.bright,
   filter: oneDark.bright,

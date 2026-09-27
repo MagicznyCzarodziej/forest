@@ -1,7 +1,7 @@
 import { stat } from 'node:fs/promises';
 import { join } from 'node:path';
-import { bareRepoPath, worktreeFolderName } from '../repos/repo-structure';
-import { branchToWorktreeSlug } from './branch-slug';
+import { bareRepositoryPath, worktreeFolderName } from '../repositories/repository-structure';
+import { branchToWorktreeSlug } from './branchToPath';
 import { repositoryHasCommits, type GitOutputHandler } from './default-branch';
 import { runGitStreaming } from './run-git';
 
@@ -23,20 +23,20 @@ async function pathExists(path: string): Promise<boolean> {
 }
 
 export async function createWorktreeFromBare(input: {
-  repoPath: string;
-  repoName: string;
+  repositoryPath: string;
+  repositoryName: string;
   /** Name of the branch and worktree folder to create. */
   newBranchName: string;
   /** Existing branch the new branch starts from. */
   baseBranch: string;
-  repoSlugSeparator?: string;
+  repositoryWorktreeSeparator?: string;
   onOutput: GitOutputHandler;
 }): Promise<CreateWorktreeResult> {
-  const barePath = bareRepoPath(input.repoPath);
-  const slug = branchToWorktreeSlug(input.newBranchName);
+  const barePath = bareRepositoryPath(input.repositoryPath);
+  const worktree = branchToWorktreeSlug(input.newBranchName);
   const worktreePath = join(
-    input.repoPath,
-    worktreeFolderName(input.repoName, slug, input.repoSlugSeparator),
+    input.repositoryPath,
+    worktreeFolderName(input.repositoryName, worktree, input.repositoryWorktreeSeparator),
   );
 
   if (await pathExists(worktreePath)) {

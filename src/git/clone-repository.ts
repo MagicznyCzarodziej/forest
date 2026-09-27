@@ -2,15 +2,15 @@ import { mkdir } from 'node:fs/promises';
 import { join } from 'node:path';
 import { withGitHubCredentials } from '../github/clone-url';
 import {
-  bareRepoPath,
+  bareRepositoryPath,
   defaultWorktreePath as worktreePathForBranch,
-} from '../repos/repo-structure';
+} from '../repositories/repository-structure';
 import { detectDefaultBranchFromRemote } from './default-branch';
 import type { GitOutputHandler } from './default-branch';
 import { runGitStreaming } from './run-git';
 
 export interface CloneRepositoryResult {
-  repoDir: string;
+  repositoryDir: string;
   barePath: string;
   defaultWorktreePath: string;
   defaultBranch: string;
@@ -18,19 +18,19 @@ export interface CloneRepositoryResult {
 
 export async function cloneRepository(input: {
   root: string;
-  repoName: string;
+  repositoryName: string;
   cloneUrl: string;
-  repoSlugSeparator?: string;
+  repositoryWorktreeSeparator?: string;
   onOutput: GitOutputHandler;
 }): Promise<CloneRepositoryResult> {
-  const repoDir = join(input.root, input.repoName);
-  const barePath = bareRepoPath(repoDir);
+  const repositoryDir = join(input.root, input.repositoryName);
+  const barePath = bareRepositoryPath(repositoryDir);
 
-  input.onOutput(`Resolving default branch for ${input.repoName}…`);
+  input.onOutput(`Resolving default branch for ${input.repositoryName}…`);
   const defaultBranch = await detectDefaultBranchFromRemote(input.cloneUrl, input.onOutput);
 
-  input.onOutput(`Creating ${repoDir}`);
-  await mkdir(repoDir, { recursive: true });
+  input.onOutput(`Creating ${repositoryDir}`);
+  await mkdir(repositoryDir, { recursive: true });
 
   input.onOutput(`Cloning bare into ${barePath}`);
   await runGitStreaming(
@@ -45,10 +45,10 @@ export async function cloneRepository(input: {
   );
 
   const defaultWtPath = worktreePathForBranch(
-    repoDir,
-    input.repoName,
+    repositoryDir,
+    input.repositoryName,
     defaultBranch,
-    input.repoSlugSeparator,
+    input.repositoryWorktreeSeparator,
   );
 
   input.onOutput(`Cloning ${defaultBranch} into ${defaultWtPath}`);
@@ -58,7 +58,7 @@ export async function cloneRepository(input: {
   );
 
   return {
-    repoDir,
+    repositoryDir,
     barePath,
     defaultWorktreePath: defaultWtPath,
     defaultBranch,

@@ -8,13 +8,13 @@ export type GitProtocol = 'https' | 'ssh';
 
 export function buildCloneUrl(
   owner: GitHubOwner,
-  repoName: string,
+  repositoryName: string,
   protocol: GitProtocol = 'https',
 ): string {
   if (protocol === 'ssh') {
-    return `git@github.com:${owner.login}/${repoName}.git`;
+    return `git@github.com:${owner.login}/${repositoryName}.git`;
   }
-  return `https://github.com/${owner.login}/${repoName}.git`;
+  return `https://github.com/${owner.login}/${repositoryName}.git`;
 }
 
 /** HTTPS clones use the `gh` token, which can read private repositories. */

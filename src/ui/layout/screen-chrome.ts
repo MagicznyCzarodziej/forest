@@ -1,6 +1,6 @@
 import type { ScreenState } from '../../navigation/screen-stack';
 
-export function reposSubtitle(githubList: 'ready' | 'loading' | 'error'): string {
+export function repositoriesSubtitle(githubList: 'ready' | 'loading' | 'error'): string {
   if (githubList === 'loading') {
     return 'Repositories · Loading from GitHub…';
   }
@@ -12,12 +12,12 @@ export function reposSubtitle(githubList: 'ready' | 'loading' | 'error'): string
 
 export function screenSubtitle(screen: ScreenState): string {
   switch (screen.type) {
-    case 'repos':
-      return reposSubtitle('ready');
+    case 'repositories':
+      return repositoriesSubtitle('ready');
     case 'worktrees':
-      return `${screen.repoName} · Worktrees`;
+      return `${screen.repositoryName} · Worktrees`;
     case 'branches':
-      return `${screen.repoName} · Create ${screen.newBranchName} from a branch`;
+      return `${screen.repositoryName} · Create ${screen.newBranchName} from a branch`;
     case 'confirm-clone':
       return 'Clone repository';
     case 'confirm-convert':

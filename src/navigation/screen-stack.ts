@@ -1,9 +1,9 @@
 export type ScreenState =
-  | { type: 'repos' }
-  | { type: 'worktrees'; repoName: string; repoPath: string }
-  | { type: 'branches'; repoName: string; repoPath: string; newBranchName: string }
-  | { type: 'confirm-clone'; repoName: string }
-  | { type: 'confirm-convert'; repoName: string; repoPath: string }
+  | { type: 'repositories' }
+  | { type: 'worktrees'; repositoryName: string; repositoryPath: string }
+  | { type: 'branches'; repositoryName: string; repositoryPath: string; newBranchName: string }
+  | { type: 'confirm-clone'; repositoryName: string }
+  | { type: 'confirm-convert'; repositoryName: string; repositoryPath: string }
   | { type: 'progress'; title: string; message: string };
 
 export function pushScreen(stack: ScreenState[], screen: ScreenState): ScreenState[] {
@@ -18,5 +18,5 @@ export function popScreen(stack: ScreenState[], minimumLength = 1): ScreenState[
 }
 
 export function currentScreen(stack: ScreenState[]): ScreenState {
-  return stack[stack.length - 1] ?? { type: 'repos' };
+  return stack[stack.length - 1] ?? { type: 'repositories' };
 }

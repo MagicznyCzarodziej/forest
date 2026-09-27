@@ -3,9 +3,9 @@ import { join } from 'node:path';
 import { execFile } from 'node:child_process';
 import { promisify } from 'node:util';
 import { branchFromHead, detectCurrentBranch } from '../git/default-branch';
-import { DEFAULT_REPO_SLUG_SEPARATOR } from '../repos/repo-structure';
+import { DEFAULT_REPOSITORY_WORKTREE_SEPARATOR } from '../repositories/repository-structure';
 import type { RawWorktree } from './worktree-catalog';
-import { type RepoStateStore } from '../state/repo-state';
+import { type RepositoryStateStore } from '../state/repository-state';
 
 const execFileAsync = promisify(execFile);
 
@@ -19,20 +19,20 @@ async function readBranchAtPath(path: string): Promise<string | null> {
 }
 
 export async function scanWorktrees(
-  repoPath: string,
-  repoName: string,
-  stateStore: RepoStateStore,
-  repoSlugSeparator = DEFAULT_REPO_SLUG_SEPARATOR,
+  repositoryPath: string,
+  repositoryName: string,
+  stateStore: RepositoryStateStore,
+  repositoryWorktreeSeparator = DEFAULT_REPOSITORY_WORKTREE_SEPARATOR,
 ): Promise<RawWorktree[]> {
-  const entries = await readdir(repoPath);
-  const prefix = `${repoName}${repoSlugSeparator}`;
+  const entries = await readdir(repositoryPath);
+  const prefix = `${repositoryName}${repositoryWorktreeSeparator}`;
   const worktrees: RawWorktree[] = [];
 
   for (const entry of entries) {
     if (!entry.startsWith(prefix)) {
       continue;
     }
-    const path = join(repoPath, entry);
+    const path = join(repositoryPath, entry);
     const info = await stat(path);
     if (!info.isDirectory()) {
       continue;
@@ -61,7 +61,7 @@ export function parseBranchNames(output: string, remoteTracking: boolean): strin
     .filter((branch) => branch && !branch.includes('HEAD'));
 }
 
-/** An unborn bare repo has a symbolic HEAD but no `refs/heads` entries yet. */
+/** An unborn bare repository has a symbolic HEAD but no `refs/heads` entries yet. */
 export function withUnbornHeadBranch(branches: string[], head: string): string[] {
   if (branches.length > 0) {
     return branches;
@@ -70,8 +70,8 @@ export function withUnbornHeadBranch(branches: string[], head: string): string[]
   return branch ? [branch] : [];
 }
 
-export async function listRemoteBranches(repoPath: string, bare: boolean): Promise<string[]> {
-  const cwd = bare ? join(repoPath, '.bare') : repoPath;
+export async function listRemoteBranches(repositoryPath: string, bare: boolean): Promise<string[]> {
+  const cwd = bare ? join(repositoryPath, '.bare') : repositoryPath;
   try {
     // `git clone --bare` copies remote branches to refs/heads rather than
     // refs/remotes/origin, so `git branch -r` is empty in forest's layout.

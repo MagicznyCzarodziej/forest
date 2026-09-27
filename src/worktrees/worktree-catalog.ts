@@ -19,7 +19,7 @@ export interface RawWorktree {
 }
 
 export interface BuildWorktreeListInput {
-  repoName: string;
+  repositoryName: string;
   defaultBranch: string;
   worktrees: RawWorktree[];
 }
