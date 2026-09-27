@@ -8,10 +8,17 @@ import {
 } from "react";
 import { fuzzyFilter } from "../../search/fuzzy-filter.js";
 
+export type FilteredIndexFilter<T> = (
+  items: T[],
+  query: string,
+  getLabel: (item: T) => string,
+) => T[];
+
 export function useFilteredIndex<T>(
   items: T[],
   query: string,
   getLabel: (item: T) => string,
+  filterItems: FilteredIndexFilter<T> = fuzzyFilter,
 ): {
   filtered: T[];
   selectedIndex: number;
@@ -21,8 +28,8 @@ export function useFilteredIndex<T>(
   getLabelRef.current = getLabel;
 
   const filtered = useMemo(
-    () => fuzzyFilter(items, query, (item) => getLabelRef.current(item)),
-    [items, query],
+    () => filterItems(items, query, (item) => getLabelRef.current(item)),
+    [items, query, filterItems],
   );
   const [selectedIndex, setSelectedIndex] = useState(0);
 

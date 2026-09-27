@@ -1,4 +1,5 @@
 import type { LocalRepoMeta, RepoCatalogEntry } from "../domain/types.js";
+import { fuzzyFilter } from "../search/fuzzy-filter.js";
 
 export function sortReposByLastOpened(repos: RepoCatalogEntry[]): RepoCatalogEntry[] {
   return [...repos].sort((a, b) => {
@@ -44,4 +45,21 @@ export function buildRepoCatalog(input: BuildRepoCatalogInput): RepoCatalogEntry
   }
 
   return sortReposByLastOpened(entries);
+}
+
+export function filterRepoCatalogBySearch(
+  repos: RepoCatalogEntry[],
+  query: string,
+  getLabel: (repo: RepoCatalogEntry) => string,
+): RepoCatalogEntry[] {
+  const matched = fuzzyFilter(repos, query, getLabel);
+  if (!query.trim()) {
+    return matched;
+  }
+  return [...matched].sort((a, b) => {
+    if (a.clonedLocally !== b.clonedLocally) {
+      return a.clonedLocally ? -1 : 1;
+    }
+    return 0;
+  });
 }

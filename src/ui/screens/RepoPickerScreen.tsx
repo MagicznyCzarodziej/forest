@@ -3,6 +3,7 @@ import type { RepoCatalogEntry } from "../../domain/types.js";
 import { SearchQuery } from "../components/SearchQuery.js";
 import { SelectableList } from "../components/SelectableList.js";
 import { useFilteredIndex } from "../hooks/useFilteredIndex.js";
+import { filterRepoCatalogBySearch } from "../../repos/repo-catalog.js";
 import { repoToListRow } from "../format/repo-rows.js";
 import { usePickerKeyboard } from "../hooks/usePickerKeyboard.js";
 import { PickerBody } from "./PickerBody.js";
@@ -25,6 +26,7 @@ export function RepoPickerScreen({
     repos,
     query,
     (r) => r.name,
+    filterRepoCatalogBySearch,
   );
 
   const repoNames = useMemo(() => repos.map((r) => r.name), [repos]);

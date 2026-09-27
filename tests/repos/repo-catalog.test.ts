@@ -1,5 +1,9 @@
 import { describe, expect, it } from "vitest";
-import { buildRepoCatalog, sortReposByLastOpened } from "../../src/repos/repo-catalog.js";
+import {
+  buildRepoCatalog,
+  filterRepoCatalogBySearch,
+  sortReposByLastOpened,
+} from "../../src/repos/repo-catalog.js";
 import type { LocalRepoMeta, RepoCatalogEntry } from "../../src/domain/types.js";
 
 describe("sortReposByLastOpened", () => {
@@ -26,6 +30,18 @@ describe("sortReposByLastOpened", () => {
       { name: "b", clonedLocally: false, structure: "none", lastOpenedAt: 1 },
     ];
     expect(sortReposByLastOpened(repos)[0]?.name).toBe("b");
+  });
+});
+
+describe("filterRepoCatalogBySearch", () => {
+  it("keeps locally cloned repos above remote-only matches when searching", () => {
+    const repos: RepoCatalogEntry[] = [
+      { name: "acme-remote-only", clonedLocally: false, structure: "none" },
+      { name: "acme-local", clonedLocally: true, structure: "standard" },
+    ];
+    expect(
+      filterRepoCatalogBySearch(repos, "acme", (r) => r.name).map((r) => r.name),
+    ).toEqual(["acme-local", "acme-remote-only"]);
   });
 });
 
