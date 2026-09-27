@@ -7,7 +7,7 @@
     "forest": "./dist/index.js"
   },
   "scripts": {
-    "build": "vite build",
+    "build": "vite build && chmod +x dist/index.js",
     "dev": "vite-node src/index.ts",
     "test": "npm run lint && npm run test:unit",
     "test:unit": "npm run lint && vitest run",

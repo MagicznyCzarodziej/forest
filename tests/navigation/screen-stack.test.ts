@@ -22,8 +22,11 @@ describe('screen stack', () => {
     expect(popScreen(stack, 1)).toEqual(stack);
   });
 
-  it('allows a single-screen entry at worktrees', () => {
-    const stack: ScreenState[] = [{ type: 'worktrees', repoName: 'x', repoPath: '/x' }];
-    expect(popScreen(stack, 1)).toEqual(stack);
+  it('pops worktrees back to repos when repos is on the stack below', () => {
+    const stack: ScreenState[] = [
+      { type: 'repos' },
+      { type: 'worktrees', repoName: 'x', repoPath: '/x' },
+    ];
+    expect(popScreen(stack, 1)).toEqual([{ type: 'repos' }]);
   });
 });

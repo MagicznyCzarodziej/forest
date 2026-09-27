@@ -28,7 +28,10 @@ interface ForestAppProps {
 
 function initialStack(start: BootstrapResult['startContext']): ScreenState[] {
   if (start.screen === 'worktrees') {
-    return [{ type: 'worktrees', repoName: start.repoName, repoPath: start.repoPath }];
+    return [
+      { type: 'repos' },
+      { type: 'worktrees', repoName: start.repoName, repoPath: start.repoPath },
+    ];
   }
   return [{ type: 'repos' }];
 }
