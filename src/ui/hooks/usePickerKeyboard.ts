@@ -1,15 +1,19 @@
-import { useRef, type Dispatch, type SetStateAction } from "react";
+import { useMemo, useRef, type Dispatch, type SetStateAction } from "react";
 import { useInput } from "ink";
 import { queryEditAction, applyQueryEdit } from "../../search/query-editing.js";
+import { fuzzyFilter } from "../../search/fuzzy-filter.js";
 import {
   tabCompleteAdvance,
   tabCompleteHint,
   type TabCycleState,
 } from "../../search/tab-complete.js";
 import { jumpListIndex, moveListIndex } from "../list-navigation.js";
+import type { FilteredIndexFilter } from "./useFilteredIndex.js";
 
-interface UsePickerKeyboardOptions {
-  candidates: string[];
+interface UsePickerKeyboardOptions<T> {
+  items: T[];
+  getLabel: (item: T) => string;
+  filterItems?: FilteredIndexFilter<T>;
   listLength: number;
   selectedIndex: number;
   setSelectedIndex: Dispatch<SetStateAction<number>>;
@@ -19,10 +23,21 @@ interface UsePickerKeyboardOptions {
   onEnter: (query: string, filteredLength: number, selectedIndex: number) => void;
 }
 
-export function usePickerKeyboard(options: UsePickerKeyboardOptions): string {
+export function usePickerKeyboard<T>(options: UsePickerKeyboardOptions<T>): string {
   const tabCycleRef = useRef<TabCycleState | null>(null);
   const optionsRef = useRef(options);
   optionsRef.current = options;
+  const getLabelRef = useRef(options.getLabel);
+  getLabelRef.current = options.getLabel;
+  const filterItems = options.filterItems ?? fuzzyFilter;
+
+  const tabOrderQuery = tabCycleRef.current?.baseQuery ?? options.query;
+  const tabCandidates = useMemo(() => {
+    const filtered = filterItems(options.items, tabOrderQuery, (item) =>
+      getLabelRef.current(item),
+    );
+    return filtered.map((item) => getLabelRef.current(item));
+  }, [filterItems, options.items, tabOrderQuery]);
 
   const resetTabCycle = () => {
     tabCycleRef.current = null;
@@ -47,9 +62,14 @@ export function usePickerKeyboard(options: UsePickerKeyboardOptions): string {
       return;
     }
     if (key.tab) {
+      const filter = opts.filterItems ?? fuzzyFilter;
+      const orderQuery = tabCycleRef.current?.baseQuery ?? opts.query;
+      const candidates = filter(opts.items, orderQuery, (item) =>
+        getLabelRef.current(item),
+      ).map((item) => getLabelRef.current(item));
       const { query, state } = tabCompleteAdvance(
         opts.query,
-        opts.candidates,
+        candidates,
         tabCycleRef.current,
       );
       tabCycleRef.current = state;
@@ -95,5 +115,5 @@ export function usePickerKeyboard(options: UsePickerKeyboardOptions): string {
     }
   });
 
-  return tabCompleteHint(options.query, options.candidates, tabCycleRef.current);
+  return tabCompleteHint(options.query, tabCandidates, tabCycleRef.current);
 }

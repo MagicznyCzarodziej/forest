@@ -35,7 +35,8 @@ export function BranchPickerScreen({
   );
 
   const tabHint = usePickerKeyboard({
-    candidates: branches,
+    items: branches,
+    getLabel: (b) => b,
     listLength: filtered.length,
     selectedIndex,
     setSelectedIndex,

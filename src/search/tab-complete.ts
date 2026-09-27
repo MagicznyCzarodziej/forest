@@ -1,27 +1,41 @@
-function compareNames(a: string, b: string): number {
-  return a.toLowerCase().localeCompare(b.toLowerCase());
-}
-
 function namesStartingWith(query: string, candidates: string[]): string[] {
   const needle = query.trim().toLowerCase();
-  return [...new Set(candidates)]
-    .filter((name) => name.toLowerCase().startsWith(needle))
-    .sort(compareNames);
+  const seen = new Set<string>();
+  const matches: string[] = [];
+  for (const name of candidates) {
+    if (seen.has(name)) {
+      continue;
+    }
+    if (name.toLowerCase().startsWith(needle)) {
+      seen.add(name);
+      matches.push(name);
+    }
+  }
+  return matches;
 }
 
 function longestCommonPrefix(names: string[]): string {
   if (names.length === 0) {
     return "";
   }
-  const first = names[0]!;
-  const last = names[names.length - 1]!;
-  const firstLower = first.toLowerCase();
-  const lastLower = last.toLowerCase();
-  let end = 0;
-  while (end < firstLower.length && firstLower[end] === lastLower[end]) {
-    end += 1;
+  let end = names[0]!.length;
+  for (let i = 1; i < names.length; i += 1) {
+    const name = names[i]!;
+    const nameLower = name.toLowerCase();
+    let shared = 0;
+    while (
+      shared < end &&
+      shared < nameLower.length &&
+      names[0]!.toLowerCase()[shared] === nameLower[shared]
+    ) {
+      shared += 1;
+    }
+    end = shared;
+    if (end === 0) {
+      break;
+    }
   }
-  return first.slice(0, end);
+  return names[0]!.slice(0, end);
 }
 
 export interface TabCycleState {

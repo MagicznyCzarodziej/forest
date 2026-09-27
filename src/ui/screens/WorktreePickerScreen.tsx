@@ -30,7 +30,6 @@ export function WorktreePickerScreen({
     (w) => w.branch,
   );
 
-  const branchNames = useMemo(() => worktrees.map((w) => w.branch), [worktrees]);
   const listRows = useMemo(
     () =>
       filtered.map((w) => {
@@ -46,7 +45,8 @@ export function WorktreePickerScreen({
   );
 
   const tabHint = usePickerKeyboard({
-    candidates: branchNames,
+    items: worktrees,
+    getLabel: (w) => w.branch,
     listLength: filtered.length,
     selectedIndex,
     setSelectedIndex,

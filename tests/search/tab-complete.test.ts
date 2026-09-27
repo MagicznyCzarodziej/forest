@@ -92,9 +92,9 @@ describe("tabCompleteAdvance", () => {
       seen.push(step.query);
     }
     expect(seen).toEqual([
-      "table-fuzzy-mine",
       "table-rotating-blah",
       "table-rotating-garden",
+      "table-fuzzy-mine",
       "tableau-seven",
     ]);
   });

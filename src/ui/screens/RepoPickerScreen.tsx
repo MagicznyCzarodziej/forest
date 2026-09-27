@@ -29,11 +29,12 @@ export function RepoPickerScreen({
     filterRepoCatalogBySearch,
   );
 
-  const repoNames = useMemo(() => repos.map((r) => r.name), [repos]);
   const listRows = useMemo(() => filtered.map(repoToListRow), [filtered]);
 
   const tabHint = usePickerKeyboard({
-    candidates: repoNames,
+    items: repos,
+    getLabel: (r) => r.name,
+    filterItems: filterRepoCatalogBySearch,
     listLength: filtered.length,
     selectedIndex,
     setSelectedIndex,
