@@ -8,7 +8,7 @@ export default defineConfig(({ command }) => ({
   define:
     command === 'build'
       ? {
-          'process.env.NODE_ENV': 'production',
+          'process.env.NODE_ENV': '"production"',
         }
       : undefined,
   resolve: {
