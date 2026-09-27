@@ -4,7 +4,7 @@ import type { GitHubOwner } from "../domain/github-owner.js";
 import { githubOwnerCacheKey } from "../domain/github-owner.js";
 import type { GitHubRepoListProvider } from "./repo-list-provider.js";
 
-const ONE_DAY_MS = 24 * 60 * 60 * 1000;
+const THIRTY_DAYS = 30 * 24 * 60 * 60 * 1000;
 
 export interface RemoteRepoCacheEntry {
   repoNames: string[];
@@ -20,7 +20,7 @@ export function shouldRefreshCache(fetchedAt?: number, now = Date.now()): boolea
   if (fetchedAt === undefined) {
     return true;
   }
-  return now - fetchedAt >= ONE_DAY_MS;
+  return now - fetchedAt >= THIRTY_DAYS;
 }
 
 export async function readRemoteRepoCache(path: string): Promise<RemoteRepoCacheFile | null> {

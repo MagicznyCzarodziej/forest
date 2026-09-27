@@ -12,9 +12,9 @@ import {
 import type { GitHubRepoListProvider } from "../../src/github/repo-list-provider.js";
 
 describe("shouldRefreshCache", () => {
-  it("returns true when cache is older than one day", () => {
-    const twoDaysAgo = Date.now() - 2 * 24 * 60 * 60 * 1000;
-    expect(shouldRefreshCache(twoDaysAgo)).toBe(true);
+  it("returns true when cache is older than thirty days", () => {
+    const thirtyOneDaysAgo = Date.now() - 31 * 24 * 60 * 60 * 1000;
+    expect(shouldRefreshCache(thirtyOneDaysAgo)).toBe(true);
   });
 
   it("returns false when cache is fresh", () => {
@@ -53,7 +53,7 @@ describe("cachedRemoteRepoNames", () => {
 
   it("returns a stale list without treating it as fresh", async () => {
     const path = join(dir, "remote-repos-cache.json");
-    const stale = Date.now() - 3 * 24 * 60 * 60 * 1000;
+    const stale = Date.now() - 31 * 24 * 60 * 60 * 1000;
     await writeRemoteRepoCache(path, {
       version: 1,
       entries: {
@@ -107,7 +107,7 @@ describe("resolveRemoteRepoNames", () => {
 
   it("refetches when cache entry is stale", async () => {
     const path = join(dir, "remote-repos-cache.json");
-    const stale = Date.now() - 3 * 24 * 60 * 60 * 1000;
+    const stale = Date.now() - 31 * 24 * 60 * 60 * 1000;
     await writeRemoteRepoCache(path, {
       version: 1,
       entries: {

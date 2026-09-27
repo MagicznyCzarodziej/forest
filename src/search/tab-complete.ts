@@ -1,23 +1,31 @@
-import { fuzzyScore } from "./fuzzy-filter.js";
+import { fuzzyFilter } from "./fuzzy-filter.js";
 
 function longestCommonPrefix(strings: string[]): string {
   if (strings.length === 0) {
     return "";
   }
-  const sorted = [...strings].sort();
+  const sorted = [...strings].sort((a, b) => a.toLowerCase().localeCompare(b.toLowerCase()));
   const first = sorted[0]!;
   const last = sorted[sorted.length - 1]!;
+  const firstLower = first.toLowerCase();
+  const lastLower = last.toLowerCase();
   let i = 0;
-  while (i < first.length && first[i] === last[i]) {
+  while (i < firstLower.length && firstLower[i] === lastLower[i]) {
     i += 1;
   }
   return first.slice(0, i);
 }
 
-export function matchingCandidates(query: string, candidates: string[]): string[] {
-  return [...new Set(candidates)]
-    .filter((c) => fuzzyScore(c, query) > 0)
-    .sort((a, b) => a.localeCompare(b));
+function startsWithQuery(candidate: string, query: string): boolean {
+  return candidate.toLowerCase().startsWith(query.trim().toLowerCase());
+}
+
+function matchingCandidates(query: string, candidates: string[]): string[] {
+  const unique = [...new Set(candidates)];
+  const prefixMatches = unique.filter((candidate) => startsWithQuery(candidate, query));
+  const pool =
+    prefixMatches.length > 0 ? prefixMatches : fuzzyFilter(unique, query, (name) => name);
+  return pool.sort((a, b) => a.localeCompare(b));
 }
 
 export interface TabCycleState {
@@ -63,7 +71,7 @@ export function tabCompleteAdvance(
       query: prefix,
       state: {
         baseQuery: query,
-        index: index >= 0 ? index : 0,
+        index: index >= 0 ? index : -1,
       },
     };
   }

@@ -18,7 +18,7 @@ Terminal UI for browsing GitHub repositories, cloning them into a structured lay
 }
 ```
 
-`kind` is `user` or `organization`. Remote repo lists are cached per owner in `~/.config/forest/remote-repos-cache.json` (refreshed daily).
+`kind` is `user` or `organization`. Remote repo lists are cached per owner in `~/.config/forest/remote-repos-cache.json` (refreshed every 30 days).
 
 ## Install
 

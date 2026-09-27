@@ -1,19 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { fuzzyFilter, fuzzyScore } from "../../src/search/fuzzy-filter.js";
-
-describe("fuzzyScore", () => {
-  it("returns higher score for consecutive character matches", () => {
-    expect(fuzzyScore("forest", "for")).toBeGreaterThan(fuzzyScore("fxoryst", "for"));
-  });
-
-  it("returns zero when query characters are missing", () => {
-    expect(fuzzyScore("abc", "xyz")).toBe(0);
-  });
-
-  it("matches subsequence with typos allowed via gaps", () => {
-    expect(fuzzyScore("forest-cli", "frst")).toBeGreaterThan(0);
-  });
-});
+import { fuzzyFilter } from "../../src/search/fuzzy-filter.js";
 
 describe("fuzzyFilter", () => {
   const items = [
@@ -29,12 +15,20 @@ describe("fuzzyFilter", () => {
 
   it("filters by name substring-style fuzzy match", () => {
     const result = fuzzyFilter(items, "forest", (i) => i.label);
-    expect(result.map((i) => i.label)).toEqual(["forest-cli", "forest-app"]);
+    expect(result.map((i) => i.label).sort()).toEqual(["forest-app", "forest-cli"]);
   });
 
-  it("allows typo-tolerant matching", () => {
-    const result = fuzzyFilter(items, "bakend", (i) => i.label);
-    expect(result.map((i) => i.label)).toContain("backend-api");
+  it("keeps a close fuzzy match and drops a weak one", () => {
+    expect(fuzzyFilter(items, "fores", (i) => i.label).map((i) => i.label)).toEqual([
+      "forest-app",
+      "forest-cli",
+    ]);
+    expect(fuzzyFilter(items, "bakend", (i) => i.label)).toEqual([]);
+  });
+
+  it("returns every match past fuzzysort's default cap of 10", () => {
+    const many = Array.from({ length: 12 }, (_, index) => ({ label: `table-${index}` }));
+    expect(fuzzyFilter(many, "tabl", (item) => item.label)).toHaveLength(12);
   });
 
   it("sorts by score descending", () => {

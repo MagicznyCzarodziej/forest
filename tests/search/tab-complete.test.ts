@@ -22,8 +22,22 @@ describe("tabCompleteAdvance", () => {
     expect(completeOnce("forest-cli", ["forest-cli", "forest-app"])).toBe("forest-cli");
   });
 
-  it("uses fuzzy matching for candidate set", () => {
-    expect(completeOnce("frst", ["forest-cli", "mobile"])).toBe("forest-cli");
+  it("uses fuzzy matching when nothing starts with the query", () => {
+    expect(completeOnce("fores", ["forest-cli", "mobile"])).toBe("forest-cli");
+  });
+
+  it("completes the shared prefix of names that start with the query", () => {
+    expect(
+      completeOnce("tabl", ["table-orders", "table-users", "stable-beta", "catalog"]),
+    ).toBe("table-");
+  });
+
+  it("cycles prefix matches after extending the shared prefix", () => {
+    const repos = ["table-a", "table-b", "stable-beta"];
+    const first = tabCompleteAdvance("tabl", repos, null);
+    expect(first.query).toBe("table-");
+    const second = tabCompleteAdvance(first.query, repos, first.state);
+    expect(second.query).toBe("table-a");
   });
 
   const repos = ["lumi", "luminark", "backend"];

@@ -15,7 +15,7 @@ export interface BootstrapResult {
   config: Awaited<ReturnType<typeof loadConfig>>;
   repos: RepoCatalogEntry[];
   localRepos: LocalRepoMeta[];
-  /** False when the GitHub list is missing or older than a day. */
+  /** False when the GitHub list is missing or older than 30 days. */
   remoteListFresh: boolean;
   refreshRemoteRepos: () => Promise<string[]>;
   startContext: StartContext;

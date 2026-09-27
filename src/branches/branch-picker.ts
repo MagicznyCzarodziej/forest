@@ -1,4 +1,4 @@
-import { fuzzyScore } from "../search/fuzzy-filter.js";
+import { fuzzyFilter } from "../search/fuzzy-filter.js";
 
 export function sortBranches(branches: string[], defaultBranch: string): string[] {
   const unique = [...new Set(branches)];
@@ -21,5 +21,7 @@ export function canConfirmBranchSelection(
   if (!trimmed) {
     return true;
   }
-  return filteredBranches.every((branch) => fuzzyScore(branch, trimmed) > 0);
+  return filteredBranches.every(
+    (branch) => fuzzyFilter([branch], trimmed, (name) => name).length > 0,
+  );
 }
