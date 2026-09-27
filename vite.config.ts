@@ -4,10 +4,13 @@ import { defineConfig } from 'vitest/config';
 
 const root = path.dirname(fileURLToPath(import.meta.url));
 
-export default defineConfig({
-  define: {
-    'process.env.NODE_ENV': JSON.stringify('production'),
-  },
+export default defineConfig(({ command }) => ({
+  define:
+    command === 'build'
+      ? {
+          'process.env.NODE_ENV': 'production',
+        }
+      : undefined,
   resolve: {
     extensions: ['.ts', '.tsx', '.js', '.jsx', '.json'],
   },
@@ -31,4 +34,4 @@ export default defineConfig({
     include: ['tests/**/*.test.ts'],
     environment: 'node',
   },
-});
+}));

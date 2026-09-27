@@ -3,9 +3,9 @@ import { bootstrap } from '../application/bootstrap';
 import { ConfigError } from '../config/load-config';
 import { ForestApp } from '../ui/ForestApp';
 
-export async function runForest(cwd = process.cwd()): Promise<void> {
+export async function runForest(): Promise<void> {
   try {
-    const data = await bootstrap(cwd);
+    const data = await bootstrap(process.cwd());
     const instance = render(<ForestApp bootstrap={data} />, {
       patchConsole: false,
       incrementalRendering: true,
