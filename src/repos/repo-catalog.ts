@@ -2,6 +2,9 @@ import type { LocalRepoMeta, RepoCatalogEntry } from "../domain/types.js";
 
 export function sortReposByLastOpened(repos: RepoCatalogEntry[]): RepoCatalogEntry[] {
   return [...repos].sort((a, b) => {
+    if (a.clonedLocally !== b.clonedLocally) {
+      return a.clonedLocally ? -1 : 1;
+    }
     const aTime = a.lastOpenedAt ?? -1;
     const bTime = b.lastOpenedAt ?? -1;
     return bTime - aTime;

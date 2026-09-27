@@ -9,7 +9,15 @@ describe("sortReposByLastOpened", () => {
       { name: "b", clonedLocally: true, structure: "legacy", lastOpenedAt: 300 },
       { name: "c", clonedLocally: false, structure: "none", lastOpenedAt: 200 },
     ];
-    expect(sortReposByLastOpened(repos).map((r) => r.name)).toEqual(["b", "c", "a"]);
+    expect(sortReposByLastOpened(repos).map((r) => r.name)).toEqual(["b", "a", "c"]);
+  });
+
+  it("lists locally cloned repos before remote-only repos", () => {
+    const repos: RepoCatalogEntry[] = [
+      { name: "remote-recent", clonedLocally: false, structure: "none", lastOpenedAt: 999 },
+      { name: "local-old", clonedLocally: true, structure: "standard", lastOpenedAt: 1 },
+    ];
+    expect(sortReposByLastOpened(repos).map((r) => r.name)).toEqual(["local-old", "remote-recent"]);
   });
 
   it("places repos without lastOpenedAt last among same tier", () => {
