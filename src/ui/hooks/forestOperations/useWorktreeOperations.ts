@@ -1,7 +1,7 @@
 import { useCallback, useState } from 'react';
 import type { WorktreeEntry } from '../../../domain/types';
 import { createWorktreeFromBare } from '../../../infrastructure/git/create-worktree';
-import { openInIdea } from '../../../infrastructure/idea/open-in-idea';
+import { openInIdea } from '../../../infrastructure/idea/openInIdea';
 import { popOverlayScreens } from '../../navigation/navigation';
 import { useForest } from '../useForest';
 import type { OperationDeps } from './types';

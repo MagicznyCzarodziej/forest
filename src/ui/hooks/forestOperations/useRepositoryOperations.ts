@@ -3,7 +3,7 @@ import type { RepositoryCatalogEntry } from '../../../domain/types';
 import { cloneRepository } from '../../../infrastructure/git/clone-repository';
 import { convertLegacyRepository } from '../../../infrastructure/git/convert-repository';
 import { buildCloneUrl, detectGitProtocol } from '../../../infrastructure/github/clone-url';
-import { openInIdea } from '../../../infrastructure/idea/open-in-idea';
+import { openInIdea } from '../../../infrastructure/idea/openInIdea';
 import { finishConfirmFlowToWorktrees, popScreen, pushScreen } from '../../navigation/navigation';
 import { useForest } from '../useForest';
 import type { OperationDeps } from './types';

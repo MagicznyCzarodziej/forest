@@ -2,12 +2,13 @@ import { describe, expect, it, vi } from 'vitest';
 import {
   disableAlternateScrollMode,
   enableAlternateScrollMode,
-} from '../../src/infrastructure/terminal/alternate-scroll-mode';
+  type AlternateScrollStream,
+} from '../../../src/infrastructure/terminal/alternateScrollMode';
 
 describe('alternate scroll mode', () => {
   it('writes DEC 1007 escapes on a TTY', () => {
-    const write = vi.fn();
-    const stream = { isTTY: true, write } as NodeJS.WriteStream;
+    const write = vi.fn<(chunk: string) => boolean>(() => true);
+    const stream: AlternateScrollStream = { isTTY: true, write };
 
     enableAlternateScrollMode(stream);
     expect(write).toHaveBeenCalledWith('\x1b[?1007h');
@@ -17,8 +18,8 @@ describe('alternate scroll mode', () => {
   });
 
   it('skips when not a TTY', () => {
-    const write = vi.fn();
-    const stream = { isTTY: false, write } as NodeJS.WriteStream;
+    const write = vi.fn<(chunk: string) => boolean>(() => true);
+    const stream: AlternateScrollStream = { isTTY: false, write };
 
     enableAlternateScrollMode(stream);
     disableAlternateScrollMode(stream);

@@ -3,7 +3,7 @@ import { useLayoutEffect } from 'react';
 import {
   disableAlternateScrollMode,
   enableAlternateScrollMode,
-} from '../../infrastructure/terminal/alternate-scroll-mode';
+} from '../../infrastructure/terminal/alternateScrollMode';
 
 /**
  * Map mouse wheel to ↑/↓ keys in the alternate screen so the terminal viewport
