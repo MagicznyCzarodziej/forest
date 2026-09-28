@@ -1,8 +1,8 @@
 import { describe, expect, it, vi } from 'vitest';
 import {
+  type AlternateScrollStream,
   disableAlternateScrollMode,
   enableAlternateScrollMode,
-  type AlternateScrollStream,
 } from '../../../src/infrastructure/terminal/alternateScrollMode';
 
 describe('alternate scroll mode', () => {
