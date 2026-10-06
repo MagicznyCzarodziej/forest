@@ -2,7 +2,7 @@ import { readFile, writeFile, mkdir } from 'node:fs/promises';
 import { dirname } from 'node:path';
 import type { GitHubOwner } from '../../domain/github-owner';
 import { githubOwnerCacheKey } from '../../domain/github-owner';
-import type { GitHubRepositoryListProvider } from './repository-list-provider';
+import type { GitHubRepositoryListProvider } from './repositoryListProvider';
 
 const THIRTY_DAYS = 30 * 24 * 60 * 60 * 1000;
 
@@ -49,7 +49,7 @@ export async function writeRemoteRepositoryCache(
 export interface ResolveRemoteRepositoryNamesOptions {
   cachePath: string;
   owner: GitHubOwner;
-  provider: GitHubRepositoryListProvider;
+  gitHubRepositoryListProvider: GitHubRepositoryListProvider;
   now?: number;
 }
 
@@ -58,16 +58,18 @@ export async function cachedRemoteRepositoryNames(
   cachePath: string,
   owner: GitHubOwner,
   now = Date.now(),
-): Promise<{ repositoryNames: string[]; fresh: boolean }> {
+): Promise<{ repositoryNames: string[]; isFresh: boolean }> {
   const existing = (await readRemoteRepositoryCache(cachePath))?.entries[
     githubOwnerCacheKey(owner)
   ];
+
   if (!existing) {
-    return { repositoryNames: [], fresh: false };
+    return { repositoryNames: [], isFresh: false };
   }
+
   return {
     repositoryNames: existing.repositoryNames,
-    fresh: !shouldRefreshCache(existing.fetchedAt, now),
+    isFresh: !shouldRefreshCache(existing.fetchedAt, now),
   };
 }
 
@@ -85,7 +87,9 @@ export async function resolveRemoteRepositoryNames(
     return existing.repositoryNames;
   }
 
-  const repositoryNames = await options.provider.listRepositoryNames(options.owner);
+  const repositoryNames = await options.gitHubRepositoryListProvider.listRepositoryNames(
+    options.owner,
+  );
   const fetchedAt = options.now ?? Date.now();
   cache.entries[key] = { repositoryNames, fetchedAt };
   await writeRemoteRepositoryCache(options.cachePath, cache);

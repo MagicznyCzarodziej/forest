@@ -56,6 +56,10 @@ export async function cloneRepository(input: {
     ['clone', '--branch', defaultBranch, '--progress', barePath, defaultWtPath],
     { onOutput: input.onOutput },
   );
+  await runGitStreaming(['remote', 'set-url', 'origin', input.cloneUrl], {
+    cwd: defaultWtPath,
+    onOutput: input.onOutput,
+  });
 
   return {
     repositoryDir,

@@ -12,6 +12,7 @@ export interface GitHubRepositoryListProvider {
 
 export function repositoryNamesGraphql(owner: GitHubOwner): { query: string; jq: string } {
   const root = owner.kind === 'organization' ? 'organization' : 'user';
+
   const query = [
     'query($login: String!, $endCursor: String) {',
     `  ${root}(login: $login) {`,
@@ -36,6 +37,7 @@ export function parseRepositoryNameLines(stdout: string): string[] {
 export class GitHubCliRepositoryListProvider implements GitHubRepositoryListProvider {
   async listRepositoryNames(owner: GitHubOwner): Promise<string[]> {
     const { query, jq } = repositoryNamesGraphql(owner);
+
     const { stdout } = await execFileAsync(
       'gh',
       [

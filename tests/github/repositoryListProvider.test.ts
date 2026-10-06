@@ -2,11 +2,12 @@ import { describe, expect, it } from 'vitest';
 import {
   parseRepositoryNameLines,
   repositoryNamesGraphql,
-} from '../../src/infrastructure/github/repository-list-provider';
+} from '../../src/infrastructure/github/repositoryListProvider';
 
 describe('repositoryNamesGraphql', () => {
   it('pages organization repository names', () => {
     const { query, jq } = repositoryNamesGraphql({ kind: 'organization', login: 'acme' });
+
     expect(query).toContain('organization(login: $login)');
     expect(query).toContain('repositories(first: 100, after: $endCursor');
     expect(query).toContain('nodes { name }');
@@ -17,6 +18,7 @@ describe('repositoryNamesGraphql', () => {
 
   it('pages user repository names', () => {
     const { query, jq } = repositoryNamesGraphql({ kind: 'user', login: 'octocat' });
+
     expect(query).toContain('user(login: $login)');
     expect(query).not.toContain('octocat');
     expect(jq).toBe('.data.user.repositories.nodes[] | select(. != null) | .name');

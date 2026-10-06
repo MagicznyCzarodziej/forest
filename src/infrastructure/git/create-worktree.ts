@@ -1,5 +1,7 @@
+import { execFile } from 'node:child_process';
 import { stat } from 'node:fs/promises';
 import { join } from 'node:path';
+import { promisify } from 'node:util';
 import {
   bareRepositoryPath,
   worktreeFolderName,
@@ -7,6 +9,8 @@ import {
 import { branchToWorktreeSlug } from './branchToPath';
 import { repositoryHasCommits, type GitOutputHandler } from './default-branch';
 import { runGitStreaming } from './run-git';
+
+const execFileAsync = promisify(execFile);
 
 export interface CreateWorktreeResult {
   worktreePath: string;
@@ -46,6 +50,8 @@ export async function createWorktreeFromBare(input: {
     throw new Error(`Worktree folder already exists: ${worktreePath}`);
   }
 
+  const upstreamOriginUrl = await readOriginUrl(barePath);
+
   if (!(await repositoryHasCommits(barePath))) {
     input.onOutput(
       `${input.baseBranch} has no commits yet. Creating empty worktree ${input.newBranchName}`,
@@ -53,7 +59,7 @@ export async function createWorktreeFromBare(input: {
     await runGitStreaming(['init', '-b', input.newBranchName, worktreePath], {
       onOutput: input.onOutput,
     });
-    await runGitStreaming(['remote', 'add', 'origin', barePath], {
+    await runGitStreaming(['remote', 'add', 'origin', upstreamOriginUrl], {
       cwd: worktreePath,
       onOutput: input.onOutput,
     });
@@ -71,6 +77,11 @@ export async function createWorktreeFromBare(input: {
     { onOutput: input.onOutput },
   );
 
+  await runGitStreaming(['remote', 'set-url', 'origin', upstreamOriginUrl], {
+    cwd: worktreePath,
+    onOutput: input.onOutput,
+  });
+
   input.onOutput(`Creating branch ${input.newBranchName} from ${input.baseBranch}`);
   await runGitStreaming(['checkout', '-b', input.newBranchName], {
     cwd: worktreePath,
@@ -78,4 +89,25 @@ export async function createWorktreeFromBare(input: {
   });
 
   return { worktreePath, branch: input.newBranchName };
+}
+
+async function readOriginUrl(repositoryPath: string): Promise<string> {
+  let stdout: string;
+  try {
+    ({ stdout } = await execFileAsync('git', [
+      '-C',
+      repositoryPath,
+      'remote',
+      'get-url',
+      'origin',
+    ]));
+  } catch (cause) {
+    throw new Error(`Bare repository has no origin remote: ${repositoryPath}`, { cause });
+  }
+
+  const originUrl = stdout.trim();
+  if (!originUrl) {
+    throw new Error(`Bare repository has no origin URL: ${repositoryPath}`);
+  }
+  return originUrl;
 }

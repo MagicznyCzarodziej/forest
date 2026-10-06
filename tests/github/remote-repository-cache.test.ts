@@ -9,7 +9,7 @@ import {
   cachedRemoteRepositoryNames,
   resolveRemoteRepositoryNames,
 } from '../../src/infrastructure/github/remote-repository-cache';
-import type { GitHubRepositoryListProvider } from '../../src/infrastructure/github/repository-list-provider';
+import type { GitHubRepositoryListProvider } from '../../src/infrastructure/github/repositoryListProvider';
 
 describe('shouldRefreshCache', () => {
   it('returns true when cache is older than thirty days', () => {
@@ -88,7 +88,7 @@ describe('resolveRemoteRepositoryNames', () => {
     const names = await resolveRemoteRepositoryNames({
       cachePath: path,
       owner,
-      provider,
+      gitHubRepositoryListProvider: provider,
       now: 1000,
     });
 
@@ -98,7 +98,7 @@ describe('resolveRemoteRepositoryNames', () => {
     const cached = await resolveRemoteRepositoryNames({
       cachePath: path,
       owner,
-      provider,
+      gitHubRepositoryListProvider: provider,
       now: 2000,
     });
     expect(cached).toEqual(['repository-a']);
@@ -122,7 +122,7 @@ describe('resolveRemoteRepositoryNames', () => {
     const names = await resolveRemoteRepositoryNames({
       cachePath: path,
       owner: { kind: 'organization', login: 'acme' },
-      provider,
+      gitHubRepositoryListProvider: provider,
     });
 
     expect(names).toEqual(['new']);

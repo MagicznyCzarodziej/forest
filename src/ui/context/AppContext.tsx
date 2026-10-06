@@ -1,5 +1,5 @@
 import { loadConfig, remoteRepositoryCachePath } from '../../config/load-config';
-import { GitHubCliRepositoryListProvider } from '../../infrastructure/github/repository-list-provider';
+import { GitHubCliRepositoryListProvider } from '../../infrastructure/github/repositoryListProvider';
 import {
   cachedRemoteRepositoryNames,
   resolveRemoteRepositoryNames,
@@ -44,12 +44,12 @@ export async function createAppContext(startPath: string): Promise<AppContextVal
     config,
     repositories,
     localRepositories,
-    remoteListFresh: cached.fresh,
+    remoteListFresh: cached.isFresh,
     refreshRemoteRepositories: () =>
       resolveRemoteRepositoryNames({
         cachePath,
         owner: config.githubOwner,
-        provider: defaultRepositoryListProvider,
+        gitHubRepositoryListProvider: defaultRepositoryListProvider,
       }),
     startContext,
     stateStore,
