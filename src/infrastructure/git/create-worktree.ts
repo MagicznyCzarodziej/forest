@@ -1,16 +1,13 @@
-import { execFile } from 'node:child_process';
 import { stat } from 'node:fs/promises';
 import { join } from 'node:path';
-import { promisify } from 'node:util';
 import {
   bareRepositoryPath,
   worktreeFolderName,
 } from '../../domain/repositories/repository-structure';
 import { branchToWorktreeSlug } from './branchToPath';
 import { repositoryHasCommits, type GitOutputHandler } from './default-branch';
+import { readOriginUrl } from './fetch-origin';
 import { runGitStreaming } from './run-git';
-
-const execFileAsync = promisify(execFile);
 
 export interface CreateWorktreeResult {
   worktreePath: string;
@@ -89,25 +86,4 @@ export async function createWorktreeFromBare(input: {
   });
 
   return { worktreePath, branch: input.newBranchName };
-}
-
-async function readOriginUrl(repositoryPath: string): Promise<string> {
-  let stdout: string;
-  try {
-    ({ stdout } = await execFileAsync('git', [
-      '-C',
-      repositoryPath,
-      'remote',
-      'get-url',
-      'origin',
-    ]));
-  } catch (cause) {
-    throw new Error(`Bare repository has no origin remote: ${repositoryPath}`, { cause });
-  }
-
-  const originUrl = stdout.trim();
-  if (!originUrl) {
-    throw new Error(`Bare repository has no origin URL: ${repositoryPath}`);
-  }
-  return originUrl;
 }

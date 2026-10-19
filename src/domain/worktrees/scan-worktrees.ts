@@ -70,17 +70,38 @@ export function withUnbornHeadBranch(branches: string[], head: string): string[]
   return branch ? [branch] : [];
 }
 
+/** Merges bare clone heads with remote-tracking refs after `git fetch`. */
+export function mergeBareBranchNames(localHeads: string[], originRefsStdout: string): string[] {
+  const fromOrigin = parseBranchNames(originRefsStdout, true);
+  return [...new Set([...localHeads, ...fromOrigin])].filter(
+    (branch) => branch && !branch.includes('HEAD'),
+  );
+}
+
+async function forEachRefShortNames(cwd: string, refPrefix: string): Promise<string> {
+  const { stdout } = await execFileAsync(
+    'git',
+    ['for-each-ref', '--format=%(refname:short)', refPrefix],
+    { cwd },
+  );
+  return stdout;
+}
+
 export async function listRemoteBranches(repositoryPath: string, bare: boolean): Promise<string[]> {
   const cwd = bare ? join(repositoryPath, '.bare') : repositoryPath;
   try {
+    if (!bare) {
+      const { stdout } = await execFileAsync('git', ['branch', '-r'], { cwd });
+      return parseBranchNames(stdout, true);
+    }
+
     // `git clone --bare` copies remote branches to refs/heads rather than
-    // refs/remotes/origin, so `git branch -r` is empty in forest's layout.
-    const args = bare
-      ? ['for-each-ref', '--format=%(refname:strip=2)', 'refs/heads']
-      : ['branch', '-r'];
-    const { stdout } = await execFileAsync('git', args, { cwd });
-    const names = parseBranchNames(stdout, !bare);
-    if (!bare || names.length > 0) {
+    // refs/remotes/origin; after fetch, new branches appear under refs/remotes/origin.
+    const headsStdout = await forEachRefShortNames(cwd, 'refs/heads');
+    const localHeads = parseBranchNames(headsStdout, false);
+    const originStdout = await forEachRefShortNames(cwd, 'refs/remotes/origin');
+    const names = mergeBareBranchNames(localHeads, originStdout);
+    if (names.length > 0) {
       return names;
     }
     const head = await readFile(join(cwd, 'HEAD'), 'utf8');
