@@ -48,6 +48,8 @@ function screenSubtitle(
       return screen.title;
     case 'message':
       return screen.title;
+    case 'keyboard-help':
+      return 'Keyboard shortcuts';
     default:
       return '';
   }

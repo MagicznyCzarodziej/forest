@@ -11,9 +11,6 @@ export function MessageRoute({ screen }: MessageRouteProps) {
   const { setStack } = useForestNavigation();
 
   return (
-    <MessageScreen
-      body={screen.body}
-      onDismiss={() => setStack((stack) => popScreen(stack))}
-    />
+    <MessageScreen body={screen.body} onDismiss={() => setStack((stack) => popScreen(stack))} />
   );
 }

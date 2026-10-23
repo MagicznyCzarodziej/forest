@@ -45,8 +45,9 @@ forest clone my-repo
 Progress is written to stderr; the default worktree path is printed on stdout. The command does not
 use the remote repository cache—it clones whatever name you pass under your configured GitHub owner.
 
-In the TUI, type an exact repository name that is not in the list (for example when the cache is
-stale) and choose **Clone from GitHub**.
+In the TUI, press **?** (with an empty filter) for keyboard shortcuts. Use **Alt+Enter** to turn on
+strict name match, type an exact repository name that is not in the list, and choose **Clone from
+GitHub**.
 
 After pulling changes, run `npm run build` again (Vite bundles the CLI to `dist/index.js`).
 `npm link` does not need to be repeated.

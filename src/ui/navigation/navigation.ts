@@ -5,7 +5,8 @@ export type ScreenState =
   | { type: 'confirm-clone'; repositoryName: string }
   | { type: 'confirm-convert'; repositoryName: string; repositoryPath: string }
   | { type: 'progress'; title: string; message: string }
-  | { type: 'message'; title: string; body: string };
+  | { type: 'message'; title: string; body: string }
+  | { type: 'keyboard-help' };
 
 export function pushScreen(stack: ScreenState[], screen: ScreenState): ScreenState[] {
   return [...stack, screen];

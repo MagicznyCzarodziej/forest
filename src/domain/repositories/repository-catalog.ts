@@ -42,12 +42,28 @@ export function repositoryPickerEntries(
   return [candidate, ...filtered];
 }
 
+export function filterRepositoryCatalogByStrictSearch(
+  repositories: RepositoryCatalogEntry[],
+  query: string,
+  getLabel: (repository: RepositoryCatalogEntry) => string,
+): RepositoryCatalogEntry[] {
+  const trimmed = query.trim();
+  if (!trimmed) {
+    return sortRepositoriesByLastOpened(repositories);
+  }
+  const needle = trimmed.toLowerCase();
+  const matched = repositories.filter((repository) =>
+    getLabel(repository).toLowerCase().includes(needle),
+  );
+  return sortRepositoriesByLastOpened(matched);
+}
+
 export function filterRepositoryPickerEntries(
   repositories: RepositoryCatalogEntry[],
   query: string,
   getLabel: (repository: RepositoryCatalogEntry) => string,
 ): RepositoryCatalogEntry[] {
-  const filtered = filterRepositoryCatalogBySearch(repositories, query, getLabel);
+  const filtered = filterRepositoryCatalogByStrictSearch(repositories, query, getLabel);
   return repositoryPickerEntries(filtered, repositories, query);
 }
 

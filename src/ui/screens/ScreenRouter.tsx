@@ -2,6 +2,7 @@ import { useForestNavigation } from '../context/ForestNavigationContext';
 import { BranchesRoute } from './BranchesScreen/BranchesRoute';
 import { ConfirmCloneRoute } from './ConfirmCloneScreen/ConfirmCloneRoute';
 import { ConfirmConvertRoute } from './ConfirmConvertScreen/ConfirmConvertRoute';
+import { KeyboardHelpRoute } from './KeyboardHelpScreen/KeyboardHelpRoute';
 import { MessageRoute } from './MessageScreen/MessageRoute';
 import { ProgressRoute } from './ProgressScreen/ProgressRoute';
 import { RepositoriesRoute } from './RepositoriesScreen/RepositoriesRoute';
@@ -25,5 +26,7 @@ export function ScreenRouter() {
       return <ProgressRoute screen={screen} />;
     case 'message':
       return <MessageRoute screen={screen} />;
+    case 'keyboard-help':
+      return <KeyboardHelpRoute />;
   }
 }

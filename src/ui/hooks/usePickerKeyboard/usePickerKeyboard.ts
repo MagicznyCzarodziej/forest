@@ -21,6 +21,10 @@ interface UsePickerKeyboardOptions<T> {
   setQuery: (value: string | ((q: string) => string)) => void;
   onEscape: () => void;
   onEnter: (query: string, filteredLength: number, selectedIndex: number) => void;
+  /** Option/Alt+Enter — toggles strict list mode when set. */
+  onToggleStrictMatch?: () => void;
+  /** Opens keyboard help when set (bound to ? with an empty filter). */
+  onOpenKeyboardHelp?: () => void;
 }
 
 export function usePickerKeyboard<T>(options: UsePickerKeyboardOptions<T>): string {
@@ -72,6 +76,16 @@ export function usePickerKeyboard<T>(options: UsePickerKeyboardOptions<T>): stri
       const { query, state } = tabCompleteAdvance(opts.query, candidates, tabCycleRef.current);
       setTabCycle(state);
       opts.setQuery(query);
+      return;
+    }
+    if (input === '?' && opts.query.length === 0 && opts.onOpenKeyboardHelp) {
+      resetTabCycle();
+      opts.onOpenKeyboardHelp();
+      return;
+    }
+    if (key.return && key.meta) {
+      resetTabCycle();
+      opts.onToggleStrictMatch?.();
       return;
     }
     if (key.return) {

@@ -25,5 +25,11 @@ function screenFooter(screen: ScreenState): string | undefined {
   if (screen.type === 'message') {
     return '← Enter · Esc dismiss';
   }
+  if (screen.type === 'repositories') {
+    return '? help';
+  }
+  if (screen.type === 'keyboard-help') {
+    return '← Enter · Esc dismiss';
+  }
   return undefined;
 }
