@@ -20,7 +20,7 @@ function repositoriesSubtitle(githubListStatus: GitHubListStatus): string {
     return 'Repositories · Loading from GitHub…';
   }
   if (githubListStatus === 'error') {
-    return 'Repositories · Could not load GitHub repositories';
+    return 'Repositories · Could not refresh list · type a name to clone';
   }
   return 'Repositories';
 }
@@ -45,6 +45,8 @@ function screenSubtitle(
     case 'confirm-convert':
       return 'Convert folder to Forest structure';
     case 'progress':
+      return screen.title;
+    case 'message':
       return screen.title;
     default:
       return '';

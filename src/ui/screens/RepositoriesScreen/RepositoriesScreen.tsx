@@ -3,7 +3,10 @@ import type { RepositoryCatalogEntry } from '../../../domain/types';
 import { SearchQuery } from '../../components/PickerBody/SearchQuery';
 import { SelectableList } from '../../components/SelectableList/SelectableList';
 import { useFilteredIndex } from '../../hooks/useFilteredIndex';
-import { filterRepositoryCatalogBySearch } from '../../../domain/repositories/repository-catalog';
+import {
+  filterRepositoryPickerEntries,
+  remoteCloneByNameCandidate,
+} from '../../../domain/repositories/repository-catalog';
 import { repositoryToListRow } from './repositoryToListRow';
 import { usePickerKeyboard } from '../../hooks/usePickerKeyboard/usePickerKeyboard';
 import { PickerBody } from '../../components/PickerBody/PickerBody';
@@ -22,27 +25,49 @@ export function RepositoriesScreen({
   emptyMessage = 'No matching repositories',
 }: RepositoriesScreenProps) {
   const [query, setQuery] = useState('');
-  const { filtered, selectedIndex, setSelectedIndex } = useFilteredIndex(
+  const {
+    filtered: pickerEntries,
+    selectedIndex,
+    setSelectedIndex,
+  } = useFilteredIndex(
     repositories,
     query,
     (repository) => repository.name,
-    filterRepositoryCatalogBySearch,
+    filterRepositoryPickerEntries,
   );
 
-  const listRows = useMemo(() => filtered.map(repositoryToListRow), [filtered]);
+  const cloneByNameCandidate = useMemo(
+    () => remoteCloneByNameCandidate(repositories, query),
+    [repositories, query],
+  );
+
+  const listRows = useMemo(
+    () =>
+      pickerEntries.map((repository, index) =>
+        cloneByNameCandidate && index === 0 && repository.name === cloneByNameCandidate.name
+          ? {
+              id: `clone:${repository.name}`,
+              primary: repository.name,
+              statusText: 'Clone from GitHub',
+              suffixRole: 'not-cloned' as const,
+            }
+          : repositoryToListRow(repository),
+      ),
+    [cloneByNameCandidate, pickerEntries],
+  );
 
   const tabHint = usePickerKeyboard({
     items: repositories,
     getLabel: (repository) => repository.name,
-    filterItems: filterRepositoryCatalogBySearch,
-    listLength: filtered.length,
+    filterItems: filterRepositoryPickerEntries,
+    listLength: pickerEntries.length,
     selectedIndex,
     setSelectedIndex,
     query,
     setQuery,
     onEscape,
     onEnter: (_, length, index) => {
-      const selectedRepository = length > 0 ? filtered[index] : undefined;
+      const selectedRepository = length > 0 ? pickerEntries[index] : undefined;
       if (selectedRepository) {
         onSelect(selectedRepository);
       }

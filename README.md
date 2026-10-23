@@ -35,6 +35,19 @@ npm link
 
 Then run `forest` from any directory. Quit with Ctrl+C.
 
+Clone a repository from the command line (same layout as cloning in the TUI: `.bare` plus a default
+branch worktree under `root`):
+
+```bash
+forest clone my-repo
+```
+
+Progress is written to stderr; the default worktree path is printed on stdout. The command does not
+use the remote repository cache—it clones whatever name you pass under your configured GitHub owner.
+
+In the TUI, type an exact repository name that is not in the list (for example when the cache is
+stale) and choose **Clone from GitHub**.
+
 After pulling changes, run `npm run build` again (Vite bundles the CLI to `dist/index.js`).
 `npm link` does not need to be repeated.
 

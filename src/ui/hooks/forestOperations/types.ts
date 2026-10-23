@@ -9,7 +9,10 @@ export interface WorktreeCatalogActions {
 
 export interface OperationDeps {
   setStack: Dispatch<SetStateAction<ScreenState[]>>;
-  runProgress: (title: string, action: () => Promise<void>) => Promise<void>;
+  runProgress: (
+    title: string,
+    action: () => Promise<void>,
+  ) => Promise<{ success: boolean; error?: string }>;
   appendProgress: (line: string) => void;
   repositoryList: Pick<
     ReturnType<typeof useRepositoryList>,

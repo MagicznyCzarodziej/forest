@@ -18,13 +18,19 @@ export function useProgressOperation({ setStack }: UseProgressOperationOptions) 
   }, []);
 
   const runProgress = useCallback(
-    async (title: string, action: () => Promise<void>) => {
+    async (
+      title: string,
+      action: () => Promise<void>,
+    ): Promise<{ success: boolean; error?: string }> => {
       setProgressLines([]);
       setStack((stack) => pushScreen(stack, { type: 'progress', title, message: '' }));
       try {
         await action();
+        return { success: true };
       } catch (error) {
-        appendProgress(error instanceof Error ? error.message : 'Operation failed');
+        const message = error instanceof Error ? error.message : 'Operation failed';
+        appendProgress(message);
+        return { success: false, error: message };
       }
     },
     [appendProgress, setStack],

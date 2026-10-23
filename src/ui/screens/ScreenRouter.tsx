@@ -2,6 +2,7 @@ import { useForestNavigation } from '../context/ForestNavigationContext';
 import { BranchesRoute } from './BranchesScreen/BranchesRoute';
 import { ConfirmCloneRoute } from './ConfirmCloneScreen/ConfirmCloneRoute';
 import { ConfirmConvertRoute } from './ConfirmConvertScreen/ConfirmConvertRoute';
+import { MessageRoute } from './MessageScreen/MessageRoute';
 import { ProgressRoute } from './ProgressScreen/ProgressRoute';
 import { RepositoriesRoute } from './RepositoriesScreen/RepositoriesRoute';
 import { WorktreesRoute } from './WorktreesScreen/WorktreesRoute';
@@ -22,5 +23,7 @@ export function ScreenRouter() {
       return <ConfirmConvertRoute screen={screen} />;
     case 'progress':
       return <ProgressRoute screen={screen} />;
+    case 'message':
+      return <MessageRoute screen={screen} />;
   }
 }

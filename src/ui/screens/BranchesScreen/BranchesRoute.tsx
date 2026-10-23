@@ -13,14 +13,20 @@ interface BranchesRouteProps {
 
 export function BranchesRoute({ screen }: BranchesRouteProps) {
   const { goBack } = useForestNavigation();
-  const { branches, ready } = useWorktreeCatalogContext();
+  const { branches, ready, refreshingBranches } = useWorktreeCatalogContext();
   const { createWorktree } = useWorktreeOperationsContext();
 
   return (
     <BranchesScreen
       key={`${screen.repositoryPath}${NULL_SEPARATOR}${screen.newBranchName}`}
       branches={ready ? branches : []}
-      emptyMessage={ready ? 'No matching branches' : 'Loading…'}
+      emptyMessage={
+        ready
+          ? refreshingBranches
+            ? 'Fetching remote branches…'
+            : 'No matching branches'
+          : 'Loading…'
+      }
       onSelectBranch={(baseBranch) =>
         void createWorktree(
           screen.repositoryName,

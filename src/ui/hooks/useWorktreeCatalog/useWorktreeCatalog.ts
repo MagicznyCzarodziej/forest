@@ -1,16 +1,10 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { sortBranches } from './sortBranches';
 import type { WorktreeEntry } from '../../../domain/types';
-import {
-  DEFAULT_BRANCH,
-  detectDefaultBranchFromBare,
-} from '../../../infrastructure/git/default-branch';
 import type { ScreenState } from '../../navigation/navigation';
 import { bareRepositoryPath } from '../../../domain/repositories/repository-structure';
-import { buildWorktreeList } from '../../../domain/worktrees/worktree-catalog';
-import { listRemoteBranches, scanWorktrees } from '../../../domain/worktrees/scan-worktrees';
 import { fetchOriginBranches } from '../../../infrastructure/git/fetch-origin';
 import { useForest } from '../useForest';
+import { readWorktreeCatalogFromDisk } from './applyWorktreeCatalog';
 
 export interface LoadWorktreeCatalogOptions {
   refreshFromOrigin?: boolean;
@@ -33,6 +27,37 @@ export function useWorktreeCatalog(screen: ScreenState) {
   const [loadedRepositoryPath, setLoadedRepositoryPath] = useState<string | null>(null);
   const [refreshingBranches, setRefreshingBranches] = useState(false);
   const requestRef = useRef(0);
+  const loadedRepositoryPathRef = useRef<string | null>(null);
+
+  useEffect(() => {
+    loadedRepositoryPathRef.current = loadedRepositoryPath;
+  }, [loadedRepositoryPath]);
+
+  const applyCatalog = useCallback(
+    async (request: number, repositoryName: string, repositoryPath: string): Promise<boolean> => {
+      if (request !== requestRef.current) {
+        return false;
+      }
+
+      const snapshot = await readWorktreeCatalogFromDisk({
+        repositoryName,
+        repositoryPath,
+        repositoryWorktreeSeparator: config.repositoryWorktreeSeparator,
+        stateStore,
+      });
+
+      if (request !== requestRef.current) {
+        return false;
+      }
+
+      setWorktrees(snapshot.worktrees);
+      setBranches(snapshot.branches);
+      setLoadedRepositoryPath(repositoryPath);
+      loadedRepositoryPathRef.current = repositoryPath;
+      return true;
+    },
+    [config.repositoryWorktreeSeparator, stateStore],
+  );
 
   const load = useCallback(
     async (
@@ -42,65 +67,50 @@ export function useWorktreeCatalog(screen: ScreenState) {
     ) => {
       const request = ++requestRef.current;
 
+      if (!options.refreshFromOrigin) {
+        setRefreshingBranches(false);
+      }
+
       if (options.refreshFromOrigin) {
-        await Promise.resolve();
+        if (loadedRepositoryPathRef.current !== repositoryPath) {
+          const loaded = await applyCatalog(request, repositoryName, repositoryPath);
+          if (!loaded) {
+            return;
+          }
+        }
+
         if (request !== requestRef.current) {
           return;
         }
-        setLoadedRepositoryPath(null);
+
         setRefreshingBranches(true);
-        try {
-          await fetchOriginBranches(bareRepositoryPath(repositoryPath));
-        } catch {
-          // Offline or auth errors: fall back to refs already on disk.
-        } finally {
+        void (async () => {
+          try {
+            await fetchOriginBranches(bareRepositoryPath(repositoryPath));
+          } catch {
+            // Offline or auth errors: fall back to refs already on disk.
+          }
+          if (request !== requestRef.current) {
+            return;
+          }
+          await applyCatalog(request, repositoryName, repositoryPath);
           if (request === requestRef.current) {
             setRefreshingBranches(false);
           }
-        }
-      }
-
-      if (request !== requestRef.current) {
+        })();
         return;
       }
 
-      const rawWorktrees = await scanWorktrees(
-        repositoryPath,
-        repositoryName,
-        stateStore,
-        config.repositoryWorktreeSeparator,
-      );
-      const remoteBranches = await listRemoteBranches(repositoryPath, true);
-
-      let defaultBranch: string;
-      try {
-        defaultBranch = await detectDefaultBranchFromBare(bareRepositoryPath(repositoryPath));
-      } catch {
-        defaultBranch = remoteBranches.includes(DEFAULT_BRANCH)
-          ? DEFAULT_BRANCH
-          : (remoteBranches[0] ?? DEFAULT_BRANCH);
-      }
-
-      if (request !== requestRef.current) {
-        return;
-      }
-
-      setWorktrees(
-        buildWorktreeList({
-          repositoryName,
-          defaultBranch,
-          worktrees: rawWorktrees,
-        }),
-      );
-      setBranches(sortBranches(remoteBranches, defaultBranch));
-      setLoadedRepositoryPath(repositoryPath);
+      await applyCatalog(request, repositoryName, repositoryPath);
     },
-    [config.repositoryWorktreeSeparator, stateStore],
+    [applyCatalog],
   );
 
   const invalidate = useCallback(() => {
     requestRef.current += 1;
+    loadedRepositoryPathRef.current = null;
     setLoadedRepositoryPath(null);
+    setRefreshingBranches(false);
   }, []);
 
   const repository = activeRepository(screen);
@@ -111,6 +121,8 @@ export function useWorktreeCatalog(screen: ScreenState) {
     if (!repositoryName || !repositoryPath) {
       return;
     }
+    // Catalog load updates React state after reading git; screen changes must trigger reload.
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- load awaits git before setState
     void load(repositoryName, repositoryPath, {
       refreshFromOrigin: screen.type === 'branches',
     });

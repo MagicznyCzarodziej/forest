@@ -24,6 +24,8 @@ export function BranchesScreen({
     branches,
     query,
     (branch) => branch,
+    undefined,
+    { preserveItemOnListChange: true },
   );
 
   const listRows = useMemo(

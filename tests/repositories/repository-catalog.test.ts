@@ -2,6 +2,9 @@ import { describe, expect, it } from 'vitest';
 import {
   buildRepositoryCatalog,
   filterRepositoryCatalogBySearch,
+  filterRepositoryPickerEntries,
+  isPlausibleGitHubRepositoryName,
+  remoteCloneByNameCandidate,
   sortRepositoriesByLastOpened,
 } from '../../src/domain/repositories/repository-catalog';
 import type { LocalRepositoryMeta, RepositoryCatalogEntry } from '../../src/domain/types';
@@ -56,6 +59,43 @@ describe('filterRepositoryCatalogBySearch', () => {
     expect(
       filterRepositoryCatalogBySearch(repositories, 'forest', (r) => r.name).map((r) => r.name),
     ).toEqual(['forest-new', 'forest-old', 'forest-remote']);
+  });
+});
+
+describe('remoteCloneByNameCandidate', () => {
+  const repositories: RepositoryCatalogEntry[] = [
+    { name: 'forest-app', clonedLocally: false, structure: 'none' },
+  ];
+
+  it('offers a clone when the exact name is not in the catalog', () => {
+    expect(remoteCloneByNameCandidate(repositories, 'brand-new-repo')).toEqual({
+      name: 'brand-new-repo',
+      clonedLocally: false,
+      structure: 'none',
+    });
+  });
+
+  it('does not offer a clone when the repository is already listed', () => {
+    expect(remoteCloneByNameCandidate(repositories, 'forest-app')).toBeUndefined();
+  });
+
+  it('ignores invalid names', () => {
+    expect(remoteCloneByNameCandidate(repositories, 'bad name')).toBeUndefined();
+    expect(isPlausibleGitHubRepositoryName('ok-repo')).toBe(true);
+    expect(isPlausibleGitHubRepositoryName('')).toBe(false);
+  });
+});
+
+describe('filterRepositoryPickerEntries', () => {
+  it('prepends a clone-by-name row ahead of fuzzy matches', () => {
+    const repositories: RepositoryCatalogEntry[] = [
+      { name: 'forest-app', clonedLocally: true, structure: 'standard' },
+    ];
+    expect(
+      filterRepositoryPickerEntries(repositories, 'forest', (repository) => repository.name).map(
+        (repository) => repository.name,
+      ),
+    ).toEqual(['forest', 'forest-app']);
   });
 });
 

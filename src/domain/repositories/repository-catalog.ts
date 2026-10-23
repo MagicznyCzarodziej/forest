@@ -1,6 +1,56 @@
 import type { LocalRepositoryMeta, RepositoryCatalogEntry } from '../types';
 import { fuzzyFilter } from '../search/fuzzy-filter';
 
+/** GitHub repository names: 1–100 chars from this set. */
+const GITHUB_REPOSITORY_NAME = /^[a-zA-Z0-9._-]{1,100}$/;
+
+export function isPlausibleGitHubRepositoryName(name: string): boolean {
+  return GITHUB_REPOSITORY_NAME.test(name);
+}
+
+export function findRepositoryByExactName(
+  repositories: RepositoryCatalogEntry[],
+  name: string,
+): RepositoryCatalogEntry | undefined {
+  return repositories.find((repository) => repository.name === name);
+}
+
+/** Lets users clone a repo that is missing from a stale or empty remote cache. */
+export function remoteCloneByNameCandidate(
+  repositories: RepositoryCatalogEntry[],
+  query: string,
+): RepositoryCatalogEntry | undefined {
+  const name = query.trim();
+  if (!isPlausibleGitHubRepositoryName(name)) {
+    return undefined;
+  }
+  if (findRepositoryByExactName(repositories, name)) {
+    return undefined;
+  }
+  return { name, clonedLocally: false, structure: 'none' };
+}
+
+export function repositoryPickerEntries(
+  filtered: RepositoryCatalogEntry[],
+  repositories: RepositoryCatalogEntry[],
+  query: string,
+): RepositoryCatalogEntry[] {
+  const candidate = remoteCloneByNameCandidate(repositories, query);
+  if (!candidate) {
+    return filtered;
+  }
+  return [candidate, ...filtered];
+}
+
+export function filterRepositoryPickerEntries(
+  repositories: RepositoryCatalogEntry[],
+  query: string,
+  getLabel: (repository: RepositoryCatalogEntry) => string,
+): RepositoryCatalogEntry[] {
+  const filtered = filterRepositoryCatalogBySearch(repositories, query, getLabel);
+  return repositoryPickerEntries(filtered, repositories, query);
+}
+
 export function sortRepositoriesByLastOpened(
   repositories: RepositoryCatalogEntry[],
 ): RepositoryCatalogEntry[] {

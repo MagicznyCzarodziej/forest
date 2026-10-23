@@ -22,5 +22,8 @@ function screenFooter(screen: ScreenState): string | undefined {
   if (screen.type === 'progress') {
     return 'Working…';
   }
+  if (screen.type === 'message') {
+    return '← Enter · Esc dismiss';
+  }
   return undefined;
 }

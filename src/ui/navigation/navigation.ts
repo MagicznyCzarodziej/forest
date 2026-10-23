@@ -4,7 +4,8 @@ export type ScreenState =
   | { type: 'branches'; repositoryName: string; repositoryPath: string; newBranchName: string }
   | { type: 'confirm-clone'; repositoryName: string }
   | { type: 'confirm-convert'; repositoryName: string; repositoryPath: string }
-  | { type: 'progress'; title: string; message: string };
+  | { type: 'progress'; title: string; message: string }
+  | { type: 'message'; title: string; body: string };
 
 export function pushScreen(stack: ScreenState[], screen: ScreenState): ScreenState[] {
   return [...stack, screen];

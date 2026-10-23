@@ -63,7 +63,7 @@ describe('cachedRemoteRepositoryNames', () => {
 
     await expect(
       cachedRemoteRepositoryNames(path, { kind: 'organization', login: 'acme' }),
-    ).resolves.toEqual({ repositoryNames: ['old'], fresh: false });
+    ).resolves.toEqual({ repositoryNames: ['old'], isFresh: false });
   });
 });
 
